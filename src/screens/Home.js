@@ -36,6 +36,11 @@ class Home extends Component {
     this.props.history.push('/restaurants')
   }
 
+  handleSignInBtn = () => {
+    this.props.history.push('/login');
+  }
+
+
   fetchRestaurantCount() {
     const db = firebase.firestore(); // Assuming firebase is already initialized
     db.collection('users').where('isRestaurant', '==', true).get()
@@ -57,7 +62,7 @@ class Home extends Component {
             {/* <Navbar history={this.props.history} /> */}
             <Navbar2 history={this.props.history} />
             <div className="container home-cont1-text">
-              <h1 className="h1 text-uppercase text-white text-center mb-4"><strong>Organic Fast Food Made <br /> Easy And Healthy</strong></h1>
+            <h1 className="h1 text-uppercase text-white text-center mb-4"><strong>Join the feast, save a feast. Savor the endless delights.</strong></h1>
               <div className="container">
                 <div className="row justify-content-center">
                   <div className="col-lg-6 col-md-6 col-sm-12 mb-3">
@@ -91,6 +96,23 @@ class Home extends Component {
             </div>
           </div>
         </div>
+
+        {/* About Us Section */}
+        {/* About Us Section with blank background */}
+        <div className="container-fluid text-center home-cont6">
+          <div className="row">
+            <div className="col-lg-6">
+            <img src="assets/images/treasure-chope-logo.svg" alt="Treasure Chope Logo" className="logo" />
+            </div>
+            <div className="col-lg-6">
+              <h2 className="mt-5 mb-3 custom-text-color">Join the feast, save a feast.</h2>
+              <p className="mb-3 custom-text-color1">Savor the endless delights.</p>
+              <p className="mb-3 custom-text-color1">Discover the joy of saving every bite with us. We turn surplus into discounts, making sustainability delicious. Join our mission for tastier, eco-friendly savings.</p>
+              <button type="button" className="btn btn-sign-in-primary text-uppercase mb-5" onClick={this.handleSignInBtn}><b>Sign In</b></button>
+            </div>
+          </div>
+        </div>
+
 
         {/* Home How it work section */}
         <div className="container-fluid text-center py-4">

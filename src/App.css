@@ -91,7 +91,7 @@ a:hover{
 }
 
 .round-border{
-  border: 2px solid #eb6825;
+  border: 2px solid #c13f86;
   border-radius: 100%;
   height: 126px;
   line-height: 116px;
@@ -100,16 +100,46 @@ a:hover{
 }
 
 .res-shadow{
-  box-shadow: 0 0 7px rgba(173, 173, 173, 0.32);
+  box-shadow: 0 0 7px rgba(251, 242, 247);
 }
 
 .res-border{
-  border: 1px solid #f2f2f2
+  border: 1px solid #FBF2F7
 }
 
 .rating{
-  color: #ffc107 !important;
+  color: #C13F86 !important;
 }
+
+/* eve add */
+.home-cont6 {
+  background-color: #FBF2F7; /* Set to white or any color you consider 'blank' */
+  /* Other styles remain unchanged */
+}
+
+.custom-text-color {
+  color: #1d0a15; /* Keeps existing color definition */
+  text-transform: uppercase; /* Makes text uppercase */
+  margin-top: 3rem; /* Adds top margin equivalent to mt-5 */
+  margin-bottom: 1rem; /* Adds bottom margin equivalent to mb-3 */
+}
+
+.custom-text-color1 {
+  color: #1d0a15; /* Keeps existing color definition */
+}
+
+.logo {
+  max-width: 100%;
+  height: auto;
+}
+
+.btn-sign-in-primary {
+  background-color: #c13f86 !important; /* Sets the background color */
+  border-color: #c13f86 !important; /* Sets the border color to match the background */
+  color: #FBF2F7
+}
+
+
 
 /* For Navbar.js */
 .nav-link{
