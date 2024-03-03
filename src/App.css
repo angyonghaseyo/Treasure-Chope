@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap');
 
 
@@ -9,12 +9,13 @@
   text-decoration: none;
 }
 
-*, body{
-  font-family: 'Roboto', sans-serif !important;
+*, body {
+  font-family: 'Poppins', sans-serif !important;
 }
 
+
 .bg-warning{
-  background-color: #eb6825 !important;
+  background-color: #FBF2F7 !important;
 }
 
 .text-warning{
@@ -138,6 +139,86 @@ a:hover{
   border-color: #c13f86 !important; /* Sets the border color to match the background */
   color: #FBF2F7
 }
+
+/* Add to your existing Home.css file */
+
+.promo-section {
+  display: flex; /* Use flexbox to align children */
+  justify-content: center; /* Center children horizontally */
+  align-items: center; /* Center children vertically */
+  text-align: left; /* Center text */
+  background-size: cover;
+  background-position: center;
+  border-radius: 25px;
+  margin: 40px 20px;
+  color: #FFFFFF; /* Assuming text is white */
+  padding: 60px 20px; /* Adjust padding as needed */
+  flex-direction: column; /* Stack children vertically */
+}
+
+.promo-content {
+  max-width: 800px; /* Adjust as needed */
+  margin: auto; /* Center the content */
+  display: flex;
+  flex-direction: column; /* Stack children vertically */
+}
+
+.promo-title {
+  font-size: 2.5rem; /* Adjust size as needed */
+  margin-bottom: 0.5rem; /* Adjust as needed */
+}
+
+.promo-subtitle {
+  font-size: 1.5rem; /* Adjust size as needed */
+  margin-bottom: 2rem; /* Adjust as needed */
+}
+
+.promo-buttons {
+  display: flex;
+  justify-content: center; /* Center-align buttons */
+  gap: 20px; /* Space between buttons */
+}
+
+.btn {
+  padding: 10px 30px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  font-weight: 500;
+  transition: background-color 0.3s ease-in-out;
+  cursor: pointer;
+  outline: none;
+}
+
+.btn-signin {
+  background-color: #77d37b; /* Replace with your sign in button color */
+  color: #fbf2f7;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-signin:hover {
+  background-color: #77d37b; /* Darkened version of #69A2B0 for hover effect */
+}
+
+.btn-browse {
+  background-color: transparent;
+  color: #bfdc94;
+  border: 2px solid #77d37b;
+}
+
+.btn-browse:hover {
+  background-color: #77d37b;
+  color
+  : #bfdc94;
+}
+
+.button-container {
+  align-self: flex-start; /* Align the button container to the end (right side) */
+  margin-top: 50px; /* Add space between the text and the button */
+
+}
+
+
 
 
 
