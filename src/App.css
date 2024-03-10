@@ -160,8 +160,60 @@ a:hover{
 }
 
 /* For Footer.js */
+.footer-svg {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 100%;  
+  z-index: 1; /* Lower z-index so text appears above */
+}
+
+/* Adjust your .footer-svg img styles to remove the whitespace */
+.footer-svg svg {
+  height: 100%; /* Set height to match your footer */
+  width: 100%; /* Keep the SVG's aspect ratio */
+}
+
+.footer-content {
+  position: relative;
+  z-index: 2; 
+  margin-bottom: 80px;/* Higher z-index to be on top of the SVG background */
+  /* Rest of your styling */
+}
+
+.treasurechope-logo {
+  width: 188px; /* Adjust the width as desired */
+  height: auto; /* This will keep the aspect ratio intact */
+  /* Add more styling as needed */
+}
+
+.col-lg-1-5 {
+  flex: 0 0 13.75%;
+  max-width: 13.75%;
+}
+
+.col-md-1-5 {
+  flex: 0 0 13.75%;
+  max-width: 13.75%;
+}
+
+.col-lg-1-25 {
+  flex: 0 0 11.3%;
+  max-width: 11.3%;
+  text-align: center;
+}
+
+.col-md-1-25 {
+  flex: 0 0 11.3%;
+  max-width: 11.3%;
+  text-align: center;
+}
+
+
 .bg-footer{
-  background-color: #282c35;
+  background-color: #F8F9FA;
+  position: relative; 
+  padding-top: 5rem;
 }
 
 .footer-head-div{
@@ -171,20 +223,20 @@ a:hover{
 
 .footer-list-div ul li{
   list-style: none;
-  color: #cdcdcd;
+  color: #000000;
   font-size: 14px;
-  margin-bottom: 10px;
+  margin-bottom: 1px;
 }
 
 .footer-list-div ul li a{
   text-decoration: none;
-  color: #cdcdcd !important;
+  color: #000000 !important;
   outline: none;
   transition: all 0.3s ease-in-out !important;
 }
 
 .footer-list-div ul li a:hover{
-  color: #eb6825 !important;
+  color: #F40469 !important;
   margin-left: 10px;
   text-decoration: none;
 }
@@ -214,13 +266,12 @@ a:hover{
   fill: #fff !important;
 }
 
-.footer-copyright{
-  border-top: 1px solid #404040;
-  padding: 30px 0px 10px !important;
+.footer-empty{
+  padding: 1px 0px 10px !important;
   letter-spacing: 1px
 }
 
-.footer-copyright p{
+.footer-empty p{
   color: #cdcdcd !important;
   font-size: 12px;
   text-transform: uppercase;
