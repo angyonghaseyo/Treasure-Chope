@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.css'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+//import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 class Footer extends Component {
     render() {
@@ -67,10 +67,10 @@ class Footer extends Component {
                             <div className="col-lg-1-5 col-md-1-5 col-sm-12">
                                 <div className="footer-list-div">
                                     <ul>
-                                        <li><a href="#">All Restaurant</a></li>
-                                        <li><a href="#">Best Sellers</a></li>
-                                        <li><a href="#">Top Rated</a></li>
-                                        <li><a href="#">Newcomers</a></li>
+                                        <li><a href="/#">All Restaurant</a></li>
+                                        <li><a href="/#">Best Sellers</a></li>
+                                        <li><a href="/#">Top Rated</a></li>
+                                        <li><a href="/#">Newcomers</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -79,10 +79,10 @@ class Footer extends Component {
                             <div className="col-lg-1-5 col-md-1-5 col-sm-12">
                                 <div className="footer-list-div">
                                     <ul>
-                                        <li><a href="#">FAQ</a></li>
-                                        <li><a href="#">Join our program</a></li>
-                                        <li><a href="#">Be our partners</a></li>
-                                        <li><a href="#">Terms & Condition</a></li>
+                                        <li><a href="/#">FAQ</a></li>
+                                        <li><a href="/#">Join our program</a></li>
+                                        <li><a href="/#">Be our partners</a></li>
+                                        <li><a href="/#">Terms & Condition</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -91,8 +91,8 @@ class Footer extends Component {
                             <div className="col-lg-2 col-md-2 col-sm-12">
                                 <div className="footer-list-div">
                                     <ul>
-                                        <li><a href="#">Our Parent Company</a></li>
-                                        <li><a href="#">Make an investment</a></li>
+                                        <li><a href="/#">Our Parent Company</a></li>
+                                        <li><a href="/#">Make an investment</a></li>
                                     </ul>
                                 </div>
                             </div>
