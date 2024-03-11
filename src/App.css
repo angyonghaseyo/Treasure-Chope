@@ -139,20 +139,7 @@ a:hover{
   color: #FBF2F7
 }
 
-.promo-section {
-  display: flex; /* Use flexbox to align children */
-  justify-content: center; /* Center children horizontally */
-  align-items: center; /* Center children vertically */
-  text-align: left; /* Center text */
-  background-size: cover;
-  background-position: center;
-  border-radius: 25px;
-  margin: 40px 20px;
-  color: #FFFFFF; /* Assuming text is white */
-  padding: 60px 20px; /* Adjust padding as needed */
-  flex-direction: column; /* Stack children vertically */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1232' height='360' viewBox='0 0 1232 360' fill='none'%3E%3Crect width='1232' height='360' rx='32' fill='%23FF6A90'/%3E%3Cmask id='mask0_215_702' style='mask-type:luminance' maskUnits='userSpaceOnUse' x='0' y='0' width='1232' height='360'%3E%3Crect width='1232' height='360' rx='32' fill='white'/%3E%3C/mask%3E%3Cg mask='url(%23mask0_215_702)'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M1408.6 425.512C1370.37 254.651 1210.17 81.7061 1096.3 273.32C1068.73 319.713 1019.72 349.455 965.758 352.619C857.64 358.959 743.007 306.344 686.069 487.013C653.777 987.744 1468.56 1004.96 1408.6 425.512Z' fill='%23FF487F'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M1395.18 280.339C1365.17 146.494 1239.56 10.976 1150.39 161.024C1128.8 197.354 1090.4 220.633 1048.12 223.094C963.391 228.023 873.54 186.772 828.98 328.268C803.842 720.468 1442.37 734.225 1395.18 280.339Z' stroke='%23FF6A90'/%3E%3Cg style='mix-blend-mode:multiply'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M-145.67 72.4004C-113.455 216.445 21.5793 362.238 117.58 200.686C140.824 161.571 182.145 136.493 227.633 133.821C318.775 128.469 415.404 172.818 463.415 20.4972C490.674 -401.655 -196.173 -416.106 -145.67 72.4004Z' stroke='%23FF6A90'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-}
+
 
 .promo-content {
   max-width: 800px; /* Adjust as needed */
@@ -491,6 +478,13 @@ a:hover{
   background: url('./assets/images/cover-photo20.jpg') no-repeat scroll 0 0 / cover;
 }
 
+.myorderspage-bgd {
+  background: url('./assets/images/myordersbgd.png') no-repeat center / cover;
+  width: 100%;
+  height: 40vh;
+
+}
+
 .res-details-cont1-text{
   padding-top: 100px !important;
   padding-bottom: 100px !important;
@@ -654,4 +648,112 @@ a:hover{
     padding-top: 60px !important;
     padding-bottom: 60px !important;
   }
+}
+
+
+/* Tabs Styles */
+.tabs {
+  display: flex;
+  justify-content: space-between; /* Ensure tabs are spread out */
+  border-bottom: 2px solid #f2f2f2; /* Light gray bottom border */
+}
+
+.tabs div {
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+/* Active tab style */
+.tab-active {
+  font-weight: bold;
+  background-color: #ffecef; /* Light pink background for the active tab */
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-color: #ffccd5; /* Light pink border if needed */
+}
+
+/* Inactive tab style */
+.tab-inactive {
+  background-color: transparent;
+  color: #000; /* Or any color that suits your design */
+}
+
+/* Order Card Styles */
+.order-card {
+  background-color: #fff; /* White background for the card */
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Soft shadow for depth */
+  margin-bottom: 20px;
+  border-left: 5px solid #ffccd5; /* Pink border on the left for highlighting */
+  padding: 20px;
+  transition: all 0.3s;
+}
+
+.order-title {
+  color: #C2185B; /* Darker pink color for the title */
+  margin-bottom: 15px; /* Adjust based on your layout */
+}
+
+.order-status {
+  color: #333; /* Dark color for text for better readability */
+  font-size: 16px; /* Adjust based on your design */
+}
+
+.status-indicator {
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+/* Specific status colors */
+.status-indicator.pending {
+  background-color: #FFC0CB; /* Light pink for pending status */
+}
+
+.status-indicator.ready {
+  background-color: #C2185B; /* Darker pink for ready status */
+}
+
+.status-indicator.delivered {
+  background-color: #90EE90; /* Green for delivered, adjust if you have a pink shade for this */
+}
+
+/* Hover effect for cards */
+.order-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Make sure your actual HTML structure uses these classes correctly. */
+
+.orderreqcontainer { /* Adjusted class for item-specific styling */
+  display: flex; /* Enables flexbox layout */
+  align-items: center; /* Centers items vertically */
+  background-color: #e7c8dc; /* Light pink background color */
+  padding: 10px; /* Adds some space inside the container */
+  border-radius: 10px; /* Optional: adds rounded corners */
+  margin-bottom: 15px; /* Adds some space between items */
+}
+
+/* Style for inactive tabs */s
+.order-req-tab {
+  background-color: rgb(106, 37, 37); /* White background for inactive tab */
+  color: rgb(118, 17, 98); /* White text color for inactive tab */
+  padding: 10px 20px;
+
+  border: 1px solid #d57a82; /* Border to maintain layout consistency */
+  transition: background-color 0.3s;
+}
+
+/* Style for active tabs */
+.order-req-tab-active {
+
+  color: rgb(43, 117, 98); /* White text color for inactive tab */
+  padding: 10px 20px;
+  cursor: pointer;
+  border: 1px solid #d57a82; /* Border to maintain layout consistency */
+  transition: background-color 0.3s;
 }
