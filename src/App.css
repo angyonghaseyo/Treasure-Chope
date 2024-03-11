@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700,900&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 * {
   margin: 0px;
@@ -10,15 +10,15 @@
 }
 
 *, body{
-  font-family: 'Roboto', sans-serif !important;
+  font-family: 'Poppins', sans-serif !important;
 }
 
 .bg-warning{
-  background-color: #eb6825 !important;
+  background-color: #FBF2F7 !important;
 }
 
 .text-warning{
- color: #eb6825 !important;
+ color: #FBF2F7 !important;
 }
 
 h1{
@@ -91,7 +91,7 @@ a:hover{
 }
 
 .round-border{
-  border: 2px solid #eb6825;
+  border: 2px solid #c13f86;
   border-radius: 100%;
   height: 126px;
   line-height: 116px;
@@ -100,16 +100,124 @@ a:hover{
 }
 
 .res-shadow{
-  box-shadow: 0 0 7px rgba(173, 173, 173, 0.32);
+  box-shadow: 0 0 7px rgba(251, 242, 247);
 }
 
 .res-border{
-  border: 1px solid #f2f2f2
+  border: 1px solid #FBF2F7
 }
 
 .rating{
-  color: #ffc107 !important;
+  color: #C13F86 !important;
 }
+
+/* eve add */
+.home-cont6 {
+  background-color: #FBF2F7; /* Set to white or any color you consider 'blank' */
+  /* Other styles remain unchanged */
+}
+
+.custom-text-color {
+  color: #1d0a15; /* Keeps existing color definition */
+  text-transform: uppercase; /* Makes text uppercase */
+  margin-top: 3rem; /* Adds top margin equivalent to mt-5 */
+  margin-bottom: 1rem; /* Adds bottom margin equivalent to mb-3 */
+}
+
+.custom-text-color1 {
+  color: #1d0a15; /* Keeps existing color definition */
+}
+
+.logo {
+  max-width: 70%;
+  height: auto;
+}
+
+.btn-sign-in-primary {
+  background-color: #c13f86 !important; /* Sets the background color */
+  border-color: #c13f86 !important; /* Sets the border color to match the background */
+  color: #FBF2F7
+}
+
+.promo-section {
+  display: flex; /* Use flexbox to align children */
+  justify-content: center; /* Center children horizontally */
+  align-items: center; /* Center children vertically */
+  text-align: left; /* Center text */
+  background-size: cover;
+  background-position: center;
+  border-radius: 25px;
+  margin: 40px 20px;
+  color: #FFFFFF; /* Assuming text is white */
+  padding: 60px 20px; /* Adjust padding as needed */
+  flex-direction: column; /* Stack children vertically */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1232' height='360' viewBox='0 0 1232 360' fill='none'%3E%3Crect width='1232' height='360' rx='32' fill='%23FF6A90'/%3E%3Cmask id='mask0_215_702' style='mask-type:luminance' maskUnits='userSpaceOnUse' x='0' y='0' width='1232' height='360'%3E%3Crect width='1232' height='360' rx='32' fill='white'/%3E%3C/mask%3E%3Cg mask='url(%23mask0_215_702)'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M1408.6 425.512C1370.37 254.651 1210.17 81.7061 1096.3 273.32C1068.73 319.713 1019.72 349.455 965.758 352.619C857.64 358.959 743.007 306.344 686.069 487.013C653.777 987.744 1468.56 1004.96 1408.6 425.512Z' fill='%23FF487F'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M1395.18 280.339C1365.17 146.494 1239.56 10.976 1150.39 161.024C1128.8 197.354 1090.4 220.633 1048.12 223.094C963.391 228.023 873.54 186.772 828.98 328.268C803.842 720.468 1442.37 734.225 1395.18 280.339Z' stroke='%23FF6A90'/%3E%3Cg style='mix-blend-mode:multiply'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M-145.67 72.4004C-113.455 216.445 21.5793 362.238 117.58 200.686C140.824 161.571 182.145 136.493 227.633 133.821C318.775 128.469 415.404 172.818 463.415 20.4972C490.674 -401.655 -196.173 -416.106 -145.67 72.4004Z' stroke='%23FF6A90'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.promo-content {
+  max-width: 800px; /* Adjust as needed */
+  margin: auto; /* Center the content */
+  display: flex;
+  flex-direction: column; /* Stack children vertically */
+}
+
+.promo-title {
+  font-size: 2.5rem; /* Adjust size as needed */
+  margin-bottom: 0.5rem; /* Adjust as needed */
+}
+
+.promo-subtitle {
+  font-size: 1.5rem; /* Adjust size as needed */
+  margin-bottom: 2rem; /* Adjust as needed */
+}
+
+.promo-buttons {
+  display: flex;
+  justify-content: center; /* Center-align buttons */
+  gap: 20px; /* Space between buttons */
+}
+
+.btn {
+  padding: 10px 30px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  font-weight: 500;
+  transition: background-color 0.3s ease-in-out;
+  cursor: pointer;
+  outline: none;
+}
+
+.btn-signin {
+  background-color: #77d37b; /* Replace with your sign in button color */
+  color: #fbf2f7;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-signin:hover {
+  background-color: #77d37b; /* Darkened version of #69A2B0 for hover effect */
+}
+
+.btn-browse {
+  background-color: transparent;
+  color: #bfdc94;
+  border: 2px solid #77d37b;
+}
+
+.btn-browse:hover {
+  background-color: #77d37b;
+  color
+  : #bfdc94;
+}
+
+.button-container {
+  align-self: flex-start; /* Align the button container to the end (right side) */
+  margin-top: 50px; /* Add space between the text and the button */
+
+}
+
+
+
 
 /* For Navbar.js */
 .nav-link{
