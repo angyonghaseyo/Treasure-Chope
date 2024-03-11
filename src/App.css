@@ -164,7 +164,8 @@ a:hover{
   position: absolute;
   bottom: 0;
   right: 0;
-  width: 100%;  
+  width: 100%;
+  pointer-events: none;  
   z-index: 1; /* Lower z-index so text appears above */
 }
 
