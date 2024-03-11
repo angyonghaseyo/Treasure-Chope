@@ -172,6 +172,9 @@ a:hover{
   transition: background-color 0.3s ease-in-out;
   cursor: pointer;
   outline: none;
+  background-color: #c13f86 !important; /* Sets the background color */
+  border-color: #c13f86 !important; /* Sets the border color to match the background */
+  color: #FBF2F7
 }
 
 .btn-signin {
