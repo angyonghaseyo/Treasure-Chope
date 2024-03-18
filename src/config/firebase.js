@@ -64,14 +64,12 @@ function signUp(userDetails) {
                     })
                 }).catch((error) => {
                     // Handle Errors here.
-                    let errorCode = error.code;
                     let errorMessage = error.message;
                     console.log("Error in getDownloadURL function", errorMessage);
                     reject(errorMessage)
                 })
             }).catch((error) => {
                 // Handle Errors here.
-                let errorCode = error.code;
                 let errorMessage = error.message;
                 console.log("Error in Image Uploading", errorMessage);
                 reject(errorMessage)
@@ -89,24 +87,22 @@ function logIn(userLoginDetails) {
         const { userLoginEmail, userLoginPassword } = userLoginDetails;
         firebase.auth().signInWithEmailAndPassword(userLoginEmail, userLoginPassword).then((success) => {
             db.collection('users').doc(success.user.uid).get().then((snapshot) => {
-                console.log("snapshot.data =>>", snapshot.data().isRestaurant);
                 if(snapshot.data().isRestaurant){
                     userLoginDetails.propsHistory.push("/order-requests");
-                    resolve(success)
+                    resolve(success);
                 }else{
                     userLoginDetails.propsHistory.push("/");
-                    resolve(success)
+                    resolve(success);
                 }             
-            })
+            });
         }).catch((error) => {
-            // Handle Errors here.
-            // var errorCode = error.code;
-            var errorMessage = error.message;
-            reject(errorMessage)
-        });
+            // Provide a more user-friendly error message
+            reject('Invalid username or password. Please try again.');
 
-    })
+        });
+    });
 }
+
 
 function addItem(itemDetails) {
     const { itemTitle, itemIngredients, itemPrice, itemImage, chooseItemType, } = itemDetails;
@@ -133,16 +129,13 @@ function addItem(itemDetails) {
                     // itemDetails.propsHistory.push("/my-foods");
                     resolve("Successfully added food item")
                 }).catch(function (error) {
-                    let errorCode = error.code;
                     let errorMessage = error.message;
                     reject(errorMessage)
                     // console.error("Error adding document: ", error);
                 })
             }).catch((error) => {
                 // Handle Errors here.
-                let errorCode = error.code;
                 let errorMessage = error.message;
-                console.log("Error in getDownloadURL function", errorCode);
                 console.log("Error in getDownloadURL function", errorMessage);
                 reject(errorMessage)
             })

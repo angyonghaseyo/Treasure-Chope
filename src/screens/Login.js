@@ -27,6 +27,7 @@ export default class Login extends Component {
       showError: false,
       userLoginEmail: "",
       userLoginPassword: "",
+      loginErrorMessage: '',
     };
     this.handleForms = this.handleForms.bind(this);
     this.handleUserName = this.handleUserName.bind(this);
@@ -73,7 +74,7 @@ export default class Login extends Component {
   handleUserEmail(e) {
     const userEmail = e;
     const userEmailFormate =
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     if (userEmail.match(userEmailFormate)) {
       this.setState({
@@ -240,7 +241,7 @@ export default class Login extends Component {
     // const whiteSpaces = /^(?!\s*$)[-a-zA-Z0-9_:,.' ']{1,100}$/;
     const userNameFormate = /^([A-Za-z.\s_-]).{5,}$/;
     const userEmailFormate =
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const userPasswordFormate = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{10,}/;
     const userCountryFormate = /^([A-Za-z.\s_-]).{5,}$/;
     const userCityFormate = /^([A-Za-z.\s_-]).{5,}$/;
@@ -335,10 +336,13 @@ export default class Login extends Component {
     event.preventDefault();
 
     try {
-        logIn(userLoginDetails);
+      await logIn(userLoginDetails);
+      this.setState({ loginErrorMessage: '' });
       // console.log(LoginReturn)
     } catch (error) {
-      console.log("Error in Login => ", error);
+      console.error("Login error:", error); 
+      this.setState({ loginErrorMessage: error });
+      // console.log("Error in Login => ", error);
     }
   }
 
@@ -498,7 +502,7 @@ export default class Login extends Component {
                   type="submit"
                   className="btn btn-warning text-uppercase mb-3"
                   style={{ backgroundColor: "#c13f86", color: "white" }}
-                
+
                 >
                   <b>Create an Account</b>
                 </button>
@@ -517,6 +521,11 @@ export default class Login extends Component {
           ) : (
             <div className="col-lg-4 col-md-6 col-sm-12 mx-auto bg-white shadow p-4">
               <h2 className="text-center mb-4">Login Your Account</h2>
+              {this.state.loginErrorMessage && (
+                <div className="alert alert-danger" role="alert">
+                  {this.state.loginErrorMessage}
+                </div>
+              )}
               <form onSubmit={this.handleLoginNowBtn}>
                 <div className="form-group">
                   <label htmlFor="userLoginEmail">Email</label>

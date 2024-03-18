@@ -312,10 +312,6 @@ class Restaurants extends Component {
                                     <h5>Sort By</h5>
                                     <ul>
                                         <li>
-                                            <FontAwesomeIcon icon="thumbs-up" className="mr-3" />
-                                            <span>Best Match</span>
-                                        </li>
-                                        <li>
                                             <FontAwesomeIcon icon="sort-alpha-down" className="mr-3" />
                                             <span>Alphabetical</span>
                                         </li>
