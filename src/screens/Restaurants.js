@@ -114,6 +114,11 @@ class Restaurants extends Component {
         const { restaurantList } = this.props;
         if (restaurantList) {
             return Object.keys(restaurantList).map((val) => {
+                const restaurant = restaurantList[val];
+                if (!restaurant.userProfileImageUrl || !restaurant.userName || !restaurant.typeOfFood) {
+                    // Skip rendering this entry if data is missing
+                    return null;
+                }
                 return (
                     <div className="container bg-white p-3 px-0 mb-4" key={restaurantList[val].id}>
                         <div className="row">

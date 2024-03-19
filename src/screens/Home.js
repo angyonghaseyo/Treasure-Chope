@@ -17,15 +17,21 @@ class Home extends Component {
     this.state = {
       homeSearchBarText: "",
       restaurantCount: 0,
+      userCount: 0,
+      collectedOrdersUsers: 0,
     };
     this.handleSearchBar = this.handleSearchBar.bind(this);
   }
 
   componentDidMount() {
-    this.fetchRestaurantCount();
+    this.initializeFirebaseData();
+  }
+  initializeFirebaseData = async () => {
+    await this.fetchRestaurantCount();
+    await this.fetchUserCount();
+    await this.fetchCollectedOrdersCount();
     // ... other componentDidMount logic
   }
-
   handleSearchBar() {
     const { homeSearchBarText } = this.state;
     if (homeSearchBarText) {
@@ -41,19 +47,58 @@ class Home extends Component {
     this.props.history.push("/login");
   };
 
-  fetchRestaurantCount() {
+  fetchRestaurantCount = async () => {
     const db = firebase.firestore(); // Assuming firebase is already initialized
-    db.collection("users")
-      .where("isRestaurant", "==", true)
-      .get()
-      .then((querySnapshot) => {
-        // Update state with the count of restaurant documents
-        this.setState({ restaurantCount: querySnapshot.size });
-      })
-      .catch((error) => {
-        console.error("Error fetching restaurant count: ", error);
-      });
+    try {
+      const querySnapshot = await db.collection("users")
+        .where("isRestaurant", "==", true)
+        .get();
+
+      // Update state with the count of restaurant documents
+      this.setState({ restaurantCount: querySnapshot.size });
+    } catch (error) {
+      console.error("Error fetching restaurant count: ", error);
+    }
   }
+
+
+  fetchUserCount = async () => {
+    const db = firebase.firestore(); // Assuming firebase is already initialized
+    try {
+      const querySnapshot = await db.collection("users")
+      .get()
+      
+        // Update state with the count of restaurant documents
+      this.setState({ userCount: querySnapshot.size });
+      }
+      catch(error){
+        console.error("Error fetching user count: ", error);
+      }
+  }
+
+  fetchCollectedOrdersCount = async () => {
+    const db = firebase.firestore();
+    let collectedOrdersUsers = new Set();
+  
+    try {
+      const usersSnapshot = await db.collection("users").get();
+      const promises = usersSnapshot.docs.map(doc => 
+        db.collection("users").doc(doc.id).collection("myOrder").where("status", "==", "COLLECTED").get()
+          .then(userOrdersSnapshot => {
+            if (!userOrdersSnapshot.empty) {
+              collectedOrdersUsers.add(doc.id);
+            }
+          })
+      );
+  
+      await Promise.all(promises);
+      this.setState({ collectedOrdersUsers: collectedOrdersUsers.size });
+    } catch (error) {
+      console.error("Error fetching collected orders count: ", error);
+    }
+  }
+
+
 
   render() {
     return (
@@ -117,18 +162,19 @@ class Home extends Component {
           <div className="row">
             <div className="col-lg-4 col-md-4 col-sm-12">
               <p className="my-3 text-lg-right text-md-right text-center text-white">
-                <b className="mr-2 h5">{this.state.restaurantCount}</b>
+                <b className="mr-2 h5">{this.state.restaurantCount - 1}</b>
                 Restaurant{this.state.restaurantCount !== 1 ? "s" : ""}
               </p>
             </div>
             <div className="col-lg-4 col-md-4 col-sm-12">
               <p className="my-3 text-center text-white">
-                <b className="mr-2 h5">9</b>People Served
+                <b className="mr-2 h5">{this.state.collectedOrdersUsers}</b>Orders Served
               </p>
             </div>
             <div className="col-lg-4 col-md-4 col-sm-12">
               <p className="my-3 text-lg-left text-md-left text-center text-white">
-                <b className="mr-2 h5">44</b>Registered Users
+                <b className="mr-2 h5">{this.state.userCount - 1}</b>
+                Registered User{this.state.userCount !== 1 ? "s" : ""}
               </p>
             </div>
           </div>
@@ -379,13 +425,13 @@ class Home extends Component {
         {/* Additional Promotion*/}
         <div
           className="promo-section"
-          
+
         >
           <div className="promo-content">
             <div className="text-content">
               <h1 className="promo-title">Hidden Gems, Happy Wallet</h1>
               <h2 className="promo-subtitle">
-              <br></br>
+                <br></br>
                 Unlock Food Deals with Treasure Chope!
                 <br></br>
 
