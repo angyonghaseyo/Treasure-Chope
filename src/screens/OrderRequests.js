@@ -45,6 +45,16 @@ class OrderRequests extends Component {
         }).then(() => {
             firebase.firestore().collection('users').doc(userUid).collection('myOrder').doc(orderId).update({
                 status: newStatus,
+            }).then(() => {
+                // After successfully updating the order status, switch to the relevant tab
+                if (newStatus === 'IN PROGRESS') {
+                    this.setState({ activeSubTab: 'preparing' });
+                } else if (newStatus === 'READY FOR COLLECTION') {
+                    this.setState({ activeSubTab: 'readyForCollection' });
+                } else{
+                
+                    this.setState({activeSubTab :'pending' });
+                }
             });
         });
     }
