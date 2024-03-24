@@ -185,7 +185,7 @@ class RestaurantDetails extends Component {
                                 <p className=""><small>{menuItemsList[val].itemIngredients}</small></p>
                             </div>
                             <div className="col-lg-3 col-md-3 col-sm-12 px-0 text-center">
-                                <span className="mx-3">RS.{menuItemsList[val].itemPrice}</span>
+                                <span className="mx-3">${menuItemsList[val].itemPrice}</span>
                                 <span className="menuItemsListAddBtn" onClick={() => this.addToCart(menuItemsList[val])} ><FontAwesomeIcon icon="plus" className="text-warning" /></span>
                             </div>
                         </div>
@@ -206,7 +206,7 @@ class RestaurantDetails extends Component {
                                 <p className="mb-0">{cartItemsList[val].itemTitle}</p>
                             </div>
                             <div className="col-4 pl-0 text-right">
-                                <p className="mb-0"><span className="food-price">RS.{cartItemsList[val].itemPrice}</span><span onClick={() => this.removeCartItem(val)} className="remove-food-item"><FontAwesomeIcon icon="times" /></span></p>
+                                <p className="mb-0"><span className="food-price">${cartItemsList[val].itemPrice}</span><span onClick={() => this.removeCartItem(val)} className="remove-food-item"><FontAwesomeIcon icon="times" /></span></p>
                             </div>
                         </div>
                     </li>
@@ -343,7 +343,7 @@ class RestaurantDetails extends Component {
                                         <div>
                                             <div className="row ">
                                                 <div className="col-12">
-                                                    <p style={{ backgroundColor: '#f1f3f8', padding: '10px 15px' }}>Total+ <span style={{ float: 'right', color: '#2f313a', fontSize: '14px', fontWeight: 700 }}><em>RS.{totalPrice}</em></span></p>
+                                                    <p style={{ backgroundColor: '#f1f3f8', padding: '10px 15px' }}>Total+ <span style={{ float: 'right', color: '#2f313a', fontSize: '14px', fontWeight: 700 }}><em>${totalPrice}</em></span></p>
                                                 </div>
                                             </div>
                                         </div>
