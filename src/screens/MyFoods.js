@@ -47,7 +47,7 @@ class MyFoods extends Component {
                                 <p className="mb-1"><small>{myFoods[val].itemIngredients}</small></p>
                             </div>
                             <div className="col-lg-3 col-md-3 col-sm-12 px-0 text-right">
-                                <span className="mx-3"><b>RS.{myFoods[val].itemPrice}</b></span>
+                                <span className="mx-3"><b>${myFoods[val].itemPrice}</b></span>
                             </div>
                         </div>
                     </div>
