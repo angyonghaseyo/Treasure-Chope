@@ -315,6 +315,7 @@ export default class Login extends Component {
         isRestaurant: false,
         propsHistory: this.props.history,
         typeOfFood: [],
+        restaurantDescription: "",
       };
       try {
         await signUp(userDetails);
