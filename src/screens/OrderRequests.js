@@ -40,6 +40,7 @@ class OrderRequests extends Component {
     handleUpdateOrderStatus = (userUid, orderId, newStatus) => {
         const { userDetails } = this.state;
         const restaurantUid = userDetails.userUid;
+
         firebase.firestore().collection('users').doc(restaurantUid).collection('orderRequest').doc(orderId).update({
             status: newStatus,
         }).then(() => {
@@ -51,9 +52,9 @@ class OrderRequests extends Component {
                     this.setState({ activeSubTab: 'preparing' });
                 } else if (newStatus === 'READY FOR COLLECTION') {
                     this.setState({ activeSubTab: 'readyForCollection' });
-                } else{
-                
-                    this.setState({activeSubTab :'pending' });
+                } else if (newStatus === 'COLLECTED') {
+                    // Here we change the mainTab to 'pastOrders' when the order is marked as collected
+                    this.setState({ mainTab: 'pastOrders' });
                 }
             });
         });
