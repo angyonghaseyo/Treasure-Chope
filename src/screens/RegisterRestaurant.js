@@ -26,9 +26,11 @@ export default class RegisterRestaurant extends Component {
       showError: false,
       userLoginEmail: "",
       userLoginPassword: "",
-    //   uenNumber: "",
-    //   bankAccountNumber: "",
-    //   selectedBank: "",
+      typeOfFood: ["", "", ""],
+      restaurantDescription: "",
+      //   uenNumber: "",
+      //   bankAccountNumber: "",
+      //   selectedBank: "",
     };
     this.handleUserName = this.handleUserName.bind(this);
     this.handleUserEmail = this.handleUserEmail.bind(this);
@@ -41,6 +43,8 @@ export default class RegisterRestaurant extends Component {
     this.handleUserProfileImage = this.handleUserProfileImage.bind(this);
     this.handleUserTNC = this.handleUserTNC.bind(this);
     this.handleUserGender = this.handleUserGender.bind(this);
+    this.handleTypeOfFood = this.handleTypeOfFood.bind(this);
+    this.handleRestaurantDescription = this.handleRestaurantDescription.bind(this);
     // this.handleUENNumber = this.handleUENNumber.bind(this);
     // this.handleBankAccountNumber = this.handleBankAccountNumber.bind(this);
     // this.handleSelectBank = this.handleSelectBank.bind(this);
@@ -67,7 +71,7 @@ export default class RegisterRestaurant extends Component {
   handleUserEmail(e) {
     const userEmail = e;
     const userEmailFormate =
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (userEmail.match(userEmailFormate)) {
       this.setState({
         showError: false,
@@ -216,17 +220,29 @@ export default class RegisterRestaurant extends Component {
     }
   }
 
-//   handleUENNumber(e) {
-//     this.setState({ uenNumber: e.target.value });
-//   }
+  handleTypeOfFood(e, index) {
+    const { typeOfFood } = this.state;
+    typeOfFood[index] = e.target.value;
+    this.setState({ typeOfFood });
+  }
 
-//   handleBankAccountNumber(e) {
-//     this.setState({ bankAccountNumber: e.target.value });
-//   }
+  handleRestaurantDescription = (e) => {
+    this.setState({
+      restaurantDescription: e.target.value,
+    });
+  };
 
-//   handleSelectBank(e) {
-//     this.setState({ selectedBank: e.target.value });
-//   }
+  //   handleUENNumber(e) {
+  //     this.setState({ uenNumber: e.target.value });
+  //   }
+
+  //   handleBankAccountNumber(e) {
+  //     this.setState({ bankAccountNumber: e.target.value });
+  //   }
+
+  //   handleSelectBank(e) {
+  //     this.setState({ selectedBank: e.target.value });
+  //   }
 
   async handleCreateAccountBtn(event) {
     const {
@@ -240,16 +256,18 @@ export default class RegisterRestaurant extends Component {
       userAge,
       userProfileImage,
       userTNC,
-    //   uenNumber,
-    //   bankAccountNumber,
-    //   selectedBank,
+      typeOfFood,
+      restaurantDescription,
+      //   uenNumber,
+      //   bankAccountNumber,
+      //   selectedBank,
     } = this.state;
     event.preventDefault();
 
     // const whiteSpaces = /^(?!\s*$)[-a-zA-Z0-9_:,.' ']{1,100}$/;
     const userNameFormate = /^([A-Za-z.\s_-]).{2,}$/;
     const userEmailFormate =
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const userPasswordFormate = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{10,}/;
     const userCountryFormate = /^([A-Za-z.\s_-]).{5,}$/;
     const userCityFormate = /^([A-Za-z.\s_-]).{5,}$/;
@@ -322,7 +340,8 @@ export default class RegisterRestaurant extends Component {
         userProfileImage: userProfileImage,
         isRestaurant: true,
         propsHistory: this.props.history,
-        typeOfFood: ["Apple Juice", "Beef Roast", "Cheese Burger"],
+        typeOfFood: typeOfFood.filter((food) => food.trim() !== ""),
+        restaurantDescription: restaurantDescription,
         //uenNumber: uenNumber,
         //bankAccountNumber: bankAccountNumber,
         //selectedBank: selectedBank,
@@ -343,6 +362,8 @@ export default class RegisterRestaurant extends Component {
       userProfileImageLable,
       userTNC,
       userGender,
+      typeOfFood,
+      restaurantDescription,
     } = this.state;
     return (
       <div>
@@ -360,7 +381,7 @@ export default class RegisterRestaurant extends Component {
         <div className="container-fluid py-5 bg-light">
           <div className="col-lg-6 col-md-6 col-sm-12 mx-auto bg-white shadow p-4">
             <h2 className="text-center mb-4">Register Restaurant</h2>
-            <form onSubmit={this.handleCreateAccountBtn}> 
+            <form onSubmit={this.handleCreateAccountBtn}>
               <div className="form-row">
                 <div className="form-group col-md-6">
                   <label htmlFor="userFullName">Registered Business Name</label>
@@ -467,6 +488,53 @@ export default class RegisterRestaurant extends Component {
                   </div>
                 </div>
               </div>
+
+              <div className="form-row">
+                <div className="form-group col-md-4">
+                  <label htmlFor="typeOfFood1">Top Dish 1</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="typeOfFood1"
+                    value={typeOfFood[0]}
+                    onChange={(e) => this.handleTypeOfFood(e, 0)}
+                  />
+                </div>
+                <div className="form-group col-md-4">
+                  <label htmlFor="typeOfFood2">Top Dish 2</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="typeOfFood2"
+                    value={typeOfFood[1]}
+                    onChange={(e) => this.handleTypeOfFood(e, 1)}
+                  />
+                </div>
+                <div className="form-group col-md-4">
+                  <label htmlFor="typeOfFood3">Top Dish 3</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="typeOfFood3"
+                    value={typeOfFood[2]}
+                    onChange={(e) => this.handleTypeOfFood(e, 2)}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="restaurantDescription">
+                    Restaurant Description
+                  </label>
+                  <textarea
+                    className="form-control"
+                    id="restaurantDescription"
+                    rows="4"
+                    placeholder="Describe your restaurant"
+                    value={restaurantDescription}
+                    onChange={(e) => this.handleRestaurantDescription(e)}
+                  ></textarea>
+                </div>
+              </div>
+
               {/* <div className="form-row">
                 <div className="form-group col-md-6">
                   <label htmlFor="uenNumber">UEN Number</label>
@@ -522,10 +590,16 @@ export default class RegisterRestaurant extends Component {
               </p>
               <button
                 type="submit"
-                style={{ backgroundColor: "#C13F86", borderColor: "#C13F86", color: '#FFFFFF' }}
+                style={{
+                  backgroundColor: "#C13F86",
+                  borderColor: "#C13F86",
+                  color: "#FFFFFF",
+                }}
                 className="btn text-uppercase mb-3"
                 onClick={this.handleCreateAccountBtn}
-              > <b>Create an Account</b>
+              >
+                {" "}
+                <b>Create an Account</b>
               </button>
             </form>
           </div>
