@@ -116,8 +116,8 @@ class OrderRequests extends Component {
                     .collection("completedOrdersForOneRestaurant")
                     .doc(orderId)
                     .set(completedOrderData);
-                    
-                    ordersDocUserRef
+
+                  ordersDocUserRef
                     .collection("completedOrdersForOneUser")
                     .doc(orderId)
                     .set(completedOrderData);
@@ -259,6 +259,9 @@ class OrderRequests extends Component {
                           <p className="mb-1">
                             <small>{item.itemIngredients}</small>
                           </p>
+                          <p className="mb-1">
+                            <small>{item.review}</small>
+                          </p>
                         </div>
                         <div className="col-lg-3 col-md-3 col-sm-12 px-0 text-right">
                           <span style={{ fontSize: "14px" }} className="mx-3">
@@ -268,6 +271,38 @@ class OrderRequests extends Component {
                       </div>
                     );
                   })}
+                  <span>
+                    {order.review ? (
+                      // Display the reviews if they exist
+                      <input
+                        type="text"
+                        value={order.review}
+                        readOnly
+                        style={{
+                          width: "100%",
+                          height: "50px", // or whatever height you prefer
+                          overflow: "auto",
+                          padding: "5px",
+                          fontSize: "1em",
+                        }}
+                      />
+                    ) : (
+                      // Display an empty text box if reviews don't exist
+                      <input
+                        type="text"
+                        value="Customer has not given review yet"
+                        readOnly
+                        style={{
+                          width: "100%",
+                          height: "50px", // or whatever height you prefer
+                          overflow: "auto",
+                          padding: "5px",
+                          fontSize: "1em",
+                          color: "grey",
+                        }}
+                      />
+                    )}
+                  </span>
                 </div>
               </div>
             </div>

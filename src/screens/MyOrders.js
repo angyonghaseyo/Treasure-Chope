@@ -6,6 +6,7 @@ import { my_order } from "../store/action";
 import "bootstrap/dist/css/bootstrap.css";
 import "../App.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import firebase from "../config/firebase";
 
 class MyOrders extends Component {
   constructor() {
@@ -15,6 +16,7 @@ class MyOrders extends Component {
       tab2: "col-12 col-lg-6 text-center",
       tab1Content: true,
       tab2Content: false,
+      reviews: {}, // Holds review texts keyed by order IDs
     };
   }
 
@@ -46,6 +48,95 @@ class MyOrders extends Component {
       });
     }
   }
+  handleReviewChange(value, orderId) {
+    this.setState((prevState) => ({
+      reviews: {
+        ...prevState.reviews,
+        [orderId]: value, // Update the review for the specific order ID
+      },
+    }));
+  }
+
+  //Review logic;
+  submitReview = (order) => {
+    if (!order.restaurantId || order.restaurantId.trim() === "") {
+      console.error("Restaurant ID is missing for the order.");
+      alert(
+        "There was an issue submitting your review due to missing information."
+      );
+      return;
+    }
+
+    // Fetch the review from the component's state
+    const review = this.state.reviews[order.id] || "";
+    if (review.trim() === "") {
+      alert("Please enter a review before submitting.");
+      return;
+    }
+
+    // //     const docRef = firebase.firestore().collection('orders').doc('yourDocumentId');
+    alert(order.id); // This will log 'yourDocumentId'
+
+    // // Define references to Firestore documents
+    // const ordersDocUserRef = firebase
+    //   .firestore()
+    //   .collection("orders")
+    //   .doc(order.customerId) // Assuming customerId is valid and exists
+    //   .collection("completedOrdersForOneUser")
+    //   .doc(order.id); // Targeting the specific order by its ID
+
+    // const ordersDocRestaurantRef = firebase
+    //   .firestore()
+    //   .collection("orders")
+    //   .doc(order.restaurantId) // Using restaurantId to navigate to the correct document
+    //   .collection("completedOrdersForOneRestaurant")
+    //   .doc(order.id); // Targeting the specific order by its ID
+
+    // // Firestore operation to update review for the user's order
+    // ordersDocUserRef
+    //   .update({ review: review })
+    //   .then(() => alert("Review submitted successfully for the user!"))
+    //   .catch((error) => console.error("Error submitting user review: ", error));
+
+    // // Firestore operation to update review for the restaurant's order
+    // ordersDocRestaurantRef
+    //   .update({ review: review })
+    //   .then(() => alert("Review submitted successfully for the restaurant!"))
+    //   .catch((error) =>
+    //     console.error("Error submitting restaurant review: ", error)
+    //   );
+        //     const docRef = firebase.firestore().collection('orders').doc('yourDocumentId');
+        //alert(order.id); // This will log 'yourDocumentId'
+
+        // Define references to Firestore documents
+        const ordersDocUserRef = firebase
+          .firestore()
+          .collection("users")
+          .doc(order.customerId) // Assuming customerId is valid and exists
+          .collection("myOrder")
+          .doc(order.id); // Targeting the specific order by its ID
+    
+        const ordersDocRestaurantRef = firebase
+          .firestore()
+          .collection("users")
+          .doc(order.restaurantId) // Using restaurantId to navigate to the correct document
+          .collection("orderRequest")
+          .doc(order.id); // Targeting the specific order by its ID
+    
+        // Firestore operation to update review for the user's order
+        ordersDocUserRef
+          .update({ review: review })
+          .then(() => alert("Review submitted successfully for the user!"))
+          .catch((error) => console.error("Error submitting user review: ", error));
+    
+        // Firestore operation to update review for the restaurant's order
+        ordersDocRestaurantRef
+          .update({ review: review })
+          .then(() => alert("Review submitted successfully for the restaurant!"))
+          .catch((error) =>
+            console.error("Error submitting restaurant review: ", error)
+          );
+  };
 
   _renderActiveOrders() {
     const { myOrder } = this.props;
@@ -120,6 +211,7 @@ class MyOrders extends Component {
 
   _renderPastOrders() {
     const { myOrder } = this.props;
+    const { reviews } = this.state; // Destructure reviews from state
     if (myOrder) {
       return myOrder
         .filter((order) => order.status === "COLLECTED")
@@ -164,6 +256,25 @@ class MyOrders extends Component {
                 <a href="/#" className="details-link">
                   View More Details &rarr;
                 </a>
+              </div>
+              {/* Review Section */}
+
+              <div className="review-section">
+                <input
+                  type="text"
+                  placeholder="Enter your review"
+                  className="review-input"
+                  value={reviews[order.id] || ""} // Use order ID to manage each review
+                  onChange={(e) =>
+                    this.handleReviewChange(e.target.value, order.id)
+                  }
+                />
+                <button
+                  onClick={() => this.submitReview(order)}
+                  className="btn btn-primary submit-review-btn"
+                >
+                  Submit Review
+                </button>
               </div>
             </div>
           </div>

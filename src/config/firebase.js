@@ -209,12 +209,18 @@ function orderNow(cartItemsList, totalPrice, resDetails, userDetails, history) {
     if (user != null) {
       uid = user.uid;
     }
+    //changes made -e
+    // Destructure 'id' out and collect the rest of the properties into 'resDetailsWithoutId'
+    const { id, ...resDetailsWithoutId } = resDetails;
 
     const myOrder = {
       itemsList: cartItemsList,
       totalPrice: totalPrice,
       status: "PENDING",
-      ...resDetails,
+      //changes made -e
+      ...resDetailsWithoutId, // Spread the rest of the resDetails properties
+      customerId: uid,
+      restaurantId: resDetails.id,
     };
 
     const orderRequest = {
@@ -222,6 +228,9 @@ function orderNow(cartItemsList, totalPrice, resDetails, userDetails, history) {
       totalPrice: totalPrice,
       status: "PENDING",
       ...userDetails,
+      //changes made -e
+      customerId: uid,
+      restaurantId: resDetails.id,
     };
 
     // console.log("myOrder => ", myOrder)
