@@ -151,63 +151,61 @@ class MyOrders extends Component {
         .map((order) => (
           <div className="order-card" key={order.id}>
             <div className="order-item">
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  overflow: "hidden",
-                  width: "100%", // Container width
-                  height: "100px", // Container height
-                }}
-              >
-                <img
-                  style={{
-                    maxWidth: "100%", // Image maximum width is 100% of its container
-                    maxHeight: "100%", // Image maximum height is 100% of its container
-                    objectFit: "contain", // Image will be scaled to maintain its aspect ratio
-                  }}
-                  className="order-image"
-                  alt="Order Item"
-                  src={
-                    order.itemsList[Object.keys(order.itemsList)[0]]
-                      .itemImageUrl
-                  }
-                />
-              </div>
-
-              <div className="order-details">
-                <h5 className="order-title">
-                  {order.itemsList[Object.keys(order.itemsList)[0]].itemTitle} $
-                  {order.itemsList[Object.keys(order.itemsList)[0]].itemPrice}{" "}
-                  Surprise Box
-                </h5>
-                <div className="order-status">
-                  <span
-                    className={`status-indicator ${order.status.toLowerCase()}`}
-                  ></span>
-                  <span>
-                    {
-                      order.status === "PENDING"
-                        ? "Order is awaiting acceptance from the restaurant"
-                        : order.status === "IN PROGRESS"
-                        ? "Order is being prepared"
-                        : order.status === "READY FOR COLLECTION"
-                        ? "Order is ready for collection"
-                        : "" // Fallback text if needed
-                    }
-                  </span>
-                </div>
-                <a href="/#" className="details-link">
-                  View More Details &rarr;
-                </a>
-              </div>
+              {Object.keys(order.itemsList).map((itemKey) => {
+                const item = order.itemsList[itemKey];
+                return (
+                  <div key={itemKey} className="order-content"> {/* Ensure each child in a list has a unique "key" prop. */}
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        overflow: "hidden",
+                        width: "100%", // Container width
+                        height: "100px", // Container height
+                      }}
+                    >
+                      <img
+                        style={{
+                          maxWidth: "100%", // Image maximum width is 100% of its container
+                          maxHeight: "100%", // Image maximum height is 100% of its container
+                          objectFit: "contain", // Image will be scaled to maintain its aspect ratio
+                        }}
+                        className="order-image"
+                        alt="Order Item"
+                        src={item.itemImageUrl}
+                      />
+                    </div>
+                    <div className="order-details">
+                      <h5 className="order-title">
+                        {item.itemTitle} ${item.itemPrice} Surprise Box
+                      </h5>
+                      <div className="order-status">
+                        <span
+                          className={`status-indicator ${order.status.toLowerCase()}`}
+                        ></span>
+                        <span>
+                          {order.status === "PENDING"
+                            ? "Order is awaiting acceptance from the restaurant"
+                            : order.status === "IN PROGRESS"
+                            ? "Order is being prepared"
+                            : order.status === "READY FOR COLLECTION"
+                            ? "Order is ready for collection"
+                            : "" // Fallback text if needed
+                          }
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         ));
     }
     return null; // Render nothing if there are no orders
   }
+  
 
   _renderPastOrders() {
     const { myOrder } = this.props;
@@ -218,45 +216,54 @@ class MyOrders extends Component {
         .map((order) => (
           <div className="order-card" key={order.id}>
             <div className="order-item">
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  overflow: "hidden",
-                  width: "100%", // Container width
-                  height: "100px", // Container height
-                }}
-              >
-                <img
-                  style={{
-                    maxWidth: "100%", // Image maximum width is 100% of its container
-                    maxHeight: "100%", // Image maximum height is 100% of its container
-                    objectFit: "contain", // Image will be scaled to maintain its aspect ratio
-                  }}
-                  className="order-image"
-                  alt="Order Item"
-                  src={
-                    order.itemsList[Object.keys(order.itemsList)[0]]
-                      .itemImageUrl
-                  }
-                />
-              </div>
-
-              <div className="order-details">
-                <h5 className="order-title">
-                  {order.itemsList[Object.keys(order.itemsList)[0]].itemTitle} $
-                  {order.itemsList[Object.keys(order.itemsList)[0]].itemPrice}{" "}
-                  Surprise Box
-                </h5>
-                <div className="order-status">
-                  <span className="status-indicator delivered"></span>
-                  <span>Order has already been collected!</span>
-                </div>
-                <a href="/#" className="details-link">
-                  View More Details &rarr;
-                </a>
-              </div>
+            {Object.keys(order.itemsList).map((itemKey) => {
+                const item = order.itemsList[itemKey];
+                return (
+                  <div key={itemKey} className="order-content"> {/* Ensure each child in a list has a unique "key" prop. */}
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        overflow: "hidden",
+                        width: "100%", // Container width
+                        height: "100px", // Container height
+                      }}
+                    >
+                      <img
+                        style={{
+                          maxWidth: "100%", // Image maximum width is 100% of its container
+                          maxHeight: "100%", // Image maximum height is 100% of its container
+                          objectFit: "contain", // Image will be scaled to maintain its aspect ratio
+                        }}
+                        className="order-image"
+                        alt="Order Item"
+                        src={item.itemImageUrl}
+                      />
+                    </div>
+                    <div className="order-details">
+                      <h5 className="order-title">
+                        {item.itemTitle} ${item.itemPrice} Surprise Box
+                      </h5>
+                      <div className="order-status">
+                        <span
+                          className={`status-indicator ${order.status.toLowerCase()}`}
+                        ></span>
+                        <span>
+                          {order.status === "PENDING"
+                            ? "Order is awaiting acceptance from the restaurant"
+                            : order.status === "IN PROGRESS"
+                            ? "Order is being prepared"
+                            : order.status === "READY FOR COLLECTION"
+                            ? "Order is ready for collection"
+                            : "" // Fallback text if needed
+                          }
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
               {/* Review Section */}
 
               <div className="review-section">
