@@ -13,20 +13,23 @@ import "../App.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 class RestaurantDetails extends Component {
-  constructor() {
-    super();
-    this.state = {
-      tab1: "col-12 col-lg-4 col-md-4 text-center res-details-tab-active",
-      tab2: "col-12 col-lg-4 col-md-4 text-center",
-      tab3: "col-12 col-lg-4 col-md-4 text-center",
-      tab1Content: true,
-      tab2Content: false,
-      tab3Content: false,
-      cartItemsList: [],
-      totalPrice: 0,
-      showCartList: false,
-    };
-  }
+
+    constructor() {
+        super()
+        this.state = {
+            tab1: "col-12 col-lg-4 col-md-4 text-center res-details-tab-active",
+            tab2: "col-12 col-lg-4 col-md-4 text-center",
+            tab3: "col-12 col-lg-4 col-md-4 text-center",
+            tab1Content: true,
+            tab2Content: false,
+            tab3Content: false,
+            cartItemsList: [],
+            totalPrice: 0,
+            showCartList: false,
+            reviews: [],
+        }
+    }
+
 
   async componentDidMount() {
     const { state } = await this.props.location;
@@ -49,36 +52,72 @@ class RestaurantDetails extends Component {
     };
   }
 
-  handleTabs(e) {
-    if (e === "tab1") {
-      this.setState({
-        tab1: "col-12 col-lg-4 col-md-4 text-center res-details-tab-active",
-        tab2: "col-12 col-lg-4 col-md-4 text-center",
-        tab3: "col-12 col-lg-4 col-md-4 text-center",
-        tab1Content: true,
-        tab2Content: false,
-        tab3Content: false,
-      });
-    } else if (e === "tab2") {
-      this.setState({
-        tab1: "col-12 col-lg-4 col-md-4 text-center",
-        tab2: "col-12 col-lg-4 col-md-4 text-center res-details-tab-active",
-        tab3: "col-12 col-lg-4 col-md-4 text-center",
-        tab1Content: false,
-        tab2Content: true,
-        tab3Content: false,
-      });
-    } else if (e === "tab3") {
-      this.setState({
-        tab1: "col-12 col-lg-4 col-md-4 text-center",
-        tab2: "col-12 col-lg-4 col-md-4 text-center",
-        tab3: "col-12 col-lg-4 col-md-4 text-center res-details-tab-active",
-        tab1Content: false,
-        tab2Content: false,
-        tab3Content: true,
-      });
+
+    fetchReviews = async () => {
+        const { resDetails } = this.state; // assuming resDetails contains the restaurant ID
+        let reviewsList = [];
+        
+        try {
+            // Fetch all users
+            const usersSnapshot = await firebase.firestore().collection('users').get();
+            
+            // Await all promises from fetching each user's orderRequest where restaurantId matches
+            const reviewsPromises = usersSnapshot.docs.map(async (userDoc) => {
+                const ordersSnapshot = await firebase.firestore()
+                    .collection('users')
+                    .doc(userDoc.id)
+                    .collection('orderRequest')
+                    .where('restaurantId', '==', resDetails.id) // Ensure each orderRequest contains a 'restaurantId' field
+                    .get();
+                
+                ordersSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (data.review) {
+                        reviewsList.push(data.review);
+                    }
+                });
+            });
+    
+            // Wait for all promises to resolve
+            await Promise.all(reviewsPromises);
+    
+            // Set state with aggregated reviews
+            this.setState({ reviews: reviewsList });
+        } catch (error) {
+            console.error("Error fetching reviews: ", error);
+        }
+    }
+    
+    handleTabs(e) {
+        const newState = {
+            tab1: "col-12 col-lg-4 col-md-4 text-center",
+            tab2: "col-12 col-lg-4 col-md-4 text-center",
+            tab3: "col-12 col-lg-4 col-md-4 text-center",
+            tab1Content: false,
+            tab2Content: false,
+            tab3Content: false,
+        };
+
+        // Update the active tab and content visibility based on the selected tab
+        if (e === "tab1") {
+            newState.tab1 += " res-details-tab-active";
+            newState.tab1Content = true;
+        } else if (e === "tab2") {
+            newState.tab2 += " res-details-tab-active";
+            newState.tab2Content = true;
+            // Fetch reviews only when the Reviews tab is selected
+            this.fetchReviews(); // This line calls fetchReviews when tab2 is activated
+        } else if (e === "tab3") {
+            newState.tab3 += " res-details-tab-active";
+            newState.tab3Content = true;
+        }
+
+        // Apply the updated state
+        this.setState(newState);
+
     }
   }
+
 
   fetchMenuItems(category) {
     const { resDetails } = this.state;
@@ -420,6 +459,7 @@ class RestaurantDetails extends Component {
                     </div>
                   )}
                 </div>
+
               </div>
               <div className="col-lg-3 col-md-3 col-sm-12">
                 <div className="container bg-white py-3 order-card">
@@ -454,6 +494,7 @@ class RestaurantDetails extends Component {
                               </span>
                             </p>
                           </div>
+
                         </div>
                       </div>
                     </div>

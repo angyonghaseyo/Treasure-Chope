@@ -6,6 +6,7 @@ import { my_order } from "../store/action";
 import "bootstrap/dist/css/bootstrap.css";
 import "../App.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import firebase from "../config/firebase";
 
 class MyOrders extends Component {
   constructor() {
@@ -15,6 +16,7 @@ class MyOrders extends Component {
       tab2: "col-12 col-lg-6 text-center",
       tab1Content: true,
       tab2Content: false,
+      reviews: {}, // Holds review texts keyed by order IDs
     };
   }
 
@@ -46,6 +48,95 @@ class MyOrders extends Component {
       });
     }
   }
+  handleReviewChange(value, orderId) {
+    this.setState((prevState) => ({
+      reviews: {
+        ...prevState.reviews,
+        [orderId]: value, // Update the review for the specific order ID
+      },
+    }));
+  }
+
+  //Review logic;
+  submitReview = (order) => {
+    if (!order.restaurantId || order.restaurantId.trim() === "") {
+      console.error("Restaurant ID is missing for the order.");
+      alert(
+        "There was an issue submitting your review due to missing information."
+      );
+      return;
+    }
+
+    // Fetch the review from the component's state
+    const review = this.state.reviews[order.id] || "";
+    if (review.trim() === "") {
+      alert("Please enter a review before submitting.");
+      return;
+    }
+
+    // //     const docRef = firebase.firestore().collection('orders').doc('yourDocumentId');
+    alert(order.id); // This will log 'yourDocumentId'
+
+    // // Define references to Firestore documents
+    // const ordersDocUserRef = firebase
+    //   .firestore()
+    //   .collection("orders")
+    //   .doc(order.customerId) // Assuming customerId is valid and exists
+    //   .collection("completedOrdersForOneUser")
+    //   .doc(order.id); // Targeting the specific order by its ID
+
+    // const ordersDocRestaurantRef = firebase
+    //   .firestore()
+    //   .collection("orders")
+    //   .doc(order.restaurantId) // Using restaurantId to navigate to the correct document
+    //   .collection("completedOrdersForOneRestaurant")
+    //   .doc(order.id); // Targeting the specific order by its ID
+
+    // // Firestore operation to update review for the user's order
+    // ordersDocUserRef
+    //   .update({ review: review })
+    //   .then(() => alert("Review submitted successfully for the user!"))
+    //   .catch((error) => console.error("Error submitting user review: ", error));
+
+    // // Firestore operation to update review for the restaurant's order
+    // ordersDocRestaurantRef
+    //   .update({ review: review })
+    //   .then(() => alert("Review submitted successfully for the restaurant!"))
+    //   .catch((error) =>
+    //     console.error("Error submitting restaurant review: ", error)
+    //   );
+        //     const docRef = firebase.firestore().collection('orders').doc('yourDocumentId');
+        //alert(order.id); // This will log 'yourDocumentId'
+
+        // Define references to Firestore documents
+        const ordersDocUserRef = firebase
+          .firestore()
+          .collection("users")
+          .doc(order.customerId) // Assuming customerId is valid and exists
+          .collection("myOrder")
+          .doc(order.id); // Targeting the specific order by its ID
+    
+        const ordersDocRestaurantRef = firebase
+          .firestore()
+          .collection("users")
+          .doc(order.restaurantId) // Using restaurantId to navigate to the correct document
+          .collection("orderRequest")
+          .doc(order.id); // Targeting the specific order by its ID
+    
+        // Firestore operation to update review for the user's order
+        ordersDocUserRef
+          .update({ review: review })
+          .then(() => alert("Review submitted successfully for the user!"))
+          .catch((error) => console.error("Error submitting user review: ", error));
+    
+        // Firestore operation to update review for the restaurant's order
+        ordersDocRestaurantRef
+          .update({ review: review })
+          .then(() => alert("Review submitted successfully for the restaurant!"))
+          .catch((error) =>
+            console.error("Error submitting restaurant review: ", error)
+          );
+  };
 
   _renderActiveOrders() {
     const { myOrder } = this.props;
@@ -60,110 +151,137 @@ class MyOrders extends Component {
         .map((order) => (
           <div className="order-card" key={order.id}>
             <div className="order-item">
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  overflow: "hidden",
-                  width: "100%", // Container width
-                  height: "100px", // Container height
-                }}
-              >
-                <img
-                  style={{
-                    maxWidth: "100%", // Image maximum width is 100% of its container
-                    maxHeight: "100%", // Image maximum height is 100% of its container
-                    objectFit: "contain", // Image will be scaled to maintain its aspect ratio
-                  }}
-                  className="order-image"
-                  alt="Order Item"
-                  src={
-                    order.itemsList[Object.keys(order.itemsList)[0]]
-                      .itemImageUrl
-                  }
-                />
-              </div>
-
-              <div className="order-details">
-                <h5 className="order-title">
-                  {order.itemsList[Object.keys(order.itemsList)[0]].itemTitle} $
-                  {order.itemsList[Object.keys(order.itemsList)[0]].itemPrice}{" "}
-                  Surprise Box
-                </h5>
-                <div className="order-status">
-                  <span
-                    className={`status-indicator ${order.status.toLowerCase()}`}
-                  ></span>
-                  <span>
-                    {
-                      order.status === "PENDING"
-                        ? "Order is awaiting acceptance from the restaurant"
-                        : order.status === "IN PROGRESS"
-                        ? "Order is being prepared"
-                        : order.status === "READY FOR COLLECTION"
-                        ? "Order is ready for collection"
-                        : "" // Fallback text if needed
-                    }
-                  </span>
-                </div>
-                <a href="/#" className="details-link">
-                  View More Details &rarr;
-                </a>
-              </div>
+              {Object.keys(order.itemsList).map((itemKey) => {
+                const item = order.itemsList[itemKey];
+                return (
+                  <div key={itemKey} className="order-content"> {/* Ensure each child in a list has a unique "key" prop. */}
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        overflow: "hidden",
+                        width: "100%", // Container width
+                        height: "100px", // Container height
+                      }}
+                    >
+                      <img
+                        style={{
+                          maxWidth: "100%", // Image maximum width is 100% of its container
+                          maxHeight: "100%", // Image maximum height is 100% of its container
+                          objectFit: "contain", // Image will be scaled to maintain its aspect ratio
+                        }}
+                        className="order-image"
+                        alt="Order Item"
+                        src={item.itemImageUrl}
+                      />
+                    </div>
+                    <div className="order-details">
+                      <h5 className="order-title">
+                        {item.itemTitle} ${item.itemPrice} Surprise Box
+                      </h5>
+                      <div className="order-status">
+                        <span
+                          className={`status-indicator ${order.status.toLowerCase()}`}
+                        ></span>
+                        <span>
+                          {order.status === "PENDING"
+                            ? "Order is awaiting acceptance from the restaurant"
+                            : order.status === "IN PROGRESS"
+                            ? "Order is being prepared"
+                            : order.status === "READY FOR COLLECTION"
+                            ? "Order is ready for collection"
+                            : "" // Fallback text if needed
+                          }
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         ));
     }
     return null; // Render nothing if there are no orders
   }
+  
 
   _renderPastOrders() {
     const { myOrder } = this.props;
+    const { reviews } = this.state; // Destructure reviews from state
     if (myOrder) {
       return myOrder
         .filter((order) => order.status === "COLLECTED")
         .map((order) => (
           <div className="order-card" key={order.id}>
             <div className="order-item">
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  overflow: "hidden",
-                  width: "100%", // Container width
-                  height: "100px", // Container height
-                }}
-              >
-                <img
-                  style={{
-                    maxWidth: "100%", // Image maximum width is 100% of its container
-                    maxHeight: "100%", // Image maximum height is 100% of its container
-                    objectFit: "contain", // Image will be scaled to maintain its aspect ratio
-                  }}
-                  className="order-image"
-                  alt="Order Item"
-                  src={
-                    order.itemsList[Object.keys(order.itemsList)[0]]
-                      .itemImageUrl
+            {Object.keys(order.itemsList).map((itemKey) => {
+                const item = order.itemsList[itemKey];
+                return (
+                  <div key={itemKey} className="order-content"> {/* Ensure each child in a list has a unique "key" prop. */}
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        overflow: "hidden",
+                        width: "100%", // Container width
+                        height: "100px", // Container height
+                      }}
+                    >
+                      <img
+                        style={{
+                          maxWidth: "100%", // Image maximum width is 100% of its container
+                          maxHeight: "100%", // Image maximum height is 100% of its container
+                          objectFit: "contain", // Image will be scaled to maintain its aspect ratio
+                        }}
+                        className="order-image"
+                        alt="Order Item"
+                        src={item.itemImageUrl}
+                      />
+                    </div>
+                    <div className="order-details">
+                      <h5 className="order-title">
+                        {item.itemTitle} ${item.itemPrice} Surprise Box
+                      </h5>
+                      <div className="order-status">
+                        <span
+                          className={`status-indicator ${order.status.toLowerCase()}`}
+                        ></span>
+                        <span>
+                          {order.status === "PENDING"
+                            ? "Order is awaiting acceptance from the restaurant"
+                            : order.status === "IN PROGRESS"
+                            ? "Order is being prepared"
+                            : order.status === "READY FOR COLLECTION"
+                            ? "Order is ready for collection"
+                            : "" // Fallback text if needed
+                          }
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+              {/* Review Section */}
+
+              <div className="review-section">
+                <input
+                  type="text"
+                  placeholder="Enter your review"
+                  className="review-input"
+                  value={reviews[order.id] || ""} // Use order ID to manage each review
+                  onChange={(e) =>
+                    this.handleReviewChange(e.target.value, order.id)
                   }
                 />
-              </div>
-
-              <div className="order-details">
-                <h5 className="order-title">
-                  {order.itemsList[Object.keys(order.itemsList)[0]].itemTitle} $
-                  {order.itemsList[Object.keys(order.itemsList)[0]].itemPrice}{" "}
-                  Surprise Box
-                </h5>
-                <div className="order-status">
-                  <span className="status-indicator delivered"></span>
-                  <span>Order has already been collected!</span>
-                </div>
-                <a href="/#" className="details-link">
-                  View More Details &rarr;
-                </a>
+                <button
+                  onClick={() => this.submitReview(order)}
+                  className="btn btn-primary submit-review-btn"
+                >
+                  Submit Review
+                </button>
               </div>
             </div>
           </div>

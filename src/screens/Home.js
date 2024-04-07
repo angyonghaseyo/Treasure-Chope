@@ -18,7 +18,7 @@ class Home extends Component {
       homeSearchBarText: "",
       restaurantCount: 0,
       userCount: 0,
-      collectedOrdersUsers: 0,
+      collectedOrdersCount: 0,
     };
     this.handleSearchBar = this.handleSearchBar.bind(this);
   }
@@ -75,28 +75,29 @@ class Home extends Component {
         console.error("Error fetching user count: ", error);
       }
   }
-
   fetchCollectedOrdersCount = async () => {
     const db = firebase.firestore();
-    let collectedOrdersUsers = new Set();
-  
+    let collectedOrdersCount = -1;
+
     try {
-      const usersSnapshot = await db.collection("users").get();
-      const promises = usersSnapshot.docs.map(doc => 
-        db.collection("users").doc(doc.id).collection("myOrder").where("status", "==", "COLLECTED").get()
-          .then(userOrdersSnapshot => {
-            if (!userOrdersSnapshot.empty) {
-              collectedOrdersUsers.add(doc.id);
-            }
-          })
-      );
-  
+      const ordersSnapshot = await db.collection("orders").get();
+      const promises = ordersSnapshot.docs.map(orderDoc => {
+        const restaurantId = orderDoc.id;
+        return db.collection("orders")
+          .doc(restaurantId)
+          .collection("completedOrdersForOneRestaurant")
+          .get()
+          .then(completedOrdersSnapshot => {
+            collectedOrdersCount += completedOrdersSnapshot.size;
+          });
+      });
+
       await Promise.all(promises);
-      this.setState({ collectedOrdersUsers: collectedOrdersUsers.size });
+      this.setState({ collectedOrdersCount }); // Update state with collected order count
     } catch (error) {
       console.error("Error fetching collected orders count: ", error);
     }
-  }
+  };
 
 
 
@@ -168,7 +169,7 @@ class Home extends Component {
             </div>
             <div className="col-lg-4 col-md-4 col-sm-12">
               <p className="my-3 text-center text-white">
-                <b className="mr-2 h5">{this.state.collectedOrdersUsers}</b>Orders Served
+                <b className="mr-2 h5">{this.state.collectedOrdersCount}</b>Orders Served
               </p>
             </div>
             <div className="col-lg-4 col-md-4 col-sm-12">
