@@ -328,13 +328,13 @@ class Home extends Component {
                   From your favorite makan places, we believe in the beauty of saving every bite. It's our mission to transform surplus into satisfaction, turning what's left at the end of the day into discounted delights for you. Join us in making sustainability delicious.
                 </p>
               </p>
-              <button
+{/*               <button
                 type="button"
                 className="btn btn-sign-in-primary text-uppercase mb-5"
                 onClick={this.handleSignInBtn}
               >
                 <b>Sign In</b>
-              </button>
+              </button> */}
               <br></br>
               <br></br>
               <br></br>
@@ -438,11 +438,11 @@ class Home extends Component {
 
               </h2>
             </div>
-            <div className="button-container">
+{/*             <div className="button-container">
               <button onClick={this.handleSignInBtn} className="btn btn-signin">
                 Sign in
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
 
