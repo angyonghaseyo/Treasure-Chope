@@ -202,7 +202,7 @@ function addItem(itemDetails) {
   });
 }
 
-function orderNow(cartItemsList, totalPrice, resDetails, userDetails, history) {
+function orderNow(cartItemsList, totalPrice, resDetails, userDetails, paymentIntendId, history) {
   return new Promise((resolve, reject) => {
     let user = firebase.auth().currentUser;
     var uid;
@@ -221,6 +221,7 @@ function orderNow(cartItemsList, totalPrice, resDetails, userDetails, history) {
       ...resDetailsWithoutId, // Spread the rest of the resDetails properties
       customerId: uid,
       restaurantId: resDetails.id,
+      paymentIntendId: paymentIntendId // include the stripe payment intent id
     };
 
     const orderRequest = {
@@ -231,6 +232,7 @@ function orderNow(cartItemsList, totalPrice, resDetails, userDetails, history) {
       //changes made -e
       customerId: uid,
       restaurantId: resDetails.id,
+        paymentIntendId: paymentIntendId // include the stripe payment intent id
     };
 
     // console.log("myOrder => ", myOrder)

@@ -158,4 +158,5 @@ export {
     order_request,
     my_order,
     my_foods,
+    completeOrder,
 }

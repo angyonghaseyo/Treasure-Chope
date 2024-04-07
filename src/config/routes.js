@@ -11,7 +11,7 @@ import AddMenuItems from '../screens/AddMenuItems';
 import OrderRequests from '../screens/OrderRequests';
 import MyOrders from '../screens/MyOrders';
 import MyFoods from '../screens/MyFoods';
-
+import PaymentForm from '../screens/Payment';
 
 
 const customHistory = createBrowserHistory();
@@ -29,6 +29,7 @@ const MyRoutes = () => (
             <Route path='/order-requests' component={OrderRequests}></Route>
             <Route path='/my-orders' component={MyOrders}></Route>
             <Route path='/my-foods' component={MyFoods}></Route>
+            <Route path='/payment' component={PaymentForm}></Route>
         </div>
     </Router>
 )
