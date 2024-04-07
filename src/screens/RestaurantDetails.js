@@ -25,6 +25,7 @@ class RestaurantDetails extends Component {
             cartItemsList: [],
             totalPrice: 0,
             showCartList: false,
+            reviews: [],
         }
     }
 
@@ -49,36 +50,69 @@ class RestaurantDetails extends Component {
         }
     }
 
-    handleTabs(e) {
-        if (e === "tab1") {
-            this.setState({
-                tab1: "col-12 col-lg-4 col-md-4 text-center res-details-tab-active",
-                tab2: "col-12 col-lg-4 col-md-4 text-center",
-                tab3: "col-12 col-lg-4 col-md-4 text-center",
-                tab1Content: true,
-                tab2Content: false,
-                tab3Content: false,
-            })
-        } else if (e === "tab2") {
-            this.setState({
-                tab1: "col-12 col-lg-4 col-md-4 text-center",
-                tab2: "col-12 col-lg-4 col-md-4 text-center res-details-tab-active",
-                tab3: "col-12 col-lg-4 col-md-4 text-center",
-                tab1Content: false,
-                tab2Content: true,
-                tab3Content: false,
-            })
-        } else if (e === "tab3") {
-            this.setState({
-                tab1: "col-12 col-lg-4 col-md-4 text-center",
-                tab2: "col-12 col-lg-4 col-md-4 text-center",
-                tab3: "col-12 col-lg-4 col-md-4 text-center res-details-tab-active",
-                tab1Content: false,
-                tab2Content: false,
-                tab3Content: true,
-            })
+    fetchReviews = async () => {
+        const { resDetails } = this.state; // assuming resDetails contains the restaurant ID
+        let reviewsList = [];
+        
+        try {
+            // Fetch all users
+            const usersSnapshot = await firebase.firestore().collection('users').get();
+            
+            // Await all promises from fetching each user's orderRequest where restaurantId matches
+            const reviewsPromises = usersSnapshot.docs.map(async (userDoc) => {
+                const ordersSnapshot = await firebase.firestore()
+                    .collection('users')
+                    .doc(userDoc.id)
+                    .collection('orderRequest')
+                    .where('restaurantId', '==', resDetails.id) // Ensure each orderRequest contains a 'restaurantId' field
+                    .get();
+                
+                ordersSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (data.review) {
+                        reviewsList.push(data.review);
+                    }
+                });
+            });
+    
+            // Wait for all promises to resolve
+            await Promise.all(reviewsPromises);
+    
+            // Set state with aggregated reviews
+            this.setState({ reviews: reviewsList });
+        } catch (error) {
+            console.error("Error fetching reviews: ", error);
         }
     }
+    
+    handleTabs(e) {
+        const newState = {
+            tab1: "col-12 col-lg-4 col-md-4 text-center",
+            tab2: "col-12 col-lg-4 col-md-4 text-center",
+            tab3: "col-12 col-lg-4 col-md-4 text-center",
+            tab1Content: false,
+            tab2Content: false,
+            tab3Content: false,
+        };
+
+        // Update the active tab and content visibility based on the selected tab
+        if (e === "tab1") {
+            newState.tab1 += " res-details-tab-active";
+            newState.tab1Content = true;
+        } else if (e === "tab2") {
+            newState.tab2 += " res-details-tab-active";
+            newState.tab2Content = true;
+            // Fetch reviews only when the Reviews tab is selected
+            this.fetchReviews(); // This line calls fetchReviews when tab2 is activated
+        } else if (e === "tab3") {
+            newState.tab3 += " res-details-tab-active";
+            newState.tab3Content = true;
+        }
+
+        // Apply the updated state
+        this.setState(newState);
+    }
+
 
     fetchMenuItems() {
         const { resDetails } = this.state;
@@ -305,27 +339,26 @@ class RestaurantDetails extends Component {
                                             </div>
                                         </div>
                                     }
-                                    {tab2Content && <div className="row review-section">
-                                        <div className="col-12 bg-white p-4">
-                                            <h5>Customer Reviews For {resDetails.userName}</h5>
-                                            <div className="row p-5">
-                                                <div className="col-6 text-right">
-                                                    <img alt="Review Icon" src={require("../assets/images/icon-review.png")} />
-                                                </div>
-                                                <div className="col-6 pl-0">
-                                                    <p className="mb-0"><strong>Write your own reviews</strong></p>
-                                                    <small className="text-danger">Only customers can write reviews</small>
-                                                </div>
+                                    {tab2Content &&
+                                        <div className="row review-section">
+                                            <div className="col-12 bg-white p-4">
+                                                <h5>Customer Reviews For {resDetails.userName}</h5>
+                                                {this.state.reviews.length > 0 ? (
+                                                    <ul>
+                                                        {this.state.reviews.map((review, index) => (
+                                                            <li key={index}>{review}</li>
+                                                        ))}
+                                                    </ul>
+                                                ) : <p>No reviews available.</p>}
                                             </div>
                                         </div>
-                                    </div>
                                     }
+
                                     {tab3Content && <div className="row info-section">
                                         <div className="col-12 bg-white p-4">
                                             <h5>Overview {resDetails.userName}</h5>
-                                            <p>Base prepared fresh daily. Extra toppings are available in choose extra
-                                                Choose you sauce: Go for BBQ sauce or piri piri sauce on your pizza base for no extra cost.
-                                                Choose your cut: Triangular, square, fingers or Un cut on any size pizza</p>
+                                            <br />
+                                            <p>{resDetails.restaurantDescription}</p>
                                         </div>
                                     </div>
                                     }
