@@ -124,6 +124,32 @@ const my_foods = () => {
     }
 }
 
+// for update order stauts in order request
+const completeOrder = (orderId, orderStatus) => {
+    return (dispatch, getState) => {
+        const uid = getState().user.uid;
+        const orderRef = db.collection('users').doc(uid).collection('orderRequest').doc(orderId);
+        orderRef.update({ status: orderStatus })
+        .then(() => {
+            // Fetch the updated order to reflect in the Redux store
+            orderRef.get().then(doc => {
+                if (doc.exists) {
+                    dispatch({
+                        type: 'UPDATE_ORDER_STATUS',
+                        orderId: orderId,
+                        orderStatus: orderStatus
+                    });
+                    console.log("Order status updated to:", orderStatus);
+                }
+            }).catch(error => {
+                console.error("Error fetching updated order:", error);
+            });
+        })
+        .catch(error => {
+            console.error("Error updating order status:", error);
+        });
+    }
+}
 
 export {
     update_user,

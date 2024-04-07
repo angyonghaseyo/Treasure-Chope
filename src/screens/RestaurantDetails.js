@@ -12,6 +12,12 @@ import '../App.css'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+// for stripe
+import { loadStripe } from '@stripe/stripe-js';
+
+
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
+
 class RestaurantDetails extends Component {
     constructor() {
         super()
@@ -118,57 +124,52 @@ class RestaurantDetails extends Component {
 
     async handleConfirmOrderBtn() {
         const { cartItemsList, totalPrice, resDetails, userDetails } = this.state;
-        console.log(cartItemsList.length)
-        if (userDetails) {
-            if (!userDetails.isRestaurant) {
-                if (cartItemsList.length > 0) {
-                    try {
-                        const history = this.props.history;
-                        const orderNowReturn = await orderNow(cartItemsList, totalPrice, resDetails, userDetails, history)
-                        console.log(orderNowReturn)
-                        // console.log("Successfully Ordered")
-                        Swal.fire({
-                            title: 'Success',
-                            text: 'Successfully Ordered',
-                            type: 'success',
-                        }).then(() => {
-                            history.push("/my-orders");
-                        })
-                    } catch (error) {
-                        // console.log(" Error in confirm order => ", error)
-                        Swal.fire({
-                            title: 'Error',
-                            text: error,
-                            type: 'error',
-                        })
-                    }
-                } else {
-                    console.log("You have to select atleast one item")
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'You have to select atleast one item',
-                        type: 'error',
-                    })
-                }
-            } else {
-                // console.log("You are not able to order")
-                Swal.fire({
-                    title: 'Error',
-                    text: 'You are not able to order',
-                    type: 'error',
-                })
-            }
-        } else {
-            // console.log("You must be Loged In")
+    
+        // Check if the user is logged in
+        if (!userDetails) {
             Swal.fire({
                 title: 'Error',
-                text: 'You must be Loged In',
-                type: 'error',
+                text: 'You must be Logged In',
+                icon: 'error',
             }).then(() => {
-                this.props.history.push('/login')
-            })
+                this.props.history.push('/login');
+            });
+            return;
         }
+    
+        // Check if the user is a restaurant (assuming restaurants can't order)
+        if (userDetails.isRestaurant) {
+            Swal.fire({
+                title: 'Error',
+                text: 'You are not able to order',
+                icon: 'error',
+            });
+            return;
+        }
+    
+        // Check if there are items in the cart
+        if (cartItemsList.length === 0) {
+            Swal.fire({
+                title: 'Error',
+                text: 'You have to select at least one item',
+                icon: 'error',
+            });
+            return;
+        }
+    
+        // Redirect to the Payment page with necessary data for completing the order
+        console.log("History object:", this.props.history);
+        this.props.history.push({
+            pathname: "/payment",
+            state: {
+                cartItemsList: cartItemsList,
+                totalPrice: totalPrice,
+                resDetails: resDetails,
+                userDetails: userDetails
+            }
+        });
     }
+    
 
     _renderMenuItemsList() {
         const { menuItemsList } = this.state;
