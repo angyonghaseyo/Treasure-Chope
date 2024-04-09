@@ -18,11 +18,9 @@ class Restaurants extends Component {
       categories: [],
       defaultSearchValue: "",
       renderRestaurantList: true,
-      renderCategorizedRestaurants: false,
       renderSearchRestaurants: false,
       menuItems: {}, // new state to store menu items
     };
-    this.handleCategoriesCheckbox = this.handleCategoriesCheckbox.bind(this);
     this.handleSearchBar = this.handleSearchBar.bind(this);
   }
 
@@ -37,63 +35,6 @@ class Restaurants extends Component {
       this.handleSearchBar(state);
     }
   }
-
-  fetchMenuItemsByCategory = async (category) => {
-    let filteredRestaurants = {};
-    const { restaurantList } = this.props; // or this.state
-
-    await Promise.all(
-      Object.keys(restaurantList).map(async (restaurantId) => {
-        const menuItemsSnapshot = await firebase
-          .firestore()
-          .collection("users")
-          .doc(restaurantId)
-          .collection("menuItems")
-          .where("chooseItemType", "==", category)
-          .get();
-        if (!menuItemsSnapshot.empty) {
-          filteredRestaurants[restaurantId] = restaurantList[restaurantId];
-        }
-      })
-    );
-
-    return filteredRestaurants;
-  };
-
-  handleCategoriesCheckbox = async (event) => {
-    const target = event.target;
-    const isChecked = target.checked;
-    const category = target.name;
-
-    // Reset the categories state entirely based on the new checkbox selection
-    let newCategories = isChecked ? [category] : [];
-
-    this.setState({ isLoading: true }); // Set a loading state
-
-    if (isChecked) {
-      // If the checkbox is checked, fetch and filter the restaurants by category
-      const filteredRestaurants = await this.fetchMenuItemsByCategory(category);
-
-      this.setState({
-        filteredRestaurantList: filteredRestaurants,
-        renderCategorizedRestaurants: true,
-        renderRestaurantList: false,
-        renderSearchRestaurants: false,
-        categories: newCategories, // Update the categories array with only the selected category
-        isLoading: false,
-      });
-    } else {
-      // If the checkbox is unchecked, reset to the full list
-      this.setState({
-        filteredRestaurantList: {},
-        renderCategorizedRestaurants: false,
-        renderRestaurantList: true,
-        renderSearchRestaurants: false,
-        categories: newCategories, // The categories array should be empty if no checkbox is checked
-        isLoading: false,
-      });
-    }
-  };
 
   handleSearchBar(event) {
     const searchText = event;
@@ -110,7 +51,6 @@ class Restaurants extends Component {
       if (searchText.length > 0) {
         this.setState({
           renderRestaurantList: false,
-          renderCategorizedRestaurants: false,
           renderSearchRestaurants: true,
           searchRestaurants: result,
           searchText: searchText,
@@ -119,7 +59,6 @@ class Restaurants extends Component {
       } else {
         this.setState({
           renderRestaurantList: true,
-          renderCategorizedRestaurants: false,
           renderSearchRestaurants: false,
           searchRestaurants: result,
           searchText: searchText,
@@ -207,36 +146,6 @@ class Restaurants extends Component {
     }
   }
 
-  _renderCategorizedRestaurants() {
-    const { filteredRestaurantList } = this.state; // Use the filtered list from the state
-
-    if (filteredRestaurantList) {
-      return Object.keys(filteredRestaurantList).map((restaurantId) => {
-        const restaurant = filteredRestaurantList[restaurantId];
-        // No need to map through categories here, since filtering is already done
-        return (
-          <div className="container bg-white p-3 px-0 mb-4" key={restaurant.id}>
-            <div className="row">
-              <div className="col-lg-3 col-md-3 col-sm-12 px-0 text-center">
-                <img
-                  style={{ width: "70%" }}
-                  alt="Restaurant"
-                  src={restaurant.userProfileImageUrl}
-                />
-              </div>
-              <div className="col-lg-6 col-md-6 col-sm-12 px-0">
-                {/* Ratings and other info */}
-              </div>
-              <div className="col-lg-3 col-md-3 col-sm-12 py-4 px-0">
-                {/* View menu button */}
-              </div>
-            </div>
-          </div>
-        );
-      });
-    }
-  }
-
   _renderSearchRestaurants() {
     const { searchText, searchRestaurants } = this.state;
     if (searchRestaurants) {
@@ -305,7 +214,6 @@ class Restaurants extends Component {
   render() {
     const {
       renderRestaurantList,
-      renderCategorizedRestaurants,
       renderSearchRestaurants,
       defaultSearchValue,
     } = this.state;
@@ -313,7 +221,6 @@ class Restaurants extends Component {
       <div>
         <div className="container-fluid restaurants-cont1">
           <div className="">
-            {/* <Navbar history={this.props.history} /> */}
             <Navbar2 history={this.props.history} />
             <div className="container px-0 restaurants-cont1-text">
               <div className="container">
@@ -347,92 +254,19 @@ class Restaurants extends Component {
         <div style={{ background: "#EBEDF3" }} className="container-fluid py-5">
           <div className="container">
             <div className="row">
-              <div className="col-lg-2 col-md-2 col-sm-12">
-                <div className="listing-filter">
-                  <div className="filter-heading py-2 mb-3">
-                    <h6 className="m-0">
-                      <FontAwesomeIcon icon="utensils" className="mr-2" />
-                      Categories
-                    </h6>
-                  </div>
-                  <div>
-                    <ul className="filter-list">
-                      <li>
-                        <input
-                          type="checkbox"
-                          className="custom-control-input"
-                          id="standard"
-                          name="standard"
-                          checked={this.state.categories.includes("standard")}
-                          onChange={this.handleCategoriesCheckbox}
-                        />
-                        <label
-                          className="custom-control-label"
-                          htmlFor="standard"
-                        >
-                          Standard
-                        </label>
-                      </li>
-                      <li>
-                        <input
-                          type="checkbox"
-                          className="custom-control-input"
-                          id="halal"
-                          name="halal"
-                          checked={this.state.categories.includes("halal")}
-                          onChange={this.handleCategoriesCheckbox}
-                        />
-                        <label className="custom-control-label" htmlFor="halal">
-                          Halal
-                        </label>
-                      </li>
-
-                      <li>
-                        <input
-                          type="checkbox"
-                          className="custom-control-input"
-                          id="vegetarian"
-                          name="vegetarian"
-                          checked={this.state.categories.includes("vegetarian")}
-                          onChange={this.handleCategoriesCheckbox}
-                        />
-                        <label
-                          className="custom-control-label"
-                          htmlFor="vegetarian"
-                        >
-                          Vegetarian
-                        </label>
-                      </li>
-
-                      <li>
-                        <input
-                          type="checkbox"
-                          className="custom-control-input"
-                          id="vegan"
-                          name="vegan"
-                          checked={this.state.categories.includes("vegan")}
-                          onChange={this.handleCategoriesCheckbox}
-                        />
-                        <label className="custom-control-label" htmlFor="vegan">
-                          Vegan
-                        </label>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div className="col-lg-7 col-md-7 col-sm-12">
+              <div className="col-lg-9 col-md-9 col-sm-12">
                 <h4 className="mb-3">Restaurant's Found</h4>
                 <div className="container px-0">
                   <div className="col-lg-12 col-md-12 col-sm-12 mb-4 px-0">
                     {renderSearchRestaurants && this._renderSearchRestaurants()}
-                    {renderCategorizedRestaurants &&
-                      this._renderCategorizedRestaurants()}
                     {renderRestaurantList && this._renderRestaurantList()}
                   </div>
                 </div>
               </div>
-              <div className="col-lg-3 col-md-3 col-sm-12">
+              <div className="col-lg-1 col-md-1 col-sm-12"></div>
+              <div className="col-lg-2 col-md-2 col-sm-12">
+              <br/>
+              <br/>
                 <div className="container bg-white py-3 sort-by">
                   <h5>Sort By</h5>
                   <ul>
@@ -447,18 +281,6 @@ class Restaurants extends Component {
                       <FontAwesomeIcon icon="star" className="mr-3" />
                       <span>Ratings</span>
                     </li>
-                    {/* <li>
-                                            <FontAwesomeIcon icon="user-minus" className="mr-3"/>
-                                            <span>Minimum order value</span>
-                                        </li>
-                                        <li>
-                                            <FontAwesomeIcon icon="dollar-sign" className="mr-3"/>
-                                            <span>Delivery fee</span>
-                                        </li>
-                                        <li>
-                                            <FontAwesomeIcon icon="angle-double-right" className="mr-3"/>
-                                            <span>Fastest delivery</span>
-                                        </li> */}
                   </ul>
                 </div>
               </div>
