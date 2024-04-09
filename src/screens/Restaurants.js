@@ -20,6 +20,7 @@ class Restaurants extends Component {
       renderRestaurantList: true,
       renderSearchRestaurants: false,
       menuItems: {}, // new state to store menu items
+      sortingMethod: 'alphabetical',
     };
     this.handleSearchBar = this.handleSearchBar.bind(this);
   }
@@ -36,11 +37,23 @@ class Restaurants extends Component {
     }
   }
 
+  changeSortingMethod = (method) => {
+    this.setState(prevState => {
+      // Toggle between ascending and descending if alphabetical sorting is already selected
+      if (method === 'alphabetical' && prevState.sortingMethod.includes('alphabetical')) {
+        return { sortingMethod: prevState.sortingMethod === 'alphabetical_asc' ? 'alphabetical_desc' : 'alphabetical_asc' };
+      }
+      // Otherwise, just update the sorting method as normal
+      return { sortingMethod: method };
+    });
+  }
+
+
   handleSearchBar(event) {
     const searchText = event;
     const { restaurantList } = this.props;
     if (restaurantList) {
-      Object.keys(restaurantList).map((val) => {});
+      Object.keys(restaurantList).map((val) => { });
       const result = restaurantList.filter((val) => {
         return (
           val.userName
@@ -74,9 +87,23 @@ class Restaurants extends Component {
 
   _renderRestaurantList() {
     const { restaurantList } = this.props;
+    const { sortingMethod } = this.state;
     if (restaurantList) {
-      return Object.keys(restaurantList).map((val) => {
-        const restaurant = restaurantList[val];
+      let sortedRestaurantArray = Object.keys(restaurantList)
+        .map(key => restaurantList[key]);
+
+      // Apply sorting based on the current sortingMethod
+      if (sortingMethod === 'alphabetical_asc') {
+        sortedRestaurantArray.sort((a, b) => a.userName.localeCompare(b.userName));
+      } else if (sortingMethod === 'alphabetical_desc') {
+        sortedRestaurantArray.sort((a, b) => b.userName.localeCompare(a.userName));
+      } else if (sortingMethod === 'ratings') {
+        // Example sorting by rating - adjust based on your data structure
+        //ortedRestaurantArray.sort((a, b) => b.rating - a.rating);
+      }
+
+      // Map over the sorted array to render the list
+      return sortedRestaurantArray.map((restaurant) => {
         if (
           !restaurant.userProfileImageUrl ||
           !restaurant.userName ||
@@ -88,14 +115,14 @@ class Restaurants extends Component {
         return (
           <div
             className="container bg-white p-3 px-0 mb-4"
-            key={restaurantList[val].id}
+            key={restaurant.id}
           >
-            <div className="row">
-              <div className="col-lg-3 col-md-3 col-sm-12 px-0 text-center">
+            <div className="row" style={{marginBottom:"-10px"}}>
+              <div className="col-lg-3 col-md-3 col-sm-12 px-0 text-center" >
                 <img
-                  style={{ width: "70%" }}
+                  style={{ height: "85px", width:"130px", margin: '0 auto'  }}
                   alt="Natural Healthy Food"
-                  src={restaurantList[val].userProfileImageUrl}
+                  src={restaurant.userProfileImageUrl}
                 />
               </div>
               <div className="col-lg-6 col-md-6 col-sm-12 px-0">
@@ -109,11 +136,11 @@ class Restaurants extends Component {
                   </small>
                   <small>(1) Review</small>
                 </p>
-                <h5 className="">{restaurantList[val].userName}</h5>
+                <h5 className="">{restaurant.userName}</h5>
                 <p className="">
                   <small>
-                    Type of Foods:{" "}
-                    <span>{restaurantList[val].typeOfFood.join(", ")}</span>
+                    Type of Foods:
+                    <span> {restaurant.typeOfFood.join(", ")}</span>
                   </small>
                 </p>
               </div>
@@ -132,7 +159,7 @@ class Restaurants extends Component {
                 </span>
                 <button
                   type="button"
-                  onClick={() => this.handleViewMenuBtn(restaurantList[val])}
+                  onClick={() => this.handleViewMenuBtn(restaurant)} // Use restaurant directly
                   className="btn btn-warning btn-sm text-uppercase"
                   style={{ marginBottom: "8px" }}
                 >
@@ -146,70 +173,86 @@ class Restaurants extends Component {
     }
   }
 
+
   _renderSearchRestaurants() {
-    const { searchText, searchRestaurants } = this.state;
-    if (searchRestaurants) {
-      return Object.keys(searchRestaurants).map((val) => {
-        return (
-          <div
-            className="container bg-white p-3 px-0 mb-4"
-            key={searchRestaurants[val].id}
-          >
-            <div className="row">
-              <div className="col-lg-3 col-md-3 col-sm-12 px-0 text-center">
-                <img
-                  style={{ width: "70%" }}
-                  alt="Natural Healthy Food"
-                  src={searchRestaurants[val].userProfileImageUrl}
-                />
-              </div>
-              <div className="col-lg-6 col-md-6 col-sm-12 px-0">
-                <p>
-                  <small className="">
-                    <FontAwesomeIcon icon="star" className="rating mr-1" />
-                    <FontAwesomeIcon icon="star" className="rating mr-1" />
-                    <FontAwesomeIcon icon="star" className="rating mr-1" />
-                    <FontAwesomeIcon icon="star" className="rating mr-1" />
-                    <FontAwesomeIcon icon="star" className="rating mr-1" />
-                  </small>
-                  <small>(1) Review</small>
-                </p>
-                <h5 className="">{searchRestaurants[val].userName}</h5>
-                <p className="">
-                  <small>
-                    Type of Foods:{" "}
-                    <span>{searchRestaurants[val].typeOfFood.join(", ")}</span>
-                  </small>
-                </p>
-              </div>
-              <div className="col-lg-3 col-md-3 col-sm-12 py-4 px-0">
-                <span
-                  style={{
-                    display: "inline-block",
-                    textAlign: "center",
-                    borderRadius: "3px",
-                    border: "1px solid #dddddd",
-                    padding: "6px 7px 0px 7px",
-                    marginRight: "16px",
-                  }}
-                >
-                  <FontAwesomeIcon icon="heart" className="text-success" />
-                </span>
-                <button
-                  type="button"
-                  onClick={() => this.handleViewMenuBtn(searchRestaurants[val])}
-                  className="btn btn-warning btn-sm text-uppercase"
-                  style={{ marginBottom: "8px" }}
-                >
-                  View Menu
-                </button>
-              </div>
+    const { searchText, searchRestaurants, sortingMethod } = this.state;
+  
+    // Convert search results into an array if it's not already one
+    let searchResultsArray = Object.keys(searchRestaurants)
+      .map(key => searchRestaurants[key]);
+  
+    // Apply sorting based on the current sortingMethod
+    if (sortingMethod === 'alphabetical_asc') {
+      searchResultsArray.sort((a, b) => a.userName.localeCompare(b.userName));
+    } else if (sortingMethod === 'alphabetical_desc') {
+      searchResultsArray.sort((a, b) => b.userName.localeCompare(a.userName));
+    } 
+    // Implement other sorting methods if needed, like 'ratings'
+  
+    // Now, map over the sorted array to render the search results
+    return searchResultsArray.map((restaurant) => {
+      // Check if all necessary data is available for each restaurant
+      if (!restaurant.userProfileImageUrl || !restaurant.userName || !restaurant.typeOfFood) {
+        return null; // Skip rendering this entry if data is missing
+      }
+  
+      return (
+        <div className="container bg-white p-3 px-0 mb-4" key={restaurant.id}>
+          <div className="row" style={{marginBottom:"-10px"}}>
+            <div className="col-lg-3 col-md-3 col-sm-12 px-0 text-center">
+              <img
+                style={{ height: "85px", width: "130px", margin: '0 auto' }}
+                alt="Natural Healthy Food"
+                src={restaurant.userProfileImageUrl}
+              />
+            </div>
+            <div className="col-lg-6 col-md-6 col-sm-12 px-0">
+              <p>
+                <small>
+                  <FontAwesomeIcon icon="star" className="rating mr-1" />
+                  <FontAwesomeIcon icon="star" className="rating mr-1" />
+                  <FontAwesomeIcon icon="star" className="rating mr-1" />
+                  <FontAwesomeIcon icon="star" className="rating mr-1" />
+                  <FontAwesomeIcon icon="star" className="rating mr-1" />
+                  
+                </small>
+                <small>(1) Review</small>
+              </p>
+              <h5>{restaurant.userName}</h5>
+              <p>
+                <small>
+                  Type of Foods: <span>{restaurant.typeOfFood.join(", ")}</span>
+                </small>
+              </p>
+            </div>
+            <div className="col-lg-3 col-md-3 col-sm-12 py-4 px-0">
+              <span
+                style={{
+                  display: "inline-block",
+                  textAlign: "center",
+                  borderRadius: "3px",
+                  border: "1px solid #dddddd",
+                  padding: "6px 7px 0px 7px",
+                  marginRight: "16px",
+                }}
+              >
+                <FontAwesomeIcon icon="heart" className="text-success" />
+              </span>
+              <button
+                type="button"
+                onClick={() => this.handleViewMenuBtn(restaurant)}
+                className="btn btn-warning btn-sm text-uppercase"
+                style={{ marginBottom: "8px" }}
+              >
+                View Menu
+              </button>
             </div>
           </div>
-        );
-      });
-    }
+        </div>
+      );
+    });
   }
+  
 
   render() {
     const {
@@ -263,19 +306,15 @@ class Restaurants extends Component {
                   </div>
                 </div>
               </div>
-              <div className="col-lg-1 col-md-1 col-sm-12"></div>
-              <div className="col-lg-2 col-md-2 col-sm-12">
-              <br/>
-              <br/>
+              <div className="col-lg-3 col-md-3 col-sm-12">
+                <br />
+                <br />
                 <div className="container bg-white py-3 sort-by">
                   <h5>Sort By</h5>
                   <ul>
-                    <li>
-                      <FontAwesomeIcon
-                        icon="sort-alpha-down"
-                        className="mr-3"
-                      />
-                      <span>Alphabetical</span>
+                    <li onClick={() => this.changeSortingMethod('alphabetical')}>
+                      <FontAwesomeIcon icon="sort-alpha-down" className="mr-3" />
+                      <span>Alphabetical {this.state.sortingMethod.includes('alphabetical') ? (this.state.sortingMethod === 'alphabetical_asc' ? '(Asc)' : '(Desc)') : ''}</span>
                     </li>
                     <li>
                       <FontAwesomeIcon icon="star" className="mr-3" />
@@ -283,6 +322,8 @@ class Restaurants extends Component {
                     </li>
                   </ul>
                 </div>
+
+
               </div>
             </div>
           </div>
