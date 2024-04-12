@@ -18,125 +18,102 @@ class MyOrders extends Component {
       tab2Content: false,
       reviews: {},
       existingReviews: {},
+      ratings: {}, // Additional state for storing ratings
+      existingRatings: {}, // State to track existing ratings
     };
   }
 
   componentDidMount() {
-    this.props.my_order();  // This should populate props.myOrder from Redux
-    this.fetchExistingReviews();  // This fetches reviews from Firestore
-}
+    this.props.my_order(); // Fetch orders
+    this.fetchExistingReviewsAndRatings(); // Fetch existing reviews and ratings
+  }
 
-fetchExistingReviews = () => {
-    // Check if orders are available from props
+  fetchExistingReviewsAndRatings = () => {
     const orders = this.props.myOrder || [];
     if (orders.length === 0) {
-        // Optionally add a delay or retry mechanism if orders are not immediately available
-        setTimeout(this.fetchExistingReviews, 1000); // Retry after 1 second
-        return;
-    }
+      setTimeout(this.fetchExistingReviewsAndRatings, 1000); // Ensure this is correctly retrying or handling cases where data might be slow to load.
+      return;
+  }
 
     orders.forEach((order) => {
-        if (!order.customerId || !order.restaurantId) {
-            console.error("Missing customer ID or restaurant ID in order:", order);
-            return; // Skip this iteration if necessary IDs are missing
-        }
+      if (!order.customerId || !order.restaurantId) {
+        console.error("Missing customer ID or restaurant ID in order:", order);
+        return;
+      }
 
-        this.fetchReview(order, "myOrder");
-        this.fetchReview(order, "orderRequest");
+      this.fetchReviewAndRating(order, "myOrder");
+      this.fetchReviewAndRating(order, "orderRequest");
     });
-};
+  };
 
-fetchReview = (order, collectionName) => {
-    const orderRef = firebase.firestore().collection("users").doc(order[collectionName === "myOrder" ? "customerId" : "restaurantId"]).collection(collectionName).doc(order.id);
+  
 
-    orderRef.get().then((doc) => {
-        if (doc.exists && doc.data().review) {
-            this.setState((prevState) => ({
-                existingReviews: {
-                    ...prevState.existingReviews,
-                    [order.id]: doc.data().review,
-                },
-                reviews: {
-                    ...prevState.reviews,
-                    [order.id]: doc.data().review,
-                },
-            }));
+  fetchReviewAndRating = (order, collectionName) => {
+    const orderRef = firebase
+      .firestore()
+      .collection("users")
+      .doc(order[collectionName === "myOrder" ? "customerId" : "restaurantId"])
+      .collection(collectionName)
+      .doc(order.id);
+
+    orderRef
+      .get()
+      .then((doc) => {
+        if (doc.exists) {
+          let updates = {};
+          if (doc.data().review) {
+            updates = {
+              ...updates,
+              existingReviews: {
+                ...this.state.existingReviews,
+                [order.id]: doc.data().review,
+              },
+              reviews: { ...this.state.reviews, [order.id]: doc.data().review },
+            };
+          }
+          if (doc.data().rating) {
+            updates = {
+              ...updates,
+              existingRatings: {
+                ...this.state.existingRatings,
+                [order.id]: doc.data().rating,
+              },
+              ratings: { ...this.state.ratings, [order.id]: doc.data().rating },
+            };
+          }
+          this.setState(updates);
         }
-    }).catch(error => console.error("Failed to fetch review for order:", order.id, error));
-};
+      })
+      .catch((error) =>
+        console.error("Error fetching data for order:", order.id, error)
+      );
+  };
 
-
-  // componentDidMount() {
-  //   this.props.my_order();
-  //   this.fetchExistingReviews();
-  // }
-
-  // fetchExistingReviews = () => {
-  //   const orders = this.props.myOrder || [];
-  //   orders.forEach((order) => {
-  //     if (!order.customerId || !order.restaurantId) {
-  //       console.error("Missing customer ID or restaurant ID in order:", order);
-  //       return; // Skip this iteration if necessary IDs are missing
-  //     }
-
-  //     const userOrderRef = firebase
-  //       .firestore()
-  //       .collection("users")
-  //       .doc(order.customerId)
-  //       .collection("myOrder")
-  //       .doc(order.id);
-  //     const restaurantOrderRef = firebase
-  //       .firestore()
-  //       .collection("users")
-  //       .doc(order.restaurantId)
-  //       .collection("orderRequest")
-  //       .doc(order.id);
-
-  //     userOrderRef.get().then((doc) => {
-  //       if (doc.exists && doc.data().review) {
-  //         this.setState((prevState) => ({
-  //           existingReviews: {
-  //             ...prevState.existingReviews,
-  //             [order.id]: doc.data().review,
-  //           },
-  //           reviews: { ...prevState.reviews, [order.id]: doc.data().review },
-  //         }));
-  //       }
-  //     });
-
-  //     restaurantOrderRef.get().then((doc) => {
-  //       if (doc.exists && doc.data().review) {
-  //         this.setState((prevState) => ({
-  //           existingReviews: {
-  //             ...prevState.existingReviews,
-  //             [order.id]: doc.data().review,
-  //           },
-  //           reviews: { ...prevState.reviews, [order.id]: doc.data().review },
-  //         }));
-  //       }
-  //     });
-  //   });
-  // };
-
-  submitReview = (order) => {
+  submitReviewAndRating = (order) => {
     if (
       !order.restaurantId ||
       order.restaurantId.trim() === "" ||
-      this.state.existingReviews[order.id]
+      this.state.existingReviews[order.id] ||
+      this.state.existingRatings[order.id]
     ) {
-      console.error(
-        "Review submission blocked due to missing information or existing review."
+      console.error("Submission blocked due to existing review or rating.");
+      alert(
+        "Review or rating already submitted or necessary information missing."
       );
-      alert("Review already submitted or necessary information missing.");
       return;
     }
 
     const review = this.state.reviews[order.id] || "";
-    if (review.trim() === "") {
-      alert("Please enter a review before submitting.");
+    const rating = this.state.ratings[order.id] || "";
+
+    if (review.trim() === "" || !(rating >= 1 && rating <= 10)) {
+      alert(
+        "Please enter a review and a valid rating (1-10) before submitting."
+      );
       return;
     }
 
+    const updateData = { review: review, rating: parseInt(rating) };
     const ordersDocUserRef = firebase
       .firestore()
       .collection("users")
@@ -150,27 +127,56 @@ fetchReview = (order, collectionName) => {
       .collection("orderRequest")
       .doc(order.id);
 
-    ordersDocUserRef
-      .update({ review: review })
+    Promise.all([
+      ordersDocUserRef.update(updateData),
+      ordersDocRestaurantRef.update(updateData),
+    ])
       .then(() => {
-        alert("Review submitted successfully for the user!");
-        this.setState((prevState) => ({
-          existingReviews: { ...prevState.existingReviews, [order.id]: review },
-        }));
-      })
-      .catch((error) => console.error("Error submitting user review: ", error));
+        const restaurantDocRef = firebase
+          .firestore()
+          .collection("users")
+          .doc(order.restaurantId);
 
-    ordersDocRestaurantRef
-      .update({ review: review })
-      .then(() => {
-        alert("Review submitted successfully for the restaurant!");
+        firebase
+          .firestore()
+          .runTransaction((transaction) => {
+            return transaction.get(restaurantDocRef).then((doc) => {
+              if (!doc.exists) {
+                throw "Document does not exist!";
+              }
+
+              // Get the current value of the required fields or initialize them if they don't exist
+              let totalRatingSummation = doc.data().totalRatingSummation || 0;
+              let totalOrdersRated = doc.data().totalOrdersRated || 0;
+
+              // Perform the increment
+              transaction.update(restaurantDocRef, {
+                totalRatingSummation: parseInt(totalRatingSummation) + parseInt(rating),
+                totalOrdersRated: totalOrdersRated + 1,
+              });
+            });
+          })
+          .then(() => {
+            console.log("successfully updated restaurant's totalOrderRated and totalRatingSummation ");
+          })
+          .catch((error) => {
+            console.error("Transaction failed: ", error);
+            console.log("Failed to update estaurant's totalOrderRated and totalRatingSummation");
+          });
+
+        alert("Review and rating submitted successfully!");
         this.setState((prevState) => ({
           existingReviews: { ...prevState.existingReviews, [order.id]: review },
+          existingRatings: {
+            ...prevState.existingRatings,
+            [order.id]: parseInt(rating),
+          },
         }));
       })
-      .catch((error) =>
-        console.error("Error submitting restaurant review: ", error)
-      );
+      .catch((error) => {
+        console.error("Error submitting review and rating: ", error);
+        alert("Failed to submit review and rating.");
+      });
   };
 
   handleTabs = (tabName) => {
@@ -191,10 +197,10 @@ fetchReview = (order, collectionName) => {
     }
   };
 
-  handleReviewChange = (value, orderId) => {
+  handleReviewChange = (value, orderId, type) => {
     this.setState((prevState) => ({
-      reviews: {
-        ...prevState.reviews,
+      [type]: {
+        ...prevState[type],
         [orderId]: value,
       },
     }));
@@ -202,155 +208,153 @@ fetchReview = (order, collectionName) => {
 
   _renderActiveOrders() {
     const { myOrder } = this.props;
-    if (myOrder) {
-      return myOrder
-        .filter(
-          (order) =>
-            order.status === "PENDING" ||
-            order.status === "IN PROGRESS" ||
-            order.status === "READY FOR COLLECTION"
-        )
-        .map((order) => (
-          <div className="order-card" key={order.id}>
-            <div className="order-item">
-              {Object.keys(order.itemsList).map((itemKey) => {
-                const item = order.itemsList[itemKey];
-                return (
-                  <div key={itemKey} className="order-content">
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        overflow: "hidden",
-                        width: "100%",
-                        height: "100px",
-                      }}
-                    >
-                      <img
+    return myOrder
+      ? myOrder
+          .filter((order) =>
+            ["PENDING", "IN PROGRESS", "READY FOR COLLECTION"].includes(
+              order.status
+            )
+          )
+          .map((order) => (
+            <div className="order-card" key={order.id}>
+              <div className="order-item">
+                {Object.keys(order.itemsList).map((itemKey) => {
+                  const item = order.itemsList[itemKey];
+                  return (
+                    <div key={itemKey} className="order-content">
+                      <div
                         style={{
-                          maxWidth: "100%",
-                          maxHeight: "100%",
-                          objectFit: "contain",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          overflow: "hidden",
+                          width: "100%",
+                          height: "100px",
                         }}
-                        className="order-image"
-                        alt="Order Item"
-                        src={item.itemImageUrl}
-                      />
-                    </div>
-                    <div className="order-details">
-                      <h5 className="order-title">
-                        {item.itemTitle} ${item.itemPrice} Surprise Box
-                      </h5>
-                      <div className="order-status">
-                        <span
-                          className={`status-indicator ${order.status.toLowerCase()}`}
-                        ></span>
-                        <span>
-                          {
-                            order.status === "PENDING"
-                              ? "Order is awaiting acceptance from the restaurant"
-                              : order.status === "IN PROGRESS"
-                              ? "Order is being prepared"
-                              : order.status === "READY FOR COLLECTION"
-                              ? "Order is ready for collection"
-                              : "" // Fallback text if needed
-                          }
-                        </span>
+                      >
+                        <img
+                          style={{
+                            maxWidth: "100%",
+                            maxHeight: "100%",
+                            objectFit: "contain",
+                          }}
+                          className="order-image"
+                          alt="Order Item"
+                          src={item.itemImageUrl}
+                        />
+                      </div>
+                      <div className="order-details">
+                        <h5 className="order-title">
+                          {item.itemTitle} ${item.itemPrice} Surprise Box
+                        </h5>
+                        <div className="order-status">
+                          <span
+                            className={`status-indicator ${order.status.toLowerCase()}`}
+                          ></span>
+                          <span>{order.status}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        ));
-    }
-    return null; // Render nothing if there are no orders
+          ))
+      : null;
   }
 
   _renderPastOrders() {
     const { myOrder } = this.props;
-    const { reviews, existingReviews } = this.state;
-    if (myOrder) {
-      return myOrder
-        .filter((order) => order.status === "COLLECTED")
-        .map((order) => (
-          <div className="order-card" key={order.id}>
-            <div className="order-item">
-              {Object.keys(order.itemsList).map((itemKey) => {
-                const item = order.itemsList[itemKey];
-                return (
-                  <div key={itemKey} className="order-content">
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        overflow: "hidden",
-                        width: "100%",
-                        height: "100px",
-                      }}
-                    >
-                      <img
+    const { reviews, ratings, existingReviews, existingRatings } = this.state;
+    return myOrder
+      ? myOrder
+          .filter((order) => order.status === "COLLECTED")
+          .map((order) => (
+            <div className="order-card" key={order.id}>
+              <div className="order-item">
+                {Object.keys(order.itemsList).map((itemKey) => {
+                  const item = order.itemsList[itemKey];
+                  return (
+                    <div key={itemKey} className="order-content">
+                      <div
                         style={{
-                          maxWidth: "100%",
-                          maxHeight: "100%",
-                          objectFit: "contain",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          overflow: "hidden",
+                          width: "100%",
+                          height: "100px",
                         }}
-                        className="order-image"
-                        alt="Order Item"
-                        src={item.itemImageUrl}
-                      />
-                    </div>
-                    <div className="order-details">
-                      <h5 className="order-title">
-                        {item.itemTitle} ${item.itemPrice} Surprise Box
-                      </h5>
-                      <div className="order-status">
-                        <span
-                          className={`status-indicator ${order.status.toLowerCase()}`}
-                        ></span>
-                        <span>
-                          {
-                            order.status === "PENDING"
-                              ? "Order is awaiting acceptance from the restaurant"
-                              : order.status === "IN PROGRESS"
-                              ? "Order is being prepared"
-                              : order.status === "READY FOR COLLECTION"
-                              ? "Order is ready for collection"
-                              : "" // Fallback text if needed
-                          }
-                        </span>
+                      >
+                        <img
+                          style={{
+                            maxWidth: "100%",
+                            maxHeight: "100%",
+                            objectFit: "contain",
+                          }}
+                          className="order-image"
+                          alt="Order Item"
+                          src={item.itemImageUrl}
+                        />
+                      </div>
+                      <div className="order-details">
+                        <h5 className="order-title">
+                          {item.itemTitle} ${item.itemPrice} Surprise Box
+                        </h5>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-              <div className="review-section">
-                <input
-                  type="text"
-                  placeholder="Enter your review"
-                  className="review-input"
-                  value={reviews[order.id] || ""}
-                  onChange={(e) =>
-                    this.handleReviewChange(e.target.value, order.id)
-                  }
-                  disabled={!!existingReviews[order.id]}
-                />
-                <button
-                  onClick={() => this.submitReview(order)}
-                  className="btn btn-primary submit-review-btn"
-                  disabled={!!existingReviews[order.id]}
-                >
-                  Submit Review
-                </button>
+                  );
+                })}
+                <div className="review-section">
+                  Review :
+                  <input
+                    type="text"
+                    placeholder="Enter your review"
+                    className="review-input"
+                    style={{ width: '100%', padding: '10px', boxSizing: 'border-box' }} // Added inline styles
+                    value={reviews[order.id] || ""}
+                    onChange={(e) =>
+                      this.handleReviewChange(
+                        e.target.value,
+                        order.id,
+                        "reviews"
+                      )
+                    }
+                    disabled={!!existingReviews[order.id]}
+                  />
+                  <br></br>
+                  Rating :
+                  <input
+                    type="number"
+                    placeholder="Rate 1-10"
+                    className="rating-input"
+                    style={{ width: '100%', padding: '10px', boxSizing: 'border-box' }} // Added inline styles
+                    value={ratings[order.id] || ""}
+                    onChange={(e) =>
+                      this.handleReviewChange(
+                        e.target.value,
+                        order.id,
+                        "ratings"
+                      )
+                    }
+                    min="1"
+                    max="10"
+                    disabled={!!existingRatings[order.id]}
+                  />
+                  <br></br>
+                  <br></br>
+                  <button
+                    onClick={() => this.submitReviewAndRating(order)}
+                    className="btn btn-primary submit-rating-btn"
+                    disabled={!!existingRatings[order.id] && !!existingReviews[order.id]}
+                  >
+                    Submit Rating
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ));
-    }
-    return null; // Render nothing if there are no past orders
+          ))
+      : null;
   }
 
   render() {
@@ -366,13 +370,13 @@ fetchReview = (order, collectionName) => {
                   <div className="col-lg-2 col-md-3 col-6 text-lg-center text-md-center pr-0 mb-2">
                     <img
                       className="p-2 bg-white rounded text-center"
-                      alt="Natural Healthy Food"
+                      alt="User Profile"
                       style={{ width: "60%" }}
                       src={userDetails.userProfileImageUrl}
                     />
                   </div>
                   <div className="col-lg-10 col-md-9 col-12 pl-lg-0 pl-md-0">
-                    <h1 className="restaurant-title">{userDetails.userName}</h1>
+                    <h1 className="user-title">{userDetails.userName}</h1>
                   </div>
                 </div>
               )}
