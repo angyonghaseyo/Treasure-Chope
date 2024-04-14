@@ -342,6 +342,7 @@ export default class RegisterRestaurant extends Component {
         propsHistory: this.props.history,
         typeOfFood: typeOfFood.filter((food) => food.trim() !== ""),
         restaurantDescription: restaurantDescription,
+        userFavorites: [],
         //uenNumber: uenNumber,
         //bankAccountNumber: bankAccountNumber,
         //selectedBank: selectedBank,
