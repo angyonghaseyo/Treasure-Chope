@@ -197,30 +197,28 @@ class Restaurants extends Component {
                 <h5>{restaurant.userName}</h5>
                 <p><small>Type of Foods: <span>{restaurant.typeOfFood.join(", ")}</span></small></p>
               </div>
-              <div className="col-lg-3 col-md-3 col-sm-12 py-4 px-0">
-              <span onClick={() => this.toggleFavorite(restaurant.id)}
-               style={{
-                cursor: 'pointer',
-                //display: "inline-block",
-                textAlign: "center",
-                borderRadius: "13px",
-                padding: "0px", // Remove padding to prevent extra space
-                marginRight: "20px",
-              }}>
-              <Heart isClick={isFavorited} onClick={(e) => {
-      e.stopPropagation(); // Prevent the event from triggering the span's onClick
-      this.toggleFavorite(restaurant.id);
-    }} />
-
-              </span>
-              <button type="button" onClick={() => this.handleViewMenuBtn(restaurant)}
-                className="btn btn-warning btn-sm text-uppercase" style={{ marginBottom: "8px" }}>
-                View Menu
-              </button>
-            </div>
-
+              <div className="col-lg-3 col-md-3 col-sm-12 d-flex justify-content-center flex-column px-0">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span onClick={() => this.toggleFavorite(restaurant.id)}
+                  style={{
+                    cursor: 'pointer',
+                    textAlign: "center",
+                    borderRadius: "13px",
+                    marginLeft: "-30px",
+                  }}>
+                  <Heart isClick={isFavorited} onClick={(e) => {
+                      e.stopPropagation(); // Prevent the event from triggering the span's onClick
+                      this.toggleFavorite(restaurant.id);
+                  }} />
+                </span>
+                <button style={{marginRight:"10px"}} type="button" onClick={() => this.handleViewMenuBtn(restaurant)}
+                  className="btn btn-warning btn-sm text-uppercase">
+                  View Menu
+                </button>
+              </div>
             </div>
           </div>
+        </div>
         ) : null;
       });
     }
@@ -236,7 +234,7 @@ class Restaurants extends Component {
       const isFavorited = this.state.userFavorites.includes(restaurant.id);
       return restaurant.userProfileImageUrl && restaurant.userName && restaurant.typeOfFood ? (
         <div className="container bg-white p-3 px-0 mb-4" key={restaurant.id}>
-          <div className="row" style={{ marginBottom: "-10px" }}>
+          <div className="row" style={{ alignItems: 'center' }}>
             <div className="col-lg-3 col-md-3 col-sm-12 px-0 text-center">
               <img style={{ height: "85px", width: "130px", margin: '0 auto' }} alt="Restaurant" src={restaurant.userProfileImageUrl} />
             </div>
@@ -244,26 +242,25 @@ class Restaurants extends Component {
               <h5>{restaurant.userName}</h5>
               <p><small>Type of Foods: <span>{restaurant.typeOfFood.join(", ")}</span></small></p>
             </div>
-            <div className="col-lg-3 col-md-3 col-sm-12 py-4 px-0">
-              <span onClick={() => this.toggleFavorite(restaurant.id)}
-               style={{
-                cursor: 'pointer',
-                //display: "inline-block",
-                textAlign: "center",
-                borderRadius: "13px",
-                padding: "0px", // Remove padding to prevent extra space
-                marginRight: "20px",
-              }}>
-              <Heart isClick={isFavorited} onClick={(e) => {
-      e.stopPropagation(); // Prevent the event from triggering the span's onClick
-      this.toggleFavorite(restaurant.id);
-    }} />
-
-              </span>
-              <button type="button" onClick={() => this.handleViewMenuBtn(restaurant)}
-                className="btn btn-warning btn-sm text-uppercase" style={{ marginBottom: "8px" }}>
-                View Menu
-              </button>
+            <div className="col-lg-3 col-md-3 col-sm-12 d-flex justify-content-center flex-column px-0">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <span onClick={() => this.toggleFavorite(restaurant.id)}
+                  style={{
+                    cursor: 'pointer',
+                    textAlign: "center",
+                    borderRadius: "13px",
+                    marginLeft: "-30px",
+                  }}>
+                  <Heart isClick={isFavorited} onClick={(e) => {
+                      e.stopPropagation(); // Prevent the event from triggering the span's onClick
+                      this.toggleFavorite(restaurant.id);
+                  }} />
+                </span>
+                <button style={{marginRight:"10px"}} type="button" onClick={() => this.handleViewMenuBtn(restaurant)}
+                  className="btn btn-warning btn-sm text-uppercase">
+                  View Menu
+                </button>
+              </div>
             </div>
           </div>
         </div>
