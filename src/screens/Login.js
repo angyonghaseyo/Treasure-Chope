@@ -27,7 +27,8 @@ export default class Login extends Component {
       showError: false,
       userLoginEmail: "",
       userLoginPassword: "",
-      loginErrorMessage: '',
+      loginErrorMessage: "",
+      userFavorites: [],
     };
     this.handleForms = this.handleForms.bind(this);
     this.handleUserName = this.handleUserName.bind(this);
@@ -234,6 +235,7 @@ export default class Login extends Component {
       userAge,
       userProfileImage,
       userTNC,
+      userFavorites,
     } = this.state;
 
     event.preventDefault();
@@ -316,6 +318,8 @@ export default class Login extends Component {
         propsHistory: this.props.history,
         typeOfFood: [],
         restaurantDescription: "",
+        // Add the favourites array to userDetails
+        userFavorites,
       };
       try {
         await signUp(userDetails);
@@ -338,10 +342,10 @@ export default class Login extends Component {
 
     try {
       await logIn(userLoginDetails);
-      this.setState({ loginErrorMessage: '' });
+      this.setState({ loginErrorMessage: "" });
       // console.log(LoginReturn)
     } catch (error) {
-      console.error("Login error:", error); 
+      console.error("Login error:", error);
       this.setState({ loginErrorMessage: error });
       // console.log("Error in Login => ", error);
     }
@@ -503,7 +507,6 @@ export default class Login extends Component {
                   type="submit"
                   className="btn btn-warning text-uppercase mb-3"
                   style={{ backgroundColor: "#c13f86", color: "white" }}
-
                 >
                   <b>Create an Account</b>
                 </button>
