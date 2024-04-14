@@ -37,6 +37,7 @@ function signUp(userDetails) {
       isRestaurant,
       typeOfFood,
       restaurantDescription,
+      userFavorites, // Add favourites array to userDetails
     } = userDetails;
     firebase
       .auth()
@@ -74,6 +75,7 @@ function signUp(userDetails) {
                   userProfileImageUrl: userProfileImageUrl,
                   typeOfFood: typeOfFood,
                   restaurantDescription: restaurantDescription,
+                  userFavorites: userFavorites, // Include favourites array in userDetailsForDb
                 };
                 db.collection("users")
                   .doc(uid)

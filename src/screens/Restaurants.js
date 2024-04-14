@@ -1,15 +1,13 @@
 import React, { Component } from "react";
-// import Navbar from '../components/Navbar';
 import Navbar2 from "../components/Navbar2";
 import Footer from "../components/Footer";
 import { connect } from "react-redux";
 import { restaurant_list } from "../store/action";
 import firebase from "../config/firebase";
-
 import "bootstrap/dist/css/bootstrap.css";
 import "../App.css";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Heart from "react-animated-heart";
 
 class Restaurants extends Component {
   constructor() {
@@ -19,21 +17,148 @@ class Restaurants extends Component {
       defaultSearchValue: "",
       renderRestaurantList: true,
       renderSearchRestaurants: false,
-      menuItems: {}, // new state to store menu items
+      menuItems: {},
       sortingMethod: 'alphabetical',
+      userFavorites: [],
     };
     this.handleSearchBar = this.handleSearchBar.bind(this);
+    this.toggleFavorite = this.toggleFavorite.bind(this);
   }
 
   componentDidMount() {
     this.props.restaurant_list();
-    //this.fetchAllMenuItems(); // Call a new method to fetch all menu items on mount
+    const userId = firebase.auth().currentUser?.uid;
+    if (userId) {
+      firebase.firestore().collection('users').doc(userId).get()
+        .then(docSnapshot => {
+          if (docSnapshot.exists) {
+            this.setState({ userFavorites: docSnapshot.data().userFavorites || [] });
+          }
+        })
+        .catch(error => {
+          console.error("Error fetching user favorites:", error);
+        });
+    }
+  
+    // Retrieve favorites from local storage
+    const storedFavorites = localStorage.getItem('userFavorites');
+    if (storedFavorites) {
+      this.setState({ userFavorites: JSON.parse(storedFavorites) });
+    }
+  
     const { state } = this.props.location;
     if (state) {
       this.setState({
         defaultSearchValue: state,
       });
       this.handleSearchBar(state);
+    }
+  }
+  
+
+  /*componentDidMount() {
+    this.props.restaurant_list();
+    const userId = firebase.auth().currentUser?.uid;
+    if (userId) {
+      firebase.firestore().collection('users').doc(userId).get()
+        .then(docSnapshot => {
+          if (docSnapshot.exists) {
+            this.setState({ userFavorites: docSnapshot.data().userFavorites || [] });
+          }
+        })
+        .catch(error => {
+          console.error("Error fetching user favorites:", error);
+        });
+    }
+    const { state } = this.props.location;
+    if (state) {
+      this.setState({
+        defaultSearchValue: state,
+      });
+      this.handleSearchBar(state);
+    }
+  }*/
+
+  /*toggleFavorite(restaurantId) {
+    const userId = firebase.auth().currentUser?.uid;
+    if (!userId) {
+      console.error("User is not logged in");
+      return;
+    }
+
+    const userRef = firebase.firestore().collection("users").doc(userId);
+    firebase.firestore().runTransaction(async (transaction) => {
+      const userDoc = await transaction.get(userRef);
+      if (!userDoc.exists) {
+        throw new Error("User document does not exist");
+      }
+
+      const userData = userDoc.data();
+      let updatedFavorites = userData.userFavorites || [];
+      if (updatedFavorites.includes(restaurantId)) {
+        updatedFavorites = updatedFavorites.filter(id => id !== restaurantId);
+      } else {
+        updatedFavorites.push(restaurantId);
+      }
+      transaction.update(userRef, { userFavorites: updatedFavorites });
+      return updatedFavorites; // Return the new favorites list for immediate update
+    }).then((updatedFavorites) => {
+      this.setState({ userFavorites: updatedFavorites });
+      console.log("Favorites updated successfully!");
+    }).catch(error => {
+      console.error("Error updating favorites:", error);
+    });
+  }*/
+
+  toggleFavorite(restaurantId) {
+    const userId = firebase.auth().currentUser?.uid;
+    if (!userId) {
+      console.error("User is not logged in");
+      return;
+    }
+  
+    const userRef = firebase.firestore().collection("users").doc(userId);
+    firebase.firestore().runTransaction(async (transaction) => {
+      const userDoc = await transaction.get(userRef);
+      if (!userDoc.exists) {
+        throw new Error("User document does not exist");
+      }
+  
+      const userData = userDoc.data();
+      let updatedFavorites = userData.userFavorites || [];
+      if (updatedFavorites.includes(restaurantId)) {
+        updatedFavorites = updatedFavorites.filter(id => id !== restaurantId);
+      } else {
+        updatedFavorites.push(restaurantId);
+      }
+      transaction.update(userRef, { userFavorites: updatedFavorites });
+      return updatedFavorites; // Return the new favorites list for immediate update
+    }).then((updatedFavorites) => {
+      // Update state
+      this.setState({ userFavorites: updatedFavorites });
+  
+      // Store favorites in local storage
+      localStorage.setItem('userFavorites', JSON.stringify(updatedFavorites));
+  
+      console.log("Favorites updated successfully!");
+    }).catch(error => {
+      console.error("Error updating favorites:", error);
+    });
+  }
+  
+
+  handleSearchBar(event) {
+    const searchText = event;
+    const { restaurantList } = this.props;
+    if (restaurantList) {
+      const result = restaurantList.filter(val => val.userName.toLowerCase().includes(searchText.toLowerCase()));
+      this.setState({
+        renderRestaurantList: searchText.length === 0,
+        renderSearchRestaurants: searchText.length > 0,
+        searchRestaurants: result,
+        searchText: searchText,
+        defaultSearchValue: searchText,
+      });
     }
   }
 
@@ -48,211 +173,103 @@ class Restaurants extends Component {
     });
   }
 
-
-  handleSearchBar(event) {
-    const searchText = event;
-    const { restaurantList } = this.props;
-    if (restaurantList) {
-      Object.keys(restaurantList).map((val) => { });
-      const result = restaurantList.filter((val) => {
-        return (
-          val.userName
-            .toLocaleLowerCase()
-            .indexOf(searchText.toLocaleLowerCase()) !== -1
-        );
-      });
-      if (searchText.length > 0) {
-        this.setState({
-          renderRestaurantList: false,
-          renderSearchRestaurants: true,
-          searchRestaurants: result,
-          searchText: searchText,
-          defaultSearchValue: searchText,
-        });
-      } else {
-        this.setState({
-          renderRestaurantList: true,
-          renderSearchRestaurants: false,
-          searchRestaurants: result,
-          searchText: searchText,
-          defaultSearchValue: searchText,
-        });
-      }
-    }
-  }
-
   handleViewMenuBtn(resDetails) {
     this.props.history.push("/restaurant-details", resDetails);
   }
 
   _renderRestaurantList() {
     const { restaurantList } = this.props;
-    const { sortingMethod } = this.state;
+    const { sortingMethod, userFavorites } = this.state;
     if (restaurantList) {
-      let sortedRestaurantArray = Object.keys(restaurantList)
-        .map(key => restaurantList[key]);
-
-      // Apply sorting based on the current sortingMethod
-      if (sortingMethod === 'alphabetical_asc') {
-        sortedRestaurantArray.sort((a, b) => a.userName.localeCompare(b.userName));
-      } else if (sortingMethod === 'alphabetical_desc') {
-        sortedRestaurantArray.sort((a, b) => b.userName.localeCompare(a.userName));
-      } else if (sortingMethod === 'ratings') {
-        // Example sorting by rating - adjust based on your data structure
-        //ortedRestaurantArray.sort((a, b) => b.rating - a.rating);
+      let sortedRestaurantArray = [...restaurantList];
+      if (sortingMethod.includes('alphabetical')) {
+        sortedRestaurantArray.sort((a, b) => sortingMethod === 'alphabetical_asc' ? a.userName.localeCompare(b.userName) : b.userName.localeCompare(a.userName));
       }
-
-      // Map over the sorted array to render the list
-      return sortedRestaurantArray.map((restaurant) => {
-        if (
-          !restaurant.userProfileImageUrl ||
-          !restaurant.userName ||
-          !restaurant.typeOfFood
-        ) {
-          // Skip rendering this entry if data is missing
-          return null;
-        }
-        return (
-          <div
-            className="container bg-white p-3 px-0 mb-4"
-            key={restaurant.id}
-          >
-            <div className="row" style={{marginBottom:"-10px"}}>
-              <div className="col-lg-3 col-md-3 col-sm-12 px-0 text-center" >
-                <img
-                  style={{ height: "85px", width:"130px", margin: '0 auto'  }}
-                  alt="Natural Healthy Food"
-                  src={restaurant.userProfileImageUrl}
-                />
+      return sortedRestaurantArray.map(restaurant => {
+        const isFavorited = userFavorites.includes(restaurant.id);
+        return restaurant.userProfileImageUrl && restaurant.userName && restaurant.typeOfFood ? (
+          <div className="container bg-white p-3 px-0 mb-4" key={restaurant.id}>
+            <div className="row" style={{ marginBottom: "-10px" }}>
+              <div className="col-lg-3 col-md-3 col-sm-12 px-0 text-center">
+                <img style={{ height: "85px", width: "130px", margin: '0 auto' }} alt="Restaurant" src={restaurant.userProfileImageUrl} />
               </div>
               <div className="col-lg-6 col-md-6 col-sm-12 px-0">
-                <p>
-                  <small className="">
-                    <FontAwesomeIcon icon="star" className="rating mr-1" />
-                    <FontAwesomeIcon icon="star" className="rating mr-1" />
-                    <FontAwesomeIcon icon="star" className="rating mr-1" />
-                    <FontAwesomeIcon icon="star" className="rating mr-1" />
-                    <FontAwesomeIcon icon="star" className="rating mr-1" />
-                  </small>
-                  <small>(1) Review</small>
-                </p>
-                <h5 className="">{restaurant.userName}</h5>
-                <p className="">
-                  <small>
-                    Type of Foods:
-                    <span> {restaurant.typeOfFood.join(", ")}</span>
-                  </small>
-                </p>
+                <h5>{restaurant.userName}</h5>
+                <p><small>Type of Foods: <span>{restaurant.typeOfFood.join(", ")}</span></small></p>
               </div>
               <div className="col-lg-3 col-md-3 col-sm-12 py-4 px-0">
-                <span
-                  style={{
-                    display: "inline-block",
-                    textAlign: "center",
-                    borderRadius: "3px",
-                    border: "1px solid #dddddd",
-                    padding: "6px 7px 0px 7px",
-                    marginRight: "16px",
-                  }}
-                >
-                  <FontAwesomeIcon icon="heart" className="text-success" />
-                </span>
-                <button
-                  type="button"
-                  onClick={() => this.handleViewMenuBtn(restaurant)} // Use restaurant directly
-                  className="btn btn-warning btn-sm text-uppercase"
-                  style={{ marginBottom: "8px" }}
-                >
-                  View Menu
-                </button>
-              </div>
+              <span onClick={() => this.toggleFavorite(restaurant.id)}
+               style={{
+                cursor: 'pointer',
+                //display: "inline-block",
+                textAlign: "center",
+                borderRadius: "13px",
+                padding: "0px", // Remove padding to prevent extra space
+                marginRight: "20px",
+              }}>
+              <Heart isClick={isFavorited} onClick={(e) => {
+      e.stopPropagation(); // Prevent the event from triggering the span's onClick
+      this.toggleFavorite(restaurant.id);
+    }} />
+
+              </span>
+              <button type="button" onClick={() => this.handleViewMenuBtn(restaurant)}
+                className="btn btn-warning btn-sm text-uppercase" style={{ marginBottom: "8px" }}>
+                View Menu
+              </button>
+            </div>
+
             </div>
           </div>
-        );
+        ) : null;
       });
     }
   }
 
-
   _renderSearchRestaurants() {
     const { searchText, searchRestaurants, sortingMethod } = this.state;
-  
-    // Convert search results into an array if it's not already one
-    let searchResultsArray = Object.keys(searchRestaurants)
-      .map(key => searchRestaurants[key]);
-  
-    // Apply sorting based on the current sortingMethod
-    if (sortingMethod === 'alphabetical_asc') {
-      searchResultsArray.sort((a, b) => a.userName.localeCompare(b.userName));
-    } else if (sortingMethod === 'alphabetical_desc') {
-      searchResultsArray.sort((a, b) => b.userName.localeCompare(a.userName));
-    } 
-    // Implement other sorting methods if needed, like 'ratings'
-  
-    // Now, map over the sorted array to render the search results
-    return searchResultsArray.map((restaurant) => {
-      // Check if all necessary data is available for each restaurant
-      if (!restaurant.userProfileImageUrl || !restaurant.userName || !restaurant.typeOfFood) {
-        return null; // Skip rendering this entry if data is missing
-      }
-  
-      return (
+    let searchResultsArray = [...searchRestaurants];
+    if (sortingMethod.includes('alphabetical')) {
+      searchResultsArray.sort((a, b) => sortingMethod === 'alphabetical_asc' ? a.userName.localeCompare(b.userName) : b.userName.localeCompare(a.userName));
+    }
+    return searchResultsArray.map(restaurant => {
+      const isFavorited = this.state.userFavorites.includes(restaurant.id);
+      return restaurant.userProfileImageUrl && restaurant.userName && restaurant.typeOfFood ? (
         <div className="container bg-white p-3 px-0 mb-4" key={restaurant.id}>
-          <div className="row" style={{marginBottom:"-10px"}}>
+          <div className="row" style={{ marginBottom: "-10px" }}>
             <div className="col-lg-3 col-md-3 col-sm-12 px-0 text-center">
-              <img
-                style={{ height: "85px", width: "130px", margin: '0 auto' }}
-                alt="Natural Healthy Food"
-                src={restaurant.userProfileImageUrl}
-              />
+              <img style={{ height: "85px", width: "130px", margin: '0 auto' }} alt="Restaurant" src={restaurant.userProfileImageUrl} />
             </div>
             <div className="col-lg-6 col-md-6 col-sm-12 px-0">
-              <p>
-                <small>
-                  <FontAwesomeIcon icon="star" className="rating mr-1" />
-                  <FontAwesomeIcon icon="star" className="rating mr-1" />
-                  <FontAwesomeIcon icon="star" className="rating mr-1" />
-                  <FontAwesomeIcon icon="star" className="rating mr-1" />
-                  <FontAwesomeIcon icon="star" className="rating mr-1" />
-                  
-                </small>
-                <small>(1) Review</small>
-              </p>
               <h5>{restaurant.userName}</h5>
-              <p>
-                <small>
-                  Type of Foods: <span>{restaurant.typeOfFood.join(", ")}</span>
-                </small>
-              </p>
+              <p><small>Type of Foods: <span>{restaurant.typeOfFood.join(", ")}</span></small></p>
             </div>
             <div className="col-lg-3 col-md-3 col-sm-12 py-4 px-0">
-              <span
-                style={{
-                  display: "inline-block",
-                  textAlign: "center",
-                  borderRadius: "3px",
-                  border: "1px solid #dddddd",
-                  padding: "6px 7px 0px 7px",
-                  marginRight: "16px",
-                }}
-              >
-                <FontAwesomeIcon icon="heart" className="text-success" />
+              <span onClick={() => this.toggleFavorite(restaurant.id)}
+               style={{
+                cursor: 'pointer',
+                //display: "inline-block",
+                textAlign: "center",
+                borderRadius: "13px",
+                padding: "0px", // Remove padding to prevent extra space
+                marginRight: "20px",
+              }}>
+              <Heart isClick={isFavorited} onClick={(e) => {
+      e.stopPropagation(); // Prevent the event from triggering the span's onClick
+      this.toggleFavorite(restaurant.id);
+    }} />
+
               </span>
-              <button
-                type="button"
-                onClick={() => this.handleViewMenuBtn(restaurant)}
-                className="btn btn-warning btn-sm text-uppercase"
-                style={{ marginBottom: "8px" }}
-              >
+              <button type="button" onClick={() => this.handleViewMenuBtn(restaurant)}
+                className="btn btn-warning btn-sm text-uppercase" style={{ marginBottom: "8px" }}>
                 View Menu
               </button>
             </div>
           </div>
         </div>
-      );
+      ) : null;
     });
   }
-  
 
   render() {
     const {
@@ -263,32 +280,17 @@ class Restaurants extends Component {
     return (
       <div>
         <div className="container-fluid restaurants-cont1">
-          <div className="">
-            <Navbar2 history={this.props.history} />
-            <div className="container px-0 restaurants-cont1-text">
-              <div className="container">
-                <div className="row justify-content-center">
-                  <div className="col-lg-6 col-md-6 col-sm-12 mb-3">
-                    <div className="input-group mb-3">
-                      <div className="input-group-prepend">
-                        <span
-                          className="input-group-text"
-                          id="inputGroup-sizing-sm"
-                        >
-                          <FontAwesomeIcon icon="search" />
-                        </span>
-                      </div>
-                      <input
-                        type="text"
-                        value={defaultSearchValue}
-                        onChange={(e) => this.handleSearchBar(e.target.value)}
-                        className="form-control"
-                        placeholder="RESTAURANT NAME"
-                        aria-label="Sizing example input"
-                        aria-describedby="inputGroup-sizing-sm"
-                      />
-                    </div>
+          <Navbar2 history={this.props.history} />
+          <div className="container px-0 restaurants-cont1-text">
+            <div className="row justify-content-center">
+              <div className="col-lg-6 col-md-6 col-sm-12 mb-3">
+                <div className="input-group mb-3">
+                  <div className="input-group-prepend">
+                    <span className="input-group-text" id="inputGroup-sizing-sm">
+                      <FontAwesomeIcon icon="search" />
+                    </span>
                   </div>
+                  <input type="text" value={defaultSearchValue} onChange={(e) => this.handleSearchBar(e.target.value)} className="form-control" placeholder="RESTAURANT NAME" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" />
                 </div>
               </div>
             </div>
@@ -322,8 +324,6 @@ class Restaurants extends Component {
                     </li>
                   </ul>
                 </div>
-
-
               </div>
             </div>
           </div>
@@ -345,5 +345,4 @@ const mapDispatchToProps = (dispatch) => {
     restaurant_list: () => dispatch(restaurant_list()),
   };
 };
-
 export default connect(mapStateToProps, mapDispatchToProps)(Restaurants);
