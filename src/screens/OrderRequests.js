@@ -15,8 +15,18 @@ class OrderRequests extends Component {
       mainTab: "activeOrders", // For switching between Active and Past Orders
       activeSubTab: "pending", // For switching between Pending, Preparing, and Ready for Collection under Active Orders
       userDetails: null,
+      reviewVisibility: {}, // Object to track visibility of each rating
     };
   }
+
+  toggleReviewVisibility = (orderId) => {
+    this.setState((prevState) => ({
+      reviewVisibility: {
+        ...prevState.reviewVisibility,
+        [orderId]: !prevState.reviewVisibility[orderId], // Toggle the visibility for the specific order ID
+      },
+    }));
+  };
 
   async componentDidMount() {
     this.props.order_request();
@@ -230,6 +240,41 @@ class OrderRequests extends Component {
     }
   }
 
+  renderStars = (rating) => {
+    // Ensure the rating is within the expected range
+    const safeRating = Math.max(0, Math.min(5, rating));
+    const fullStars = Math.floor(safeRating);
+    const emptyStars = 5 - fullStars; // This should now never be negative
+
+    return (
+      <>
+        {"★"
+          .repeat(fullStars)
+          .split("")
+          .map((star, index) => (
+            <span key={index} style={{ color: "#c13f86", marginRight: "2px" }}>
+              {star}
+            </span>
+          ))}
+        {"☆"
+          .repeat(emptyStars)
+          .split("")
+          .map((star, index) => (
+            <span key={index} style={{ color: "#1D0A15", marginRight: "2px" }}>
+              {star}
+            </span>
+          ))}
+      </>
+    );
+  };
+
+  adjustInputSize = (element) => {
+    if (element) {
+      const length = element.value.length;
+      element.size = Math.max(5, length); // Set the size attribute based on content length
+    }
+  };
+
   _renderPastOrders() {
     const { orderRequest } = this.props;
     if (orderRequest) {
@@ -237,6 +282,11 @@ class OrderRequests extends Component {
         .filter((key) => orderRequest[key].status === "COLLECTED")
         .map((key) => {
           const order = orderRequest[key];
+          const rating = Math.max(
+            0,
+            Math.min(5, parseFloat(order.rating || 0))
+          ); // Safely parse the rating and ensure it's within the range 0-5
+
           return (
             <div className="container border-bottom pb-2 mb-4" key={order.id}>
               <div className="row">
@@ -271,38 +321,73 @@ class OrderRequests extends Component {
                       </div>
                     );
                   })}
+
                   <span>
-                    {order.review ? (
-                      // Display the reviews if they exist
-                      <input
-                        type="text"
-                        value={order.review}
-                        readOnly
-                        style={{
-                          width: "100%",
-                          height: "50px", // or whatever height you prefer
-                          overflow: "auto",
-                          padding: "5px",
-                          fontSize: "1em",
-                        }}
-                      />
-                    ) : (
-                      // Display an empty text box if reviews don't exist
-                      <input
-                        type="text"
-                        value="Customer has not given review yet"
-                        readOnly
-                        style={{
-                          width: "100%",
-                          height: "50px", // or whatever height you prefer
-                          overflow: "auto",
-                          padding: "5px",
-                          fontSize: "1em",
-                          color: "grey",
-                        }}
-                      />
-                    )}
+                    <input
+                      type="text"
+                      value={
+                        rating > 0 ? `${rating} / 5` : "Rating not available"
+                      }
+                      readOnly
+                      className="rating-input"
+                      ref={this.adjustInputSize} // Adjust size when element is mounted
+                      placeholder="Rate this"
+                    />
+                    {this.renderStars(rating)}
                   </span>
+
+                  <button
+                    onClick={() => this.toggleReviewVisibility(order.id)}
+                    className="btn button-toggle"
+                    aria-expanded={this.state.reviewVisibility[order.id]}
+                  >
+                    {this.state.reviewVisibility[order.id]
+                      ? "Hide Reviews "
+                      : "Show Reviews "}
+                    <span
+                      className={
+                        this.state.reviewVisibility[order.id]
+                          ? "caret-up"
+                          : "caret-down"
+                      }
+                    ></span>
+                  </button>
+
+                  {this.state.reviewVisibility[order.id] && (
+                    <span>
+                      {order.review ? (
+                        <input
+                          type="text"
+                          value={order.review}
+                          readOnly
+                          style={{
+                            width: "100%",
+                            height: "50px", // or whatever height you prefer
+                            overflow: "auto",
+                            padding: "5px",
+                            fontSize: "1em",
+                            border: "1px solid #c13f86", // Set the border color
+
+                            backgroundColor: "#fbf2f7", // Optional: matching the soft pink background
+                          }}
+                        />
+                      ) : (
+                        <input
+                          type="text"
+                          value="Customer has not given review yet"
+                          readOnly
+                          style={{
+                            width: "100%",
+                            height: "50px", // or whatever height you prefer
+                            overflow: "auto",
+                            padding: "5px",
+                            fontSize: "1em",
+                            color: "grey",
+                          }}
+                        />
+                      )}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
@@ -325,10 +410,18 @@ class OrderRequests extends Component {
                       <div className="col-lg-2 col-md-3 col-6 text-lg-center text-md-center pr-0 mb-2">
                         <img
                           className="p-2 bg-white rounded text-center"
-                          alt="User Profile"
+                          alt="Natural Healthy Food"
                           style={{ width: "60%" }}
                           src={userDetails.userProfileImageUrl}
                         />
+                      </div>
+                      <div className="col-lg-10 col-md-9 col-12 pl-lg-0 pl-md-0">
+                        <h1 className="restaurant-title">
+                          {userDetails.userName}
+                        </h1>
+                        <p className="restaurant-text">
+                          {userDetails.typeOfFood.join(", ")}
+                        </p>
                       </div>
                     </div>
                   )}
