@@ -50,39 +50,113 @@ class RestaurantDetails extends Component {
     };
   }
 
+  // fetchReviews = async () => {
+  //   const { resDetails } = this.state;
+  //   let reviewsList = [];
+
+  //   try {
+  //     const ordersSnapshot = await firebase
+  //       .firestore()
+  //       .collection("users")
+  //       .doc(resDetails.id)
+  //       .collection("orderRequest")
+  //       .where("status", "==", "COLLECTED")
+  //       .get();
+
+  //     const userFetchPromises = ordersSnapshot.docs.map(async (doc) => {
+  //       const data = doc.data();
+  //       console.log("data is fetched: " + data + " " + data.review);
+  //       if (data.review && data.userEmail) {
+  //         console.log("am i here");
+  //         const userSnapshot = await firebase
+  //           .firestore()
+  //           .collection("users")
+  //           .where("email", "==", data.userEmail) // Make sure the field name is correct
+  //           .get();
+  //         console.log("userSnapshot: ", userSnapshot.docs[0].data().name);
+
+  //         if (!userSnapshot.empty) {
+  //           const userData = userSnapshot.docs[0].data();
+  //           console.log(
+  //             userData.name + data.review + data.totalRatingSummation
+  //           );
+  //           return {
+  //             reviewerName: userData.name, // Make sure userData contains 'name'
+  //             reviewText: data.review,
+  //             // Make sure you are calculating the rating correctly
+  //             rating: data.totalRatingSummation / data.totalOrdersRated,
+  //           };
+  //         } else {
+  //           // Handle the case where the user is not found
+  //           return null;
+  //         }
+  //       }
+  //       return null;
+  //     });
+
+  //     // Wait for all user fetch promises to complete
+  //     const fetchedReviews = await Promise.all(userFetchPromises);
+  //     console.log("fetchedReviews: ", fetchedReviews);
+
+  //     // Filter out any nulls in case some user details couldn't be fetched
+  //     reviewsList = fetchedReviews.filter((review) => review !== null);
+  //     console.log("reviewsList: ", reviewsList);
+
+  //     // Finally, update the state with the fetched reviews
+  //     this.setState({ reviews: reviewsList });
+  //   } catch (error) {
+  //     console.error("Error fetching reviews: ", error);
+  //   }
+  // };
+
   fetchReviews = async () => {
-    const { resDetails } = this.state; // assuming resDetails contains the restaurant ID
+    const { resDetails } = this.state;
     let reviewsList = [];
 
     try {
-      // Fetch all users
-      const usersSnapshot = await firebase
+      const ordersSnapshot = await firebase
         .firestore()
         .collection("users")
+        .doc(resDetails.id)
+        .collection("orderRequest")
+        .where("status", "==", "COLLECTED")
         .get();
 
-      // Await all promises from fetching each user's orderRequest where restaurantId matches
-      const reviewsPromises = usersSnapshot.docs.map(async (userDoc) => {
-        const ordersSnapshot = await firebase
-          .firestore()
-          .collection("users")
-          .doc(userDoc.id)
-          .collection("orderRequest")
-          .where("restaurantId", "==", resDetails.id) // Ensure each orderRequest contains a 'restaurantId' field
-          .get();
+      if (ordersSnapshot.empty) {
+        console.log("No orders with status 'COLLECTED' found.");
+        return; // Early return if no orders are found
+      }
 
-        ordersSnapshot.forEach((doc) => {
-          const data = doc.data();
-          if (data.review) {
-            reviewsList.push(data.review);
+      const userFetchPromises = ordersSnapshot.docs.map(async (doc) => {
+        const data = doc.data();
+        if (data.review && data.userEmail) {
+          const userSnapshot = await firebase
+            .firestore()
+            .collection("users")
+            .where("userEmail", "==", data.userEmail)
+            .get();
+
+          if (!userSnapshot.empty) {
+            const userData = userSnapshot.docs[0].data();
+            console.log("userData: ", userData);
+            console.log(data.review, data.rating);
+            console.log(userData.userProfileImageUrl);
+            return {
+              reviewerPhoto: userData.userProfileImageUrl,
+              reviewerName: userData.userName,
+              reviewText: data.review,
+              rating: data.rating,
+            };
+          } else {
+            console.log(`No user found with email: ${data.userEmail}`);
+            return null; // Return null if no user data found
           }
-        });
+        }
+        return null;
       });
 
-      // Wait for all promises to resolve
-      await Promise.all(reviewsPromises);
-
-      // Set state with aggregated reviews
+      const fetchedReviews = await Promise.all(userFetchPromises);
+      reviewsList = fetchedReviews.filter((review) => review !== null);
       this.setState({ reviews: reviewsList });
     } catch (error) {
       console.error("Error fetching reviews: ", error);
@@ -291,6 +365,88 @@ class RestaurantDetails extends Component {
     }
   }
 
+  _renderReviews() {
+    const { reviews } = this.state;
+    if (reviews.length === 0) {
+      return (
+        <p style={{ color: "#999", fontSize: "16px", fontFamily: "Poppins" }}>
+          No reviews available.
+        </p>
+      );
+    }
+
+    return (
+      <div style={{ backgroundColor: "#FBF2F7", padding: "15px" }}>
+        {reviews.map((review, index) => (
+          <div
+            key={index}
+            style={{
+              backgroundColor: "#ffffff",
+              border: "1px solid #dee1e9",
+              borderRadius: "8px",
+              padding: "20px",
+              boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+              position: "relative",
+              marginBottom: "10px",
+              display: "flex",
+              alignItems: "flex-start", // Aligns items at the top of the container
+            }}
+          >
+            <img
+              src={review.reviewerPhoto}
+              alt={`${review.reviewerName}'s profile`}
+              style={{
+                width: "50px", // Adjust size as needed
+                height: "50px", // Adjust size as needed
+                borderRadius: "50%", // Makes the image round
+                objectFit: "cover", // Ensures the image covers the area without distortion
+                marginRight: "15px", // Adds some space between the image and the text
+              }}
+            />
+            <div style={{ flex: 1 }}>
+              <h5
+                style={{
+                  color: "#1d0a15",
+                  fontFamily: "Montserrat, sans-serif",
+                  fontWeight: "bold",
+                  fontSize: "18px",
+                  marginBottom: "4px",
+                }}
+              >
+                {review.reviewerName}
+              </h5>
+              <p
+                style={{
+                  fontSize: "14px",
+                  color: "#666",
+                  fontFamily: "Poppins, sans-serif",
+                  margin: "0",
+                  width: "100%", // Ensures text uses the full width
+                }}
+              >
+                {review.reviewText}
+              </p>
+            </div>
+            <span
+              style={{
+                backgroundColor: "#c13f86",
+                color: "#FBF2F7",
+                padding: "3px 8px",
+                borderRadius: "4px",
+                fontSize: "14px",
+                position: "absolute", // Positioned absolutely to be on the right
+                top: "20px", // Distance from the top of the container
+                right: "20px", // Distance from the right of the container
+              }}
+            >
+              Rating: {review.rating}
+            </span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   render() {
     const {
       tab1,
@@ -428,11 +584,7 @@ class RestaurantDetails extends Component {
                       <div className="col-12 bg-white p-4">
                         <h5>Customer Reviews For {resDetails.userName}</h5>
                         {this.state.reviews.length > 0 ? (
-                          <ul>
-                            {this.state.reviews.map((review, index) => (
-                              <li key={index}>{review}</li>
-                            ))}
-                          </ul>
+                          <div>{this._renderReviews()}</div>
                         ) : (
                           <p>No reviews available.</p>
                         )}
