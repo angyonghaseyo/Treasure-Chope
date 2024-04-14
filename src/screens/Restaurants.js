@@ -204,14 +204,14 @@ class Restaurants extends Component {
                     cursor: 'pointer',
                     textAlign: "center",
                     borderRadius: "13px",
-                    marginLeft: "-30px",
+                    marginLeft: "-55px",
                   }}>
                   <Heart isClick={isFavorited} onClick={(e) => {
                       e.stopPropagation(); // Prevent the event from triggering the span's onClick
                       this.toggleFavorite(restaurant.id);
                   }} />
                 </span>
-                <button style={{marginRight:"10px"}} type="button" onClick={() => this.handleViewMenuBtn(restaurant)}
+                <button style={{marginRight:"20px"}} type="button" onClick={() => this.handleViewMenuBtn(restaurant)}
                   className="btn btn-warning btn-sm text-uppercase">
                   View Menu
                 </button>
@@ -249,14 +249,15 @@ class Restaurants extends Component {
                     cursor: 'pointer',
                     textAlign: "center",
                     borderRadius: "13px",
-                    marginLeft: "-30px",
+                    marginLeft: "-55px",
+                    marginTop:"10px",
                   }}>
                   <Heart isClick={isFavorited} onClick={(e) => {
                       e.stopPropagation(); // Prevent the event from triggering the span's onClick
                       this.toggleFavorite(restaurant.id);
                   }} />
                 </span>
-                <button style={{marginRight:"10px"}} type="button" onClick={() => this.handleViewMenuBtn(restaurant)}
+                <button style={{marginRight:"20px", marginTop:"10px"}} type="button" onClick={() => this.handleViewMenuBtn(restaurant)}
                   className="btn btn-warning btn-sm text-uppercase">
                   View Menu
                 </button>
