@@ -366,6 +366,9 @@ class OrderRequests extends Component {
                             overflow: "auto",
                             padding: "5px",
                             fontSize: "1em",
+                            border: "1px solid #c13f86", // Set the border color
+
+                            backgroundColor: "#fbf2f7", // Optional: matching the soft pink background
                           }}
                         />
                       ) : (

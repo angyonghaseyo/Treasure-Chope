@@ -33,7 +33,7 @@ class MyOrders extends Component {
     if (orders.length === 0) {
       setTimeout(this.fetchExistingReviewsAndRatings, 1000); // Ensure this is correctly retrying or handling cases where data might be slow to load.
       return;
-  }
+    }
 
     orders.forEach((order) => {
       if (!order.customerId || !order.restaurantId) {
@@ -45,8 +45,6 @@ class MyOrders extends Component {
       this.fetchReviewAndRating(order, "orderRequest");
     });
   };
-
-  
 
   fetchReviewAndRating = (order, collectionName) => {
     const orderRef = firebase
@@ -142,7 +140,7 @@ class MyOrders extends Component {
           .runTransaction((transaction) => {
             return transaction.get(restaurantDocRef).then((doc) => {
               if (!doc.exists) {
-                throw "Document does not exist!";
+                throw new Error("Document does not exist!");
               }
 
               // Get the current value of the required fields or initialize them if they don't exist
@@ -151,17 +149,22 @@ class MyOrders extends Component {
 
               // Perform the increment
               transaction.update(restaurantDocRef, {
-                totalRatingSummation: parseInt(totalRatingSummation) + parseInt(rating),
+                totalRatingSummation:
+                  parseInt(totalRatingSummation) + parseInt(rating),
                 totalOrdersRated: totalOrdersRated + 1,
               });
             });
           })
           .then(() => {
-            console.log("successfully updated restaurant's totalOrderRated and totalRatingSummation ");
+            console.log(
+              "successfully updated restaurant's totalOrderRated and totalRatingSummation "
+            );
           })
           .catch((error) => {
             console.error("Transaction failed: ", error);
-            console.log("Failed to update estaurant's totalOrderRated and totalRatingSummation");
+            console.log(
+              "Failed to update estaurant's totalOrderRated and totalRatingSummation"
+            );
           });
 
         alert("Review and rating submitted successfully!");
@@ -198,12 +201,23 @@ class MyOrders extends Component {
   };
 
   handleReviewChange = (value, orderId, type) => {
-    this.setState((prevState) => ({
-      [type]: {
-        ...prevState[type],
-        [orderId]: value,
-      },
-    }));
+    if (type === "ratings") {
+      // Parse the rating as an integer only if it's a rating update
+      this.setState((prevState) => ({
+        [type]: {
+          ...prevState[type],
+          [orderId]: parseInt(value),
+        },
+      }));
+    } else {
+      // Handle text updates for reviews as regular strings
+      this.setState((prevState) => ({
+        [type]: {
+          ...prevState[type],
+          [orderId]: value,
+        },
+      }));
+    }
   };
 
   _renderActiveOrders() {
@@ -263,9 +277,34 @@ class MyOrders extends Component {
       : null;
   }
 
+  renderStars = (rating, orderId) => {
+    const maxRating = 5; // Define the maximum number of stars
+    return (
+      <div>
+        {Array.from({ length: maxRating }, (_, index) => (
+          <span
+            key={index}
+            style={{
+              cursor: "pointer",
+              color: index < rating ? "#c13f86" : "#ccc", // Highlighted if less than current rating
+              marginRight: "5px",
+              fontSize: "20px", // Larger font size for better clickability
+            }}
+            onClick={() =>
+              this.handleReviewChange(index + 1, orderId, "ratings")
+            }
+            aria-label={`Rate ${index + 1} stars`}
+          >
+            {index < rating ? "★" : "☆"}
+          </span>
+        ))}
+      </div>
+    );
+  };
+
   _renderPastOrders() {
     const { myOrder } = this.props;
-    const { reviews, ratings, existingReviews, existingRatings } = this.state;
+    const { reviews, existingReviews } = this.state;
     return myOrder
       ? myOrder
           .filter((order) => order.status === "COLLECTED")
@@ -311,7 +350,11 @@ class MyOrders extends Component {
                     type="text"
                     placeholder="Enter your review"
                     className="review-input"
-                    style={{ width: '100%', padding: '10px', boxSizing: 'border-box' }} // Added inline styles
+                    style={{
+                      width: "100%",
+                      padding: "10px",
+                      boxSizing: "border-box",
+                    }} // Added inline styles
                     value={reviews[order.id] || ""}
                     onChange={(e) =>
                       this.handleReviewChange(
@@ -324,29 +367,19 @@ class MyOrders extends Component {
                   />
                   <br></br>
                   Rating :
-                  <input
-                    type="number"
-                    placeholder="Rate 1-5"
-                    className="rating-input"
-                    style={{ width: '100%', padding: '10px', boxSizing: 'border-box' }} // Added inline styles
-                    value={ratings[order.id] || ""}
-                    onChange={(e) =>
-                      this.handleReviewChange(
-                        e.target.value,
-                        order.id,
-                        "ratings"
-                      )
-                    }
-                    min="1"
-                    max="5"
-                    disabled={!!existingRatings[order.id]}
-                  />
+                  {this.renderStars(
+                    this.state.ratings[order.id] || 0,
+                    order.id
+                  )}
                   <br></br>
                   <br></br>
                   <button
                     onClick={() => this.submitReviewAndRating(order)}
                     className="btn btn-primary submit-rating-btn"
-                    disabled={!!existingRatings[order.id] && !!existingReviews[order.id]}
+                    disabled={
+                      !!this.state.existingRatings[order.id] &&
+                      !!this.state.existingReviews[order.id]
+                    }
                   >
                     Submit Rating
                   </button>
