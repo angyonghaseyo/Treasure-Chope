@@ -303,6 +303,38 @@ class OrderRequests extends Component {
                       />
                     )}
                   </span>
+                  <span>
+                    {order.rating ? (
+                      // Display the reviews if they exist
+                      <input
+                        type="text"
+                        value={order.rating}
+                        readOnly
+                        style={{
+                          width: "100%",
+                          height: "50px", // or whatever height you prefer
+                          overflow: "auto",
+                          padding: "5px",
+                          fontSize: "1em",
+                        }}
+                      />
+                    ) : (
+                      // Display an empty text box if reviews don't exist
+                      <input
+                        type="text"
+                        value="Customer has not given rating yet"
+                        readOnly
+                        style={{
+                          width: "100%",
+                          height: "50px", // or whatever height you prefer
+                          overflow: "auto",
+                          padding: "5px",
+                          fontSize: "1em",
+                          color: "grey",
+                        }}
+                      />
+                    )}
+                  </span>
                 </div>
               </div>
             </div>
@@ -315,7 +347,7 @@ class OrderRequests extends Component {
     return (
       <div>
         <div className="container-fluid">
-          <div className="container-fluid res-details-cont1">
+        <div className="container-fluid res-details-cont1">
             <div className="">
               <Navbar2 history={this.props.history} />
               <div className="container px-0 res-details-cont1-text mx-0">
@@ -325,10 +357,14 @@ class OrderRequests extends Component {
                       <div className="col-lg-2 col-md-3 col-6 text-lg-center text-md-center pr-0 mb-2">
                         <img
                           className="p-2 bg-white rounded text-center"
-                          alt="User Profile"
+                          alt="Natural Healthy Food"
                           style={{ width: "60%" }}
                           src={userDetails.userProfileImageUrl}
                         />
+                      </div>
+                      <div className="col-lg-10 col-md-9 col-12 pl-lg-0 pl-md-0">
+                        <h1 className="restaurant-title">{userDetails.userName}</h1>
+                        <p className="restaurant-text">{userDetails.typeOfFood.join(', ')}</p>
                       </div>
                     </div>
                   )}
