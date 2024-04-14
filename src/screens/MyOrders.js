@@ -106,9 +106,9 @@ class MyOrders extends Component {
     const review = this.state.reviews[order.id] || "";
     const rating = this.state.ratings[order.id] || "";
 
-    if (review.trim() === "" || !(rating >= 1 && rating <= 10)) {
+    if (review.trim() === "" || !(rating >= 1 && rating <= 5)) {
       alert(
-        "Please enter a review and a valid rating (1-10) before submitting."
+        "Please enter a review and a valid rating (1-5) before submitting."
       );
       return;
     }
@@ -326,7 +326,7 @@ class MyOrders extends Component {
                   Rating :
                   <input
                     type="number"
-                    placeholder="Rate 1-10"
+                    placeholder="Rate 1-5"
                     className="rating-input"
                     style={{ width: '100%', padding: '10px', boxSizing: 'border-box' }} // Added inline styles
                     value={ratings[order.id] || ""}
@@ -338,7 +338,7 @@ class MyOrders extends Component {
                       )
                     }
                     min="1"
-                    max="10"
+                    max="5"
                     disabled={!!existingRatings[order.id]}
                   />
                   <br></br>

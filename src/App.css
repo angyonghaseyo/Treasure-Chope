@@ -760,3 +760,62 @@ a:hover{
   border: 1px solid #d57a82; /* Border to maintain layout consistency */
   transition: background-color 0.3s;
 }
+
+/* for order request */
+
+.button-toggle {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  display: inline-block;
+  font-family: 'Poppins', sans-serif;
+  margin-left: 5px;
+  /* under line */
+  margin-bottom: 10px;
+  margin-top: 10px;
+  
+}
+
+.caret-down::after, .caret-up::after {
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 0;
+  vertical-align: middle;
+  border-top: 5px solid;  /* Adjusted for a more clear arrow */
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+}
+
+.caret-up::after {
+  transform: rotate(180deg);  /* Flip the caret for 'up' state */
+}
+
+.rating-input {
+  min-width: 60px;  /* Ensures the box isn't too small even if empty */
+  height: 50px;
+  padding: 0 10px; /* Horizontal padding for aesthetics */
+  font-size: 1em;
+  border: 1px solid #c13f86; /* Use the primary color for the border */
+  background: #fbf2f7; /* Soft pink background from your palette */
+  text-align: center; /* Center text for better readability */
+  color: #1d0a15; /* Dark text for contrast */
+  border-radius: 5px; /* Rounded corners */
+  margin-right: 10px; /* Maintain margin for layout consistency */
+  font-family: 'Poppins', sans-serif; /* Consistent font styling */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Subtle depth with shadow */
+  display: inline-block; /* Inline-block for better control over sizing */
+}
+
+/* Style when the input is focused (optional, if you make the input interactive later) */
+.rating-input:focus {
+  outline: none; /* Removes the default focus outline */
+  border-color: #c13f86; /* Highlight color when focused */
+  box-shadow: 0 0 0 2px rgba(193, 63, 134, 0.5); /* Soft glow effect */
+}
+
+/* Placeholder styling (optional) */
+.rating-input::placeholder {
+  color: #aaa; /* Lighter grey for placeholder text */
+}
