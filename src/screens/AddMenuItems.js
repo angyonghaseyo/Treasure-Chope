@@ -106,7 +106,7 @@ export default class AddMenuItems extends Component {
   }
 
   render() {
-    const { itemImageLable, showError, registerFormError } = this.state;
+    const { showError, registerFormError } = this.state;
     return (
       <div>
         <div className="container-fluid register-cont1">
