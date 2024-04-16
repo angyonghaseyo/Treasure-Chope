@@ -143,102 +143,85 @@ class OrderRequests extends Component {
     const { orderRequest } = this.props;
     const { activeSubTab } = this.state;
     if (orderRequest) {
-      return Object.keys(orderRequest)
-        .filter((key) => {
-          const order = orderRequest[key];
+        const filteredOrders = Object.keys(orderRequest).filter((key) => {
+            const order = orderRequest[key];
+            return (
+                (activeSubTab === "pending" && order.status === "PENDING") ||
+                (activeSubTab === "preparing" && order.status === "IN PROGRESS") ||
+                (activeSubTab === "readyForCollection" && order.status === "READY FOR COLLECTION")
+            );
+        });
+
+        if (filteredOrders.length === 0) {
+          // Return a message when there are no orders to display
           return (
-            (activeSubTab === "pending" && order.status === "PENDING") ||
-            (activeSubTab === "preparing" && order.status === "IN PROGRESS") ||
-            (activeSubTab === "readyForCollection" &&
-              order.status === "READY FOR COLLECTION")
-          );
-        })
-        .map((key) => {
-          const order = orderRequest[key];
-          return (
-            <div className="container border-bottom pb-2 mb-4" key={order.id}>
-              <div className="row">
-                <div className="col-12">
-                  <h5>{order.userName}</h5>
-                  <span className="order-status">{order.status}</span>
-                  {Object.keys(order.itemsList).map((itemKey) => {
-                    const item = order.itemsList[itemKey];
-                    return (
-                      <div key={itemKey} className="orderreqcontainer">
-                        <div className="col-lg-2 col-md-3 col-8 offset-2 offset-lg-0 offset-md-0 px-0 mb-3 text-center">
-                          <img
-                            style={{ width: "70px", height: "70px" }}
-                            alt="Order Item"
-                            src={item.itemImageUrl}
-                          />
-                        </div>
-                        <div className="col-lg-7 col-md-6 col-sm-12 px-0">
-                          <h6 className="">{item.itemTitle}</h6>
-                          <p className="mb-1">
-                            <small>{item.itemIngredients}</small>
-                          </p>
-                        </div>
-                        <div className="col-lg-3 col-md-3 col-sm-12 px-0 text-right">
-                          <span style={{ fontSize: "14px" }} className="mx-3">
-                            <b>{item.itemPrice}</b>
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                  <div className="row">
-                    <div className="col-12">
-                      {activeSubTab === "pending" && (
-                        <button
-                          onClick={() =>
-                            this.handleUpdateOrderStatus(
-                              order.userUid,
-                              order.id,
-                              "IN PROGRESS"
-                            )
-                          }
-                          className="btn btn-primary"
-                        >
-                          Mark as Preparing
-                        </button>
-                      )}
-                      {activeSubTab === "preparing" && (
-                        <button
-                          onClick={() =>
-                            this.handleUpdateOrderStatus(
-                              order.userUid,
-                              order.id,
-                              "READY FOR COLLECTION"
-                            )
-                          }
-                          className="btn btn-secondary"
-                        >
-                          Mark as Ready for Collection
-                        </button>
-                      )}
-                      {activeSubTab === "readyForCollection" && (
-                        <button
-                          onClick={() =>
-                            this.handleUpdateOrderStatus(
-                              order.userUid,
-                              order.id,
-                              "COLLECTED"
-                            )
-                          }
-                          className="btn btn-success"
-                        >
-                          Mark as Collected
-                        </button>
-                      )}
-                    </div>
-                  </div>
+            <div className="text-center mt-4">
+            <div className="card shadow-sm">
+                <div className="card-body">
+                    <p className="text-muted">Check back later.</p>
+                    <p>Been a while? You may not have orders due to limited food options.</p>
+                    <button className="btn btn-primary" onClick={() => this.props.history.push('/add-menu-items')}>
+                        Add Menu Items
+                    </button>
                 </div>
-              </div>
             </div>
+        </div>
           );
+      }
+
+        // Return the list of orders if there are any
+        return filteredOrders.map((key) => {
+            const order = orderRequest[key];
+            return (
+                <div className="container border-bottom pb-2 mb-4" key={order.id}>
+                    <div className="row">
+                        <div className="col-12">
+                            <h5>{order.userName}</h5>
+                            <span className="order-status">{order.status}</span>
+                            {Object.keys(order.itemsList).map((itemKey) => {
+                                const item = order.itemsList[itemKey];
+                                return (
+                                    <div key={itemKey} className="orderreqcontainer">
+                                        <div className="col-lg-2 col-md-3 col-8 offset-2 offset-lg-0 offset-md-0 px-0 mb-3 text-center">
+                                            <img style={{ width: "70px", height: "70px" }} alt="Order Item" src={item.itemImageUrl} />
+                                        </div>
+                                        <div className="col-lg-7 col-md-6 col-sm-12 px-0">
+                                            <h6 className="">{item.itemTitle}</h6>
+                                            <p className="mb-1"><small>{item.itemIngredients}</small></p>
+                                        </div>
+                                        <div className="col-lg-3 col-md-3 col-sm-12 px-0 text-right">
+                                            <span style={{ fontSize: "14px" }} className="mx-3"><b>{item.itemPrice}</b></span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                            <div className="row">
+                                <div className="col-12">
+                                    {activeSubTab === "pending" && (
+                                        <button onClick={() => this.handleUpdateOrderStatus(order.userUid, order.id, "IN PROGRESS")} className="btn btn-primary">
+                                            Mark as Preparing
+                                        </button>
+                                    )}
+                                    {activeSubTab === "preparing" && (
+                                        <button onClick={() => this.handleUpdateOrderStatus(order.userUid, order.id, "READY FOR COLLECTION")} className="btn btn-secondary">
+                                            Mark as Ready for Collection
+                                        </button>
+                                    )}
+                                    {activeSubTab === "readyForCollection" && (
+                                        <button onClick={() => this.handleUpdateOrderStatus(order.userUid, order.id, "COLLECTED")} className="btn btn-success">
+                                            Mark as Collected
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
         });
     }
-  }
+}
+
 
   renderStars = (rating) => {
     // Ensure the rating is within the expected range
@@ -277,6 +260,19 @@ class OrderRequests extends Component {
 
   _renderPastOrders() {
     const { orderRequest } = this.props;
+    if (!orderRequest || Object.keys(orderRequest).length === 0) {
+      return (
+          <div className="text-center mt-4">
+              <div className="card shadow-sm">
+                  <div className="card-body">
+                      <p className="text-muted">No past orders yet.</p>
+                      <p>Looking to see your completed orders here? Make sure all deliveries are marked correctly and check back later.</p>
+                  </div>
+              </div>
+          </div>
+      );
+  }
+
     if (orderRequest) {
       return Object.keys(orderRequest)
         .filter((key) => orderRequest[key].status === "COLLECTED")
@@ -397,6 +393,7 @@ class OrderRequests extends Component {
   }
   render() {
     const { mainTab, userDetails } = this.state;
+    const activeSubTab = this.state.activeSubTab; // Correctly reference activeSubTab from state
     return (
       <div>
         <div className="container-fluid">
@@ -430,66 +427,36 @@ class OrderRequests extends Component {
             </div>
           </div>
           <div className="row">
-            <div
-              className={`col text-center ${
-                mainTab === "activeOrders"
-                  ? "order-req-tab-active"
-                  : "order-req-tab"
-              }`}
-              onClick={() => this.handleMainTabs("activeOrders")}
-            >
-              Active Orders
+          {/* Main tabs */}
+          <div className={`col text-center tab ${mainTab === "activeOrders" ? "tab-active" : ""}`}
+               onClick={() => this.handleMainTabs("activeOrders")}>
+            Active Orders
+          </div>
+          <div className={`col text-center tab ${mainTab === "pastOrders" ? "tab-active" : ""}`}
+               onClick={() => this.handleMainTabs("pastOrders")}>
+            Past Orders
+          </div>
+        </div>
+        {mainTab === "activeOrders" && (
+          <div className="row">
+            {/* Sub-tabs for Active Orders */}
+            <div className={`col text-center tab ${activeSubTab === "pending" ? "tab-active" : ""}`}
+                 onClick={() => this.handleActiveSubTabs("pending")}>
+              Pending
             </div>
-            <div
-              className={`col text-center ${
-                mainTab === "pastOrders"
-                  ? "order-req-tab-active"
-                  : "order-req-tab"
-              }`}
-              onClick={() => this.handleMainTabs("pastOrders")}
-            >
-              Past Orders
+            <div className={`col text-center tab ${activeSubTab === "preparing" ? "tab-active" : ""}`}
+                 onClick={() => this.handleActiveSubTabs("preparing")}>
+              Preparing
+            </div>
+            <div className={`col text-center tab ${activeSubTab === "readyForCollection" ? "tab-active" : ""}`}
+                 onClick={() => this.handleActiveSubTabs("readyForCollection")}>
+              Ready for Collection
             </div>
           </div>
-
-          {mainTab === "activeOrders" && (
-            <div className="row">
-              <div
-                className={`col text-center ${
-                  this.state.activeSubTab === "pending"
-                    ? "order-req-tab-active"
-                    : ""
-                }`}
-                onClick={() => this.handleActiveSubTabs("pending")}
-              >
-                Pending
-              </div>
-              <div
-                className={`col text-center ${
-                  this.state.activeSubTab === "preparing"
-                    ? "order-req-tab-active"
-                    : ""
-                }`}
-                onClick={() => this.handleActiveSubTabs("preparing")}
-              >
-                Preparing
-              </div>
-              <div
-                className={`col text-center ${
-                  this.state.activeSubTab === "readyForCollection"
-                    ? "order-req-tab-active"
-                    : ""
-                }`}
-                onClick={() => this.handleActiveSubTabs("readyForCollection")}
-              >
-                Ready for Collection
-              </div>
-            </div>
-          )}
-          <div className="order-section">
-            {mainTab === "activeOrders" && this._renderActiveOrders()}
-            {mainTab === "pastOrders" && this._renderPastOrders()}
-          </div>
+        )}
+        <div className="order-section">
+          {mainTab === "activeOrders" ? this._renderActiveOrders() : this._renderPastOrders()}
+        </div>
         </div>
         <Footer />
       </div>
