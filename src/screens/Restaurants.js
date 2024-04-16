@@ -189,7 +189,7 @@ class Restaurants extends Component {
         const isFavorited = userFavorites.includes(restaurant.id);
         return restaurant.userProfileImageUrl && restaurant.userName && restaurant.typeOfFood ? (
           <div className="container bg-white p-3 px-0 mb-4" key={restaurant.id}>
-            <div className="row" style={{ marginBottom: "-10px" }}>
+            <div className="row" style={{ alignItems: 'center', marginBottom: "-10px" }}>
               <div className="col-lg-3 col-md-3 col-sm-12 px-0 text-center">
                 <img style={{ height: "85px", width: "130px", margin: '0 auto' }} alt="Restaurant" src={restaurant.userProfileImageUrl} />
               </div>
