@@ -857,3 +857,116 @@ a:hover{
 .custom-button {
   
   }
+
+ @import url("https://fonts.googleapis.com/css?family=Montserrat");
+
+/* Basic styling for the button */
+.btn-search {
+  background-color: #c13f86; /* Primary color */
+  border-color: #c13f86; /* Same as background */
+  color:  #fbf2f7; /* Text color */
+  padding: 8px 16px; /* Initial padding */
+  font-size: 16px;
+  font-weight: bold;
+  width: 150px;
+  height: 43px;
+  margin-left: 10px;
+  font-family: 'Poppins', sans-serif;
+  text-transform: uppercase;
+  border: 2px solid  #fbf2f7; /* Text color used for border */
+  transition: all 0.3s ease;
+  position: relative; /* Needed for pseudo-elements */
+  overflow: hidden;
+  display: block;
+  text-align: center; /* Ensures text is centered */
+}
+
+/* Pseudo-element for background slide */
+.btn-search::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  background: #fbf2f7; /* Background color */
+  z-index: -1;
+  transition: transform 0.3s ease;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+/* Pseudo-element for arrow icon */
+.btn-search::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 10px; /* Space from right */
+  background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="%23fbf2f7" d="M438.6 233.4l-192-192c-9.4-9.4-24.6-9.4-33.9 0L128 125.1c-9.4 9.4-9.4 24.6 0 33.9l103.2 103.1-103.2 103.1c-9.4 9.4-9.4 24.6 0 33.9l84.2 84.2c9.4 9.4 24.6 9.4 33.9 0l192-192c9.4-9.4 9.4-24.6 0-34z"/></svg>');
+  width: 20px; /* Width of the arrow icon */
+  height: 20px; /* Height of the arrow icon */
+  background-size: cover;
+  transform: translateY(-50%); /* Center vertically */
+  opacity: 0; /* Start as hidden */
+  transition: opacity 0.3s ease, right 0.3s ease;
+}
+
+/* Hover effects for the button */
+.btn-search:hover::before {
+  transform: scaleX(1); /* Full width */
+}
+
+.btn-search:hover::after {
+  opacity: 1; /* Show arrow */
+  right: 20px; /* Move arrow closer to the center */
+  top: 17px;
+}
+
+.btn-search:hover {
+  padding-right: 36px; /* Make room for the arrow on hover */
+  background-color: #77d37b; /* Accent color on hover */
+  color: #fbf2f7 /* Text color stays the same */
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.text-animate-fade-in-up {
+  animation: fadeInUp 1s ease-out forwards; /* Adjust time as needed */
+}
+
+.text-animate-fade-in {
+  animation: fadeIn 2s ease-out forwards; /* Slower fade for subtlety */
+}
+
+/* Optional: Ensure initial state is set if you want them invisible initially */
+.text-animate-fade-in-up, .text-animate-fade-in {
+  opacity: 0;
+}
+
+@keyframes expandContract {
+  0%, 100% { transform: scale(1); }  /* Start and end at normal size */
+  50% { transform: scale(1.1); }    /* Peak at a larger scale */
+}
+
+.expand-animate {
+  animation: expandContract 0.8s ease-in-out forwards;
+}
+
