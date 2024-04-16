@@ -417,7 +417,7 @@ class OrderRequests extends Component {
                           {userDetails.userName}
                         </h1>
                         <p className="restaurant-text">
-                          {userDetails.typeOfFood.join(", ")}
+                        {userDetails.typeOfFood ? userDetails.typeOfFood.join(", ") : ""}
                         </p>
                       </div>
                     </div>
