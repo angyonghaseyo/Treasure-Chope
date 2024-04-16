@@ -221,6 +221,10 @@ a:hover{
   color: #eb6825 !important;
 }
 
+.nav-link:hover, .nav-link:focus {
+  color: #c13f86; /* Primary color for hover state */
+}
+
 .nav-item .btn{
   font-size: 13px;
   font-weight: 700;
@@ -844,3 +848,12 @@ a:hover{
   text-emphasis-color: #fbf2f7;
   color: #fbf2f7;
 }
+
+.custom-nav-item {
+  margin-right: 20px; /* Adjust the right margin as needed */
+  align-self: left; /* Vertically center within the navbar */
+}
+
+.custom-button {
+  
+  }
