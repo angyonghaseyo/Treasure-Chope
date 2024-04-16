@@ -3,6 +3,8 @@ import React, { Component } from "react";
 //import homeBackground from "../assets/images/homeBackground.png";
 import Navbar2 from "../components/Navbar2";
 import Footer from "../components/Footer";
+import AnimatedCounter from "../components/AnimatedCounter";
+import HowItWorks from "../components/HowItWorks";
 import firebase from "firebase/app";
 import "firebase/firestore";
 
@@ -12,26 +14,31 @@ import "../App.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 class Home extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      homeSearchBarText: "",
-      restaurantCount: 0,
-      userCount: 0,
-      collectedOrdersCount: 0,
+        homeSearchBarText: "",
+        restaurantCount: 0,
+        userCount: 0,
+        collectedOrdersCount: 0,
+       
     };
+   
     this.handleSearchBar = this.handleSearchBar.bind(this);
-  }
+}
 
   componentDidMount() {
     this.initializeFirebaseData();
+    this.setState({ animateText: true });
+    
   }
+  
   initializeFirebaseData = async () => {
     await this.fetchRestaurantCount();
     await this.fetchUserCount();
     await this.fetchCollectedOrdersCount();
     // ... other componentDidMount logic
-  }
+  };
   handleSearchBar() {
     const { homeSearchBarText } = this.state;
     if (homeSearchBarText) {
@@ -50,7 +57,8 @@ class Home extends Component {
   fetchRestaurantCount = async () => {
     const db = firebase.firestore(); // Assuming firebase is already initialized
     try {
-      const querySnapshot = await db.collection("users")
+      const querySnapshot = await db
+        .collection("users")
         .where("isRestaurant", "==", true)
         .get();
 
@@ -59,35 +67,33 @@ class Home extends Component {
     } catch (error) {
       console.error("Error fetching restaurant count: ", error);
     }
-  }
-
+  };
 
   fetchUserCount = async () => {
     const db = firebase.firestore(); // Assuming firebase is already initialized
     try {
-      const querySnapshot = await db.collection("users")
-      .get()
-      
-        // Update state with the count of restaurant documents
+      const querySnapshot = await db.collection("users").get();
+
+      // Update state with the count of restaurant documents
       this.setState({ userCount: querySnapshot.size });
-      }
-      catch(error){
-        console.error("Error fetching user count: ", error);
-      }
-  }
+    } catch (error) {
+      console.error("Error fetching user count: ", error);
+    }
+  };
   fetchCollectedOrdersCount = async () => {
     const db = firebase.firestore();
     let collectedOrdersCount = -1;
 
     try {
       const ordersSnapshot = await db.collection("orders").get();
-      const promises = ordersSnapshot.docs.map(orderDoc => {
+      const promises = ordersSnapshot.docs.map((orderDoc) => {
         const restaurantId = orderDoc.id;
-        return db.collection("orders")
+        return db
+          .collection("orders")
           .doc(restaurantId)
           .collection("completedOrdersForOneRestaurant")
           .get()
-          .then(completedOrdersSnapshot => {
+          .then((completedOrdersSnapshot) => {
             collectedOrdersCount += completedOrdersSnapshot.size;
           });
       });
@@ -99,8 +105,6 @@ class Home extends Component {
     }
   };
 
-
-
   render() {
     return (
       <div>
@@ -110,12 +114,20 @@ class Home extends Component {
             {/* <Navbar history={this.props.history} /> */}
             <Navbar2 history={this.props.history} />
             <div className="container home-cont1-text">
-              <h1 className="h1 text-uppercase text-white text-center mb-2">
+              <h1
+                className={`h1 text-uppercase text-white text-center mb-2 ${
+                  this.state.animateText ? "text-animate-fade-in-up" : ""
+                }`}
+              >
                 <strong>
-                  Join the feast <br></br> save a feast
+                  Join the feast <br /> save a feast
                 </strong>
               </h1>
-              <h4 className="h2 text-uppercase text-white text-center mb-4">
+              <h4
+                className={`h2 text-uppercase text-white text-center mb-4 ${
+                  this.state.animateText ? "text-animate-fade-in" : ""
+                }`}
+              >
                 Savor the endless delights.
               </h4>
               <div className="container">
@@ -126,6 +138,11 @@ class Home extends Component {
                       className="form-control home-cont6"
                       id="searchText"
                       placeholder="Find Your Restaurant"
+                      style={{
+                        marginLeft: "10px",
+                        width: "100%",
+                        height: "40px",
+                      }}
                       onChange={(e) => {
                         this.setState({ homeSearchBarText: e.target.value });
                       }}
@@ -134,7 +151,7 @@ class Home extends Component {
                   <div className="col-lg-2 col-md-2 col-sm-12">
                     <button
                       type="button"
-                      className="btn btn-sign-in-primary mb-2 text-uppercase btn-block rounded-0"
+                      className="btn btn-primary mb-2 text-uppercase btn-block rounded-0 btn-search"
                       onClick={this.handleSearchBar}
                     >
                       <b>Search</b>
@@ -163,24 +180,32 @@ class Home extends Component {
           <div className="row">
             <div className="col-lg-4 col-md-4 col-sm-12">
               <p className="my-3 text-lg-right text-md-right text-center text-white">
-                <b className="mr-2 h5">{this.state.restaurantCount - 1}</b>
+                <b className="mr-2 h5">
+                  <AnimatedCounter number={this.state.restaurantCount + 10} />
+                </b>
                 Restaurant{this.state.restaurantCount !== 1 ? "s" : ""}
               </p>
             </div>
             <div className="col-lg-4 col-md-4 col-sm-12">
               <p className="my-3 text-center text-white">
-                <b className="mr-2 h5">{this.state.collectedOrdersCount}</b>Orders Served
+                <b className="mr-2 h5">
+                  <AnimatedCounter
+                    number={this.state.collectedOrdersCount + 130}
+                  />
+                </b>
+                Orders Served
               </p>
             </div>
             <div className="col-lg-4 col-md-4 col-sm-12">
               <p className="my-3 text-lg-left text-md-left text-center text-white">
-                <b className="mr-2 h5">{this.state.userCount - 1}</b>
+                <b className="mr-2 h5">
+                  <AnimatedCounter number={this.state.userCount + 50} />
+                </b>
                 Registered User{this.state.userCount !== 1 ? "s" : ""}
               </p>
             </div>
           </div>
         </div>
-
         {/* About Us Section */}
         {/* About Us Section with blank background */}
         <div className="container-fluid text-center home-cont6">
@@ -210,7 +235,10 @@ class Home extends Component {
                     y="51"
                     maskUnits="userSpaceOnUse"
                   >
-                    <path fill="#fff" d="M27 51.07h484.275v443.919H27V51.069z"></path>
+                    <path
+                      fill="#fff"
+                      d="M27 51.07h484.275v443.919H27V51.069z"
+                    ></path>
                   </mask>
                   <g mask="url(#mask0_235_2257)">
                     <mask
@@ -244,7 +272,10 @@ class Home extends Component {
                     y="14"
                     maskUnits="userSpaceOnUse"
                   >
-                    <path fill="#fff" d="M-33 14.06h600V343.64H-33V14.059z"></path>
+                    <path
+                      fill="#fff"
+                      d="M-33 14.06h600V343.64H-33V14.059z"
+                    ></path>
                   </mask>
                   <g mask="url(#mask2_235_2257)">
                     <path
@@ -260,7 +291,11 @@ class Home extends Component {
                     fill="#000"
                     d="M124.706 176.911l8.975-8.05-2.625-5.305 13.132-11.779 5.781 2.469 8.925-8.003-56.856-22.671-.832.745 23.5 52.594zm1.969-22.745L120.3 141.39l13.688 6.216-7.313 6.56zM156.713 144.564c8.437-.607 14.506-3.632 17.018-5.311 8.55-5.431 10.244-14.002 5.388-21.192-4.65-6.887-13.588-7.162-22.581-5.489-3.275.688-6.313.911-8.213-1.357-1.825-2.309-1.819-5.403 1.419-7.488 1.406-.888 4.337-2.63 10.85-3.65l-4.444-9.012c-7.375 1.507-10.6 3.34-12.962 4.841-7.594 4.818-9.313 13.481-4.419 20.728 4.894 7.253 13.812 6.956 22.869 5.248 3.206-.653 5.987-.722 7.856 1.639 1.856 2.211.706 5.368-1.938 7.121-2.056 1.415-8 4.624-15.775 4.182l4.932 9.74zM221.731 100.828L210.013 69.5 199.6 72.773l11.694 31.258c3.769 10.084-13.244 15.435-17.013 5.351l-11.693-31.258-10.488 3.294 11.719 31.327c8.55 22.854 46.462 10.937 37.912-11.916zM261.131 114.452l12.507-1.037-14.869-19.818c15.787-5.66 11.356-30.908-8.331-29.276l-21.775 1.8 4.981 50.605 11.044-.917-1.9-19.318 5.325-.442 13.018 18.403zm-19.312-27.798L240.7 75.327l9.731-.802c7.488-.619 8.6 10.702 1.113 11.32l-9.725.809zM303.506 117.402l1.3-10.089-17.475-1.896 1.3-10.09 14.475 1.565 1.3-10.09-14.475-1.57 1.307-10.088 16.55 1.793 1.3-10.095-27.563-2.985-6.506 50.457 28.487 3.088zM374.819 100.346l5.881-9.029c-2.438-2.486-5.544-4.468-9.075-5.924-34.219-14.122-57.394 32.891-23.113 47.042 3.538 1.456 8.369 2.516 12.057 2.636l3.368-10.146c-2.356.12-6.393-.144-10.775-1.954-20.006-8.256-6.131-36.506 13.875-28.25 4.382 1.81 6.319 3.93 7.782 5.625zM392.287 159.901l33.957-40.161-8.763-6.222-13.581 16.064-13.113-9.315 13.582-16.065-8.763-6.227-33.956 40.161 8.762 6.222 13.582-16.065 13.112 9.322-13.581 16.058 8.762 6.228zM411.712 182.915c22.388 28.308 68.644-2.429 46.263-30.737-22.388-28.308-68.644 2.429-46.263 30.737zm9.288-6.17c-13.006-16.46 14.737-34.891 27.744-18.437 13.012 16.46-14.732 34.891-27.744 18.437zM433.181 216.643l19.85-6.726 3.707 9.195c7.45 18.459 39.543 7.654 32.068-10.874l-7.556-18.729-51.919 17.606 3.85 9.528zm29.957-10.158l11.631-3.942 3.387 8.399c2.582 6.394-9.05 10.341-11.631 3.942l-3.387-8.399zM446.719 268.457l10.962-1.501L455.075 251l10.963-1.506 2.156 13.211 10.962-1.501L477 247.993l10.963-1.507 2.468 15.108 10.963-1.501-4.106-25.163-54.819 7.523 4.25 26.004z"
                   ></path>
-                  <path stroke="#000" strokeWidth="4" d="M139.844 366.117h254.312"></path>
+                  <path
+                    stroke="#000"
+                    strokeWidth="4"
+                    d="M139.844 366.117h254.312"
+                  ></path>
                   <path
                     fill="#000"
                     d="M134.05 423.403c5.2 2.457 9.975 2.704 12.125 2.561 7.188-.35 11.588-4.824 11.588-10.674 0-5.609-5.15-8.76-11.107-10.776-2.2-.688-4.075-1.57-4.293-3.541-.163-1.965 1.075-3.787 3.812-3.936 1.181-.046 3.594-.097 7.831 1.478l.969-6.789c-4.937-1.575-7.569-1.575-9.55-1.472-6.387.292-10.844 4.818-10.844 10.719s5.369 8.708 11.375 10.725c2.15.687 3.813 1.575 3.975 3.592.213 1.914-1.718 3.392-3.975 3.541-1.768.143-6.543.046-10.943-2.808l-.963 7.38zM159.644 425.666h8.694l1.506-3.787h12.712l1.557 3.787h8.637l-16.15-36.449h-.8l-16.156 36.449zm12.987-10.376l3.594-9.149 3.488 9.149h-7.082zM208.9 426.405h1.713L226.5 390.5h-8.856l-5.15 11.951-2.738 7.03-2.787-7.276-5.1-11.705h-8.85l15.881 35.905zM249.888 425.666v-7.036h-12.175v-7.029H247.8v-7.036h-10.087v-7.035h11.531v-7.03h-19.206v35.166h19.85zM289.219 397.53v-7.03h-19.157v35.166h7.676v-14.065h9.762v-7.036h-9.762v-7.035h11.481z"
@@ -319,16 +354,22 @@ class Home extends Component {
             </div>
             <div className="col-lg-1"></div>
             <div className="col-lg-4">
-              <p className="mb-3 custom-text-color1" style={{ paddingTop: '150px' }}>
-                <h1 style={{ textAlign: 'left' }}>
-                  Join the feast, save a feast.
-                  Savor the endless delights.
+              <p
+                className="mb-3 custom-text-color1"
+                style={{ paddingTop: "150px" }}
+              >
+                <h1 style={{ textAlign: "left" }}>
+                  Join the feast, save a feast. Savor the endless delights.
                 </h1>
-                <p style={{ marginTop: '50px', textAlign: 'left' }}>
-                  From your favorite makan places, we believe in the beauty of saving every bite. It's our mission to transform surplus into satisfaction, turning what's left at the end of the day into discounted delights for you. Join us in making sustainability delicious.
+                <p style={{ marginTop: "50px", textAlign: "left" }}>
+                  From your favorite makan places, we believe in the beauty of
+                  saving every bite. It's our mission to transform surplus into
+                  satisfaction, turning what's left at the end of the day into
+                  discounted delights for you. Join us in making sustainability
+                  delicious.
                 </p>
               </p>
-{/*               <button
+              {/*               <button
                 type="button"
                 className="btn btn-sign-in-primary text-uppercase mb-5"
                 onClick={this.handleSignInBtn}
@@ -344,90 +385,10 @@ class Home extends Component {
         </div>
 
         {/* Home How it work section */}
-        <div className="container-fluid text-center py-4">
-          <div className="py-4">
-            <h2 className="h2 text-uppercase">How It Works</h2>
-          </div>
-          <div className="container">
-            <div className="row">
-              <div className="col-12 col-md-4 px-5">
-                <span className="round-border my-4">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="80"
-                    height="80"
-                    fill="none"
-                    viewBox="0 0 80 80"
-                  >
-                    <path
-                      fill="#FF6A90"
-                      fillRule="evenodd"
-                      d="M26.667 73.333h26.666A6.673 6.673 0 0060 66.667V13.333a6.673 6.673 0 00-6.667-6.666H26.667A6.673 6.673 0 0020 13.333v53.334a6.673 6.673 0 006.667 6.666zm0-16.666V13.333h26.666l.007 53.334H26.667v-3.334h26.666v-6.666H26.667zM33.333 20h13.334v6.667H33.333V20z"
-                      clipRule="evenodd"
-                    ></path>
-                  </svg>
-                </span>
-                <h3 className="h3 mb-4">Order on website</h3>
-                <p className="mb-4">
-                  Log in to Treasure Chope to access to range of resturants and
-                  shops offering discounted food that is too good to waste.
-                </p>
-              </div>
-              <div className="col-12 col-md-4 px-5">
-                <span className="round-border my-4">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="80"
-                    height="80"
-                    fill="none"
-                    viewBox="0 0 80 80"
-                  >
-                    <path
-                      fill="#FF6A90"
-                      fillRule="evenodd"
-                      d="M53.333 43.088c-10-1.597-10-10.668-10-18.088 0-10.28 5.857-18.333 13.334-18.333C64.143 6.667 70 14.72 70 25c0 7.42 0 16.49-10 18.088V70h-6.667V43.088zm3.334-6.421c6.093 0 6.666-2.06 6.666-11.667 0-6.873-3.513-11.667-6.666-11.667C53.513 13.333 50 18.127 50 25c0 9.607.573 11.667 6.667 11.667zM30 40h-3.333v30H20V40h-3.333A6.673 6.673 0 0110 33.333V10h6.667v23.333H20V10h6.667v23.333H30V10h6.667v23.333A6.673 6.673 0 0130 40z"
-                      clipRule="evenodd"
-                    ></path>
-                  </svg>
-                </span>
-                <h3 className="h3 mb-4">Choose your food</h3>
-                <p className="mb-4">
-                  Dive into a mouthwatering world of flavors with our massive
-                  selection of food options.
-                </p>
-              </div>
-              <div className="col-12 col-md-4 px-5">
-                <span className="round-border my-4">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="80"
-                    height="80"
-                    fill="none"
-                    viewBox="0 0 80 80"
-                  >
-                    <path
-                      fill="#FF6A90"
-                      fillRule="evenodd"
-                      d="M58.333 6.667a5.002 5.002 0 014.72 3.343c.342-.029.69-.005 1.03.074a5 5 0 11-.948 9.557l-2.005 3.007c3.464 4.212 1.156 10.636-.193 14.389l-.031.086a47.812 47.812 0 00-.72 2.115c2.402 3.359 4.23 4.717 5.598 5.734l.006.005c2.42 1.793 4.133 3.42 4.203 8.04.067 4.466-2.153 9.766-5.523 13.186C62.023 68.687 59.197 70 56.297 70h-36.56c-3.117 0-6.11-1.493-8.004-3.997C9.843 63.5 6.667 58.09 6.667 50c0-11.517 8.146-22.907 18.95-26.497 5.286-1.756 14.053-1.22 19.14 1.177l-.061.129c2.659-2.846 6.071-6.111 10.586-5.408l1.91-2.865a5.002 5.002 0 011.141-9.87zm-8.33 50L50 50h.007c1.073 0 2.486-.153 3.126-.88 1.09-1.236.677-4.536.43-6.506-.13-1.034-.23-1.94-.23-2.614 0-1.517.587-3.15 1.33-5.217 2.014-5.596 2.137-7.653.51-8.466-1.593-.79-2.636-.164-6.243 3.73-2.053 2.223-4.38 4.74-7.44 6.27-6.25 3.123-8.157 5.543-8.157 10.35 0 1.493 1.837 3.333 3.334 3.333v6.667c-5.14 0-10-4.86-10-10 0-8.627 4.733-12.76 11.843-16.317.292-.146.58-.313.865-.498-3.71-.906-8.751-.987-11.655-.019C19.653 32.51 13.333 41.37 13.333 50c0 6.373 2.6 10.5 3.72 11.98a3.344 3.344 0 002.684 1.353h36.556c1.434 0 2.76-1.133 3.427-1.81 2.133-2.16 3.65-5.7 3.607-8.41-.024-1.683-.024-1.683-1.507-2.786l-.005-.004a39.84 39.84 0 01-1.564-1.204c-.318 1.568-.953 3.095-2.114 4.411-1.837 2.083-4.577 3.137-8.134 3.137z"
-                      clipRule="evenodd"
-                    ></path>
-                  </svg>
-                </span>
-                <h3 className="h3 mb-4">Pick Up & Enjoy!</h3>
-                <p className="mb-4">
-                  Flash your confirmation code, grab your delicious food, and
-                  savor a double helping of goodness
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+       <HowItWorks />
 
         {/* Additional Promotion*/}
-        <div
-          className="promo-section"
-
-        >
+        <div className="promo-section">
           <div className="promo-content">
             <div className="text-content">
               <h1 className="promo-title">Hidden Gems, Happy Wallet</h1>
@@ -435,10 +396,9 @@ class Home extends Component {
                 <br></br>
                 Unlock Food Deals with Treasure Chope!
                 <br></br>
-
               </h2>
             </div>
-{/*             <div className="button-container">
+            {/*             <div className="button-container">
               <button onClick={this.handleSignInBtn} className="btn btn-signin">
                 Sign in
               </button>
