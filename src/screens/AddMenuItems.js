@@ -120,164 +120,153 @@ export default class AddMenuItems extends Component {
             </div>
           </div>
         </div>
-        <div className="container-fluid py-5 bg-light">
-          <div className="col-lg-6 col-md-6 col-sm-12 mx-auto bg-white shadow p-4">
-            <h2 className="text-center mb-4">Add Surprise Bag</h2>
-            <form onSubmit={this.handleAddYourItemBtn}>
-              <div className="form-row">
-                <div className="form-group col-md-6">
-                  <label htmlFor="itemTitle">
-                    <b>Name</b>
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="itemTitle"
-                    placeholder="Full name of dish"
-                    onChange={(e) =>
-                      this.setState({ itemTitle: e.target.value })
-                    }
-                  />
-                </div>
-                <div className="form-group col-md-6">
-                  <label htmlFor="itemIngredients">
-                    <b>Description</b>
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="itemIngredients"
-                    placeholder="Item Ingredients Name"
-                    onChange={(e) =>
-                      this.setState({ itemIngredients: e.target.value })
-                    }
-                  />
-                </div>
-              </div>
-              <div className="form-row">
-                <div className="form-group col-md-6">
-                  <label htmlFor="itemPrice">
-                    <b>Price $</b>
-                  </label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    id="itemPrice"
-                    placeholder="Price in number"
-                    onChange={(e) =>
-                      this.setState({ itemPrice: e.target.value })
-                    }
-                  />
-                </div>
-                <div className="form-group col-md-6">
-                  <label className="mb-2">
-                    <b>Item Image</b>
-                  </label>
-                  <div className="custom-file">
-                    <input
-                      type="file"
-                      className="custom-file-input"
-                      id="itemImage"
-                      onChange={this.handleItemImage} // Include standard one~
-                    />
-                    <label className="custom-file-label" htmlFor="itemImage">
-                      {itemImageLable}
-                    </label>
-                  </div>
-                </div>
-              </div>
-              <label className="mb-2">
-                <b>Choose Surprise Bag Type </b>
-              </label>
-              <div className="form-row">
-                <div className="form-group col-md-3">
-                  <div className="custom-control custom-radio">
-                    <input
-                      type="radio"
-                      className="custom-control-input"
-                      id="standard"
-                      value="standard"
-                      name="chooseItemType"
-                      onChange={(e) =>
-                        this.setState({ chooseItemType: e.target.value })
-                      }
-                    />
-                    <label className="custom-control-label" htmlFor="standard">
-                      Standard
-                    </label>
-                  </div>
-                </div>
-                <div className="form-group col-md-3">
-                  <div className="custom-control custom-radio">
-                    <input
-                      type="radio"
-                      className="custom-control-input"
-                      id="halal"
-                      value="halal"
-                      name="chooseItemType"
-                      onChange={(e) =>
-                        this.setState({ chooseItemType: e.target.value })
-                      }
-                    />
-                    <label className="custom-control-label" htmlFor="halal">
-                      Halal
-                    </label>
-                  </div>
-                </div>
-                <div className="form-group col-md-3">
-                  <div className="custom-control custom-radio">
-                    <input
-                      type="radio"
-                      className="custom-control-input"
-                      id="vegetarian"
-                      value="vegetarian"
-                      name="chooseItemType"
-                      onChange={(e) =>
-                        this.setState({ chooseItemType: e.target.value })
-                      }
-                    />
-                    <label className="custom-control-label" htmlFor="vegetarian">
-                      Vegetarian
-                    </label>
-                  </div>
-                </div>
-                <div className="form-group col-md-3">
-                  <div className="custom-control custom-radio">
-                    <input
-                      type="radio"
-                      className="custom-control-input"
-                      id="vegan"
-                      value="vegan"
-                      name="chooseItemType"
-                      onChange={(e) =>
-                        this.setState({ chooseItemType: e.target.value })
-                      }
-                    />
-                    <label className="custom-control-label" htmlFor="vegan">
-                      Vegan
-                    </label>
-                  </div>
-                </div>
-              </div>
+        <div className="container-fluid py-5" style={{ backgroundColor: "#f8f9fa" }}>
+    <div className="col-lg-6 col-md-8 col-sm-12 mx-auto" style={{ backgroundColor: "#fbf2f7", boxShadow: "0 4px 8px rgba(0,0,0,0.1)", padding: "1rem" }}>
+        <h2 className="text-center" style={{ marginBottom: "1rem", color: "#C13F86" }}>Add Surprise Bag</h2>
+        <form onSubmit={this.handleAddYourItemBtn}>
+        <div className="mb-3">
+    <label htmlFor="itemTitle" className="form-label" style={{ fontWeight: "bold", color: "#C13F86" }}>Name</label>
+    <input
+        type="text"
+        className="form-control"
+        id="itemTitle"
+        placeholder="Full name of dish"
+        style={{
+            boxShadow: "none",
+            color: "#1d0a15",
+            borderColor: '#C13F86', // Sets the border color to match the label
+            borderWidth: '1px', // Specifies the border width
+            borderStyle: 'solid', // Ensures the border is solid
+            outline: 'none' // Removes the default focus outline
+        }}
+        onChange={(e) => this.setState({ itemTitle: e.target.value })}
+        onFocus={(e) => e.target.style.boxShadow = '0 0 0 0.2rem rgba(193, 63, 134, 0.25)'} // Adds a pink glow when focused
+        onBlur={(e) => e.target.style.boxShadow = 'none'} // Removes the glow when not focused
+    />
+</div>
 
-              {showError ? (
-                <p className="text-danger">{registerFormError}</p>
-              ) : null}
-              <button
+            <div className="mb-3">
+    <label htmlFor="itemIngredients" className="form-label" style={{ fontWeight: "bold", color: "#C13F86" }}>Description</label>
+    <input
+        type="text"
+        className="form-control"
+        id="itemIngredients"
+        placeholder="Describe the ingredients"
+        style={{
+            boxShadow: "none",
+            color: "#1d0a15",
+            borderColor: '#C13F86', // Sets the border color to pink
+            borderWidth: '1px', // Specifies the border width
+            borderStyle: 'solid', // Ensures the border is solid
+            outline: 'none' // Removes the default focus outline
+        }}
+        onChange={(e) => this.setState({ itemIngredients: e.target.value })}
+        onFocus={(e) => e.target.style.boxShadow = '0 0 0 0.2rem rgba(193, 63, 134, 0.25)'} // Adds a pink glow when focused
+        onBlur={(e) => e.target.style.boxShadow = 'none'} // Removes the glow when not focused
+    />
+</div>
+<div className="mb-3">
+    <label htmlFor="itemPrice" className="form-label" style={{ fontWeight: "bold", color: "#C13F86" }}>Price $</label>
+    <input
+        type="number"
+        className="form-control"
+        id="itemPrice"
+        placeholder="Enter price"
+        style={{
+            boxShadow: "none",
+            color: "#1d0a15",
+            borderColor: '#C13F86', // Sets the border color to pink
+            borderWidth: '1px', // Specifies the border width
+            borderStyle: 'solid', // Ensures the border is solid
+            outline: 'none' // Removes the default focus outline
+        }}
+        onChange={(e) => this.setState({ itemPrice: e.target.value })}
+        onFocus={(e) => e.target.style.boxShadow = '0 0 0 0.2rem rgba(193, 63, 134, 0.25)'} // Adds a pink glow when focused
+        onBlur={(e) => e.target.style.boxShadow = 'none'} // Removes the glow when not focused
+    />
+</div>
+
+<div className="mb-4">
+    <label htmlFor="itemImage" className="form-label" style={{ fontWeight: "bold", color: "#C13F86" }}>Item Image</label>
+    <div className="custom-file" style={{ borderRadius: '0.25rem', overflow: 'hidden' }}>
+        <input
+            type="file"
+            className="form-control"
+            id="itemImage"
+            style={{
+                cursor: 'pointer',
+                backgroundColor: '#ffffff',
+                borderColor: '#c13f86',
+                boxShadow: 'inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(193, 63, 134, 0.6)',
+                color: '#555',
+                position: 'absolute',  // Allows the label to fully cover the input visually
+                width: '100%',
+                height: '100%',
+                top: 0,
+                left: 0,
+                opacity: 0  // Makes the input invisible but still functional
+            }}
+            onChange={this.handleItemImage}
+        />
+        <label className="custom-file-label" htmlFor="itemImage" style={{
+            backgroundColor: 'transparent',
+            borderColor: '#c13f86',
+            color: '#1d0a15',
+            fontSize: '0.875rem',
+            transition: 'border .3s ease-in-out',
+            display: 'block',
+            padding: '0.375rem 0.75rem',
+            width: '100%',
+            textAlign: 'left',  // Ensures text alignment is consistent
+            pointerEvents: 'none',  // Ensures clicks pass through to the input
+        }}>
+            {this.state.itemImageLabel || "Choose file..."}
+        </label>
+    </div>
+</div>
+
+
+<fieldset className="mb-4" style={{ border: '1px solid #c13f86', borderRadius: '5px', padding: '20px', backgroundColor: '#fbf2f7', marginTop:'-20px' }}>
+    <legend style={{ fontWeight: "bold", color: "#C13F86", marginBottom: '10px', width: 'auto', padding: '0 10px', backgroundColor: '#fbf2f7' }}>Choose Surprise Bag Type</legend>
+    <div className="d-flex flex-wrap">
+        {["standard", "halal", "vegetarian", "vegan"].map(type => (
+            <div key={type} className="form-check form-check-inline" style={{ marginRight: '20px' }}>
+                <input
+                    className="form-check-input"
+                    type="radio"
+                    name="chooseItemType"
+                    id={type}
+                    value={type}
+                    style={{
+                        cursor: 'pointer',
+                        accentColor: '#c13f86' // This styles the color of the radio input
+                    }}
+                    onChange={(e) => this.setState({ chooseItemType: e.target.value })}
+                />
+                <label className="form-check-label" htmlFor={type} style={{ color: '#1d0a15' }}>
+                    {type.charAt(0).toUpperCase() + type.slice(1)}
+                </label>
+            </div>
+        ))}
+    </div>
+</fieldset>
+
+            {showError && (
+                <div className="alert alert-danger" role="alert" style={{ backgroundColor: "#f8d7da", color: "#721c24" }}>
+                    {registerFormError}
+                </div>
+            )}
+            <button
                 type="submit"
-                className="btn btn-custom-add-item text-uppercase mb-3"
-                style={{
-                  backgroundColor: "#C13F86",
-                  borderColor: "#C13F86",
-                  color: "#FFFFFF",
-                }}
-                onClick={this.handleAddYourItemBtn}
-              >
+                className="btn text-uppercase w-100"
+                style={{ backgroundColor: "#C13F86", borderColor: "#C13F86", color: "#FFFFFF" }}
+            >
                 <b>Add your item</b>
-              </button>
-            </form>
-          </div>
-        </div>
+            </button>
+        </form>
+    </div>
+</div>
+
         <Footer />
       </div>
     );
