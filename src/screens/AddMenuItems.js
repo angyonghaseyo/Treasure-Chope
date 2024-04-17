@@ -220,7 +220,7 @@ export default class AddMenuItems extends Component {
             textAlign: 'left',  // Ensures text alignment is consistent
             pointerEvents: 'none',  // Ensures clicks pass through to the input
         }}>
-            {this.state.itemImageLabel || "Choose file..."}
+            {this.state.itemImageLable || "Choose file..."}
         </label>
     </div>
 </div>
