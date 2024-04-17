@@ -232,7 +232,7 @@ class Restaurants extends Component {
             >
               <div className="col-lg-3 col-md-3 col-sm-12 px-0 text-center">
                 <img
-                  style={{ height: "85px", width: "130px", margin: "0 auto" }}
+                  style={{ height: "95px", width: "125px", paddingBottom:"10px" }}
                   alt="Restaurant"
                   src={restaurant.userProfileImageUrl}
                 />
