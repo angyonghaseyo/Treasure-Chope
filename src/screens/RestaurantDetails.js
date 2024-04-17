@@ -288,7 +288,7 @@ class RestaurantDetails extends Component {
       // console.log("You must be Loged In")
       Swal.fire({
         title: "Error",
-        text: "You must be Loged In",
+        text: "You must be Logged In",
         type: "error",
       }).then(() => {
         this.props.history.push("/login");
