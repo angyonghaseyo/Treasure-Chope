@@ -232,12 +232,12 @@ class Restaurants extends Component {
             >
               <div className="col-lg-3 col-md-3 col-sm-12 px-0 text-center">
                 <img
-                  style={{ height: "95px", width: "125px", paddingBottom:"10px" }}
+                  style={{ height: "95px", width: "125px", paddingBottom:"10px", marginLeft:"-30px" }}
                   alt="Restaurant"
                   src={restaurant.userProfileImageUrl}
                 />
               </div>
-              <div className="col-lg-6 col-md-6 col-sm-12 px-0">
+              <div className="col-lg-6 col-md-6 col-sm-12 px-0" style={{marginLeft:"-20px", marginRight:"20px"}}>
                 <h5>{restaurant.userName}</h5>
                 <p>
                   <small>
@@ -308,12 +308,12 @@ class Restaurants extends Component {
           <div className="row" style={{ alignItems: "center" }}>
             <div className="col-lg-3 col-md-3 col-sm-12 px-0 text-center">
               <img
-                style={{ height: "85px", width: "130px", margin: "0 auto" }}
+                style={{ height: "95px", width: "125px", paddingBottom:"10px", marginLeft:"-30px" }}
                 alt="Restaurant"
                 src={restaurant.userProfileImageUrl}
               />
             </div>
-            <div className="col-lg-6 col-md-6 col-sm-12 px-0">
+            <div className="col-lg-6 col-md-6 col-sm-12 px-0" style={{marginLeft:"-20px", marginRight:"20px"}}>
               <h5>{restaurant.userName}</h5>
               <p>
                 <small>
