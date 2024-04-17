@@ -220,6 +220,54 @@ class MyOrders extends Component {
     }
   };
 
+  cancelOrder = (order) => {
+    console.log("Received order for cancellation:", order.id);
+  
+    // References to the order documents in Firebase Firestore
+    const userOrderRef = firebase.firestore()
+      .collection("users")
+      .doc(order.customerId)
+      .collection("myOrder")
+      .doc(order.id);
+  console.log(userOrderRef)
+    const restaurantOrderRef = firebase.firestore()
+      .collection("users")
+      .doc(order.restaurantId)
+      .collection("orderRequest")
+      .doc(order.id);
+  console.log(restaurantOrderRef)
+    // First check the order status from the user's perspective
+    userOrderRef.get().then(doc => {
+      if (!doc.exists) {
+        alert("No such order exists or it has already been deleted.");
+        return;
+      }
+      if (doc.data().status === "PENDING") {
+        // Delete the order from both user's and restaurant's collections
+        Promise.all([userOrderRef.delete(), restaurantOrderRef.delete()])
+          .then(() => {
+            alert("Order has been cancelled and deleted successfully.");
+            this.props.my_order(); // Refresh the order list
+          })
+          .catch((error) => {
+            console.error("Error deleting the order:", error);
+            alert("Failed to delete the order. Error: " + error.message);
+          });
+      } else {
+        alert("Order cannot be cancelled because it is not in 'PENDING' status.");
+      }
+    }).catch((error) => {
+      console.error("Error retrieving order details:", error);
+      alert("Failed to retrieve order details. Error: " + error.message);
+    });
+  };
+  
+  
+  
+  
+  
+
+  // Modify the render method or specific component that renders each order
   _renderActiveOrders() {
     const { myOrder } = this.props;
     return myOrder
@@ -267,6 +315,10 @@ class MyOrders extends Component {
                           ></span>
                           <span>{order.status}</span>
                         </div>
+                        {order.status === "PENDING" && (
+                         <button onClick={() => this.cancelOrder(order)}>Cancel Order</button>
+
+                        )}
                       </div>
                     </div>
                   );

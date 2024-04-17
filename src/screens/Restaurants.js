@@ -322,7 +322,7 @@ class Restaurants extends Component {
               />
             </div>
             <div className="col-lg-6 col-md-6 col-sm-12 px-0" style={{marginLeft:"-20px", marginRight:"20px"}}>
-            <small>
+               <small>
                     <FontAwesomeIcon icon="star" className="rating mr-1" />
                     <FontAwesomeIcon icon="star" className="rating mr-1" />
                     <FontAwesomeIcon icon="star" className="rating mr-1" />
