@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { update_user, remove_user } from '../store/action';
 // import { logOut, } from '../config/firebase';
+import "../App.css";
+
 
 class Navbar extends Component {
   constructor() {

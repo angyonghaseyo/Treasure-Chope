@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
  import 'bootstrap/dist/css/bootstrap.css'
- import { Link } from 'react-router-dom';
+ import { NavLink, Link } from 'react-router-dom';
  import { connect } from 'react-redux';
  import { update_user, remove_user } from '../store/action';
  import { Navbar } from 'react-bootstrap'
  // import { logOut, } from '../config/firebase';
+ import "../App.css";
+
 
  class Navbar2 extends Component {
      constructor() {
@@ -50,19 +52,17 @@ import React, { Component } from 'react';
 
      _renderWithOutLogin() {
          return (
-             <ul className="navbar-nav ml-auto">
-                 <li className="nav-item">
-                     <span className="nav-link active text-uppercase mr-2"><Link to="/restaurants">Restaurants</Link></span>
-                 </li>
-                 <li className="nav-item">
-                     <span className="nav-link text-uppercase mr-2"><Link to="/login">Login / Register</Link></span>
-                 </li>
-                 <li className="nav-item">
-                     <Link to="/register-restaurant">
-                         <button type="button" className="btn btn-sm text-uppercase mr-2 mr-1 px-3" style={{color:'pink'}}>Register Restaurant</button>
-                     </Link>
-                 </li>
-             </ul>
+          <ul className="navbar-nav ml-auto">
+          <li className="nav-item">
+              <NavLink exact to="/restaurants" className="nav-link text-uppercase mr-2" activeClassName="active">Restaurants</NavLink>
+          </li>
+          <li className="nav-item">
+              <NavLink to="/login" className="nav-link text-uppercase mr-2" activeClassName="active">Login / Register</NavLink>
+          </li>
+          <li className="nav-item">
+              <NavLink to="/register-restaurant" className="btn btn-sm text-uppercase mr-2 mr-1 px-3" style={{color:'pink'}}>Register Restaurant</NavLink>
+          </li>
+      </ul>
          )
      }
 
@@ -70,40 +70,40 @@ import React, { Component } from 'react';
          const { updated_user } = this.state
          if (updated_user.isRestaurant) {
              return (
-                 <ul className="navbar-nav ml-auto">
-                     <li className="nav-item">
-                         <span className="nav-link active text-uppercase mr-2"><Link to="/add-menu-items">Add Foods</Link></span>
-                     </li>
-                     <li className="nav-item">
-                         <span className="nav-link active text-uppercase mr-2"><Link to="/my-foods">My Foods</Link></span>
-                     </li>
-                     <li className="nav-item">
-                         <span className="nav-link active text-uppercase mr-2"><Link to="/order-requests">Order Requests</Link></span>
-                     </li>
-                     <li className="nav-item">
-                         <span className="nav-link active text-uppercase mr-2">{updated_user.userName}</span>
-                     </li>
-                     <li className="nav-item">
-                         <button type="button" className="btn btn-warning btn-sm text-uppercase mr-2 mr-1 px-3" onClick={() => this.handleLogOutBtn()}>Log Out</button>
-                     </li>
-                 </ul>
+              <ul className="navbar-nav ml-auto">
+              <li className="nav-item">
+                  <NavLink exact to="/add-menu-items" className="nav-link text-uppercase mr-2" activeClassName="active">Add Foods</NavLink>
+              </li>
+              <li className="nav-item">
+                  <NavLink to="/my-foods" className="nav-link text-uppercase mr-2" activeClassName="active">My Foods</NavLink>
+              </li>
+              <li className="nav-item">
+                  <NavLink to="/order-requests" className="nav-link text-uppercase mr-2" activeClassName="active">Order Requests</NavLink>
+              </li>
+              <li className="nav-item">
+                  <span className="nav-link active text-uppercase mr-2">{updated_user.userName}</span>
+              </li>
+              <li className="nav-item">
+                  <button type="button" className="btn btn-warning btn-sm text-uppercase mr-2 mr-1 px-3" onClick={() => this.handleLogOutBtn()}>Log Out</button>
+              </li>
+          </ul>
              )
          } else {
              return (
-                 <ul className="navbar-nav ml-auto">
-                     <li className="nav-item">
-                         <span className="nav-link active text-uppercase mr-2"><Link to="/restaurants">Restaurants</Link></span>
-                     </li>
-                     <li className="nav-item">
-                         <span className="nav-link active text-uppercase mr-2"><Link to="/my-orders">My Orders</Link></span>
-                     </li>
-                     <li className="nav-item">
-                         <span className="nav-link active text-uppercase mr-2">{updated_user.userName}</span>
-                     </li>
-                     <li className="nav-item">
-                         <button type="button" className="btn btn-warning btn-sm text-uppercase mr-2 mr-1 px-3" onClick={() => this.handleLogOutBtn()}>Log Out</button>
-                     </li>
-                 </ul>
+              <ul className="navbar-nav ml-auto">
+              <li className="nav-item">
+                  <NavLink exact to="/restaurants" className="nav-link text-uppercase mr-2" activeClassName="active">Restaurants</NavLink>
+              </li>
+              <li className="nav-item">
+                  <NavLink to="/my-orders" className="nav-link text-uppercase mr-2" activeClassName="active">My Orders</NavLink>
+              </li>
+              <li className="nav-item">
+                  <span className="nav-link text-uppercase mr-2">{updated_user.userName}</span>
+              </li>
+              <li className="nav-item">
+                  <button type="button" className="btn btn-warning btn-sm text-uppercase mr-2 mr-1 px-3" onClick={() => this.handleLogOutBtn()}>Log Out</button>
+              </li>
+          </ul>
              )
          }
      }

@@ -419,20 +419,21 @@ class Restaurants extends Component {
                   <h5>Sort By</h5>
                   <ul>
                     <li
+                      style={{ cursor: "pointer" }}
                       onClick={() => this.changeSortingMethod("alphabetical")}
                     >
                       <FontAwesomeIcon
                         icon="sort-alpha-down"
                         className="mr-3"
                       />
-                      <span>
+                 
                         Alphabetical{" "}
                         {this.state.sortingMethod.includes("alphabetical")
                           ? this.state.sortingMethod === "alphabetical_asc"
                             ? "(Asc)"
                             : "(Desc)"
                           : ""}
-                      </span>
+            
                     </li>
                     <li>
                       <FontAwesomeIcon icon="star" className="mr-3" />
