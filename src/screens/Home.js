@@ -17,22 +17,20 @@ class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        homeSearchBarText: "",
-        restaurantCount: 0,
-        userCount: 0,
-        collectedOrdersCount: 0,
-       
+      homeSearchBarText: "",
+      restaurantCount: 0,
+      userCount: 0,
+      collectedOrdersCount: 0,
     };
-   
+
     this.handleSearchBar = this.handleSearchBar.bind(this);
-}
+  }
 
   componentDidMount() {
     this.initializeFirebaseData();
     this.setState({ animateText: true });
-    
   }
-  
+
   initializeFirebaseData = async () => {
     await this.fetchRestaurantCount();
     await this.fetchUserCount();
@@ -385,7 +383,7 @@ class Home extends Component {
         </div>
 
         {/* Home How it work section */}
-       <HowItWorks />
+        <HowItWorks />
 
         {/* Additional Promotion*/}
         <div className="promo-section">
@@ -593,7 +591,7 @@ class Home extends Component {
                     >
                       <h5 className="mb-1">Menu's</h5>
                       <p className="mb-2">
-                        <small>Fish Fry, Fresh Juice, Stakes</small>
+                        <small>Fish Fry, Fresh Juice, Steak</small>
                       </p>
                       <p>
                         <small className="">
