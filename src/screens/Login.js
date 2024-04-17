@@ -373,46 +373,70 @@ export default class Login extends Component {
             </div>
           </div>
         </div>
-        <div className="container-fluid py-5 bg-light">
+        <div className="container-fluid py-5" style={{ backgroundColor: "#f8f9fa" }}>
           {isRegisterForm ? (
-            <div className="col-lg-6 col-md-8 col-sm-12 mx-auto bg-white shadow p-4">
-              <h2 className="text-center mb-4">Create an Account</h2>
+    <div className="col-lg-6 col-md-8 col-sm-12 mx-auto" style={{ backgroundColor: "#fbf2f7", boxShadow: "0 4px 8px rgba(0,0,0,0.1)", padding: "1rem" }}>
+        <h2 className="text-center" style={{ marginBottom: "1rem", color: "#C13F86" }}>Create An Account</h2>
               <form onSubmit={this.handleCreateAccountBtn}>
                 <div className="form-row">
                   <div className="form-group col-md-6">
-                    <label htmlFor="userFullName">Full Name</label>
+                    <label htmlFor="userFullName"style={{ fontWeight: "bold", color: "#C13F86" }}>Full Name </label>
                     <input
                       type="text"
                       className="form-control"
                       id="userName"
                       placeholder="Full Name"
+                      style={{
+                        boxShadow: "none",
+                        color: "#1d0a15",
+                        borderColor: '#C13F86', // Sets the border color to match the label
+                        borderWidth: '1px', // Specifies the border width
+                        borderStyle: 'solid', // Ensures the border is solid
+                        outline: 'none' // Removes the default focus outline
+                    }}
                       onKeyUp={(e) => this.handleUserName(e.target.value)}
                     />
                   </div>
                   <div className="form-group col-md-6">
-                    <label htmlFor="userEmail">Email</label>
+                    <label htmlFor="userEmail" style={{ fontWeight: "bold", color: "#C13F86" }}>Email</label>
                     <input
                       type="email"
                       className="form-control"
                       id="userEmail"
                       placeholder="Email"
+                      style={{
+                        boxShadow: "none",
+                        color: "#1d0a15",
+                        borderColor: '#C13F86', // Sets the border color to match the label
+                        borderWidth: '1px', // Specifies the border width
+                        borderStyle: 'solid', // Ensures the border is solid
+                        outline: 'none' // Removes the default focus outline
+                    }}
                       onKeyUp={(e) => this.handleUserEmail(e.target.value)}
                     />
                   </div>
                 </div>
                 <div className="form-row">
                   <div className="form-group col-md-6">
-                    <label htmlFor="userPassword">Password</label>
+                    <label htmlFor="userPassword" style={{ fontWeight: "bold", color: "#C13F86" }}>Password</label>
                     <input
                       type="password"
                       className="form-control"
                       id="userPassword"
                       placeholder="Password"
+                      style={{
+                        boxShadow: "none",
+                        color: "#1d0a15",
+                        borderColor: '#C13F86', // Sets the border color to match the label
+                        borderWidth: '1px', // Specifies the border width
+                        borderStyle: 'solid', // Ensures the border is solid
+                        outline: 'none' // Removes the default focus outline
+                    }}
                       onKeyUp={(e) => this.handleUserPassword(e.target.value)}
                     />
                   </div>
                   <div className="form-group col-md-6">
-                    <label htmlFor="userConfirmPassword">
+                    <label htmlFor="userConfirmPassword" style={{ fontWeight: "bold", color: "#C13F86" }}>
                       Confirm Password
                     </label>
                     <input
@@ -420,6 +444,14 @@ export default class Login extends Component {
                       className="form-control"
                       id="userConfirmPassword"
                       placeholder="Password"
+                      style={{
+                        boxShadow: "none",
+                        color: "#1d0a15",
+                        borderColor: '#C13F86', // Sets the border color to match the label
+                        borderWidth: '1px', // Specifies the border width
+                        borderStyle: 'solid', // Ensures the border is solid
+                        outline: 'none' // Removes the default focus outline
+                    }}
                       onKeyUp={(e) =>
                         this.handleUserConfirmPassword(e.target.value)
                       }
@@ -428,31 +460,55 @@ export default class Login extends Component {
                 </div>
                 <div className="form-row">
                   <div className="form-group col-md-6">
-                    <label htmlFor="userCity">City</label>
+                    <label htmlFor="userCity" style={{ fontWeight: "bold", color: "#C13F86" }}>City</label>
                     <input
                       type="text"
                       className="form-control"
                       id="userCity"
+                      style={{
+                        boxShadow: "none",
+                        color: "#1d0a15",
+                        borderColor: '#C13F86', // Sets the border color to match the label
+                        borderWidth: '1px', // Specifies the border width
+                        borderStyle: 'solid', // Ensures the border is solid
+                        outline: 'none' // Removes the default focus outline
+                    }}
                       onKeyUp={(e) => this.handleUserCity(e.target.value)}
                     />
                   </div>
                   <div className="form-group col-md-6">
-                    <label htmlFor="userCountry">Country</label>
+                    <label htmlFor="userCountry" style={{ fontWeight: "bold", color: "#C13F86" }}>Country</label>
                     <input
                       type="text"
                       className="form-control"
                       id="userCountry"
+                      style={{
+                        boxShadow: "none",
+                        color: "#1d0a15",
+                        borderColor: '#C13F86', // Sets the border color to match the label
+                        borderWidth: '1px', // Specifies the border width
+                        borderStyle: 'solid', // Ensures the border is solid
+                        outline: 'none' // Removes the default focus outline
+                    }}
                       onKeyUp={(e) => this.handleUserCountry(e.target.value)}
                     />
                   </div>
                 </div>
                 <div className="form-row">
                   <div className="form-group col-md-4">
-                    <label htmlFor="userGender">Gender</label>
+                    <label htmlFor="userGender" style={{ fontWeight: "bold", color: "#C13F86" }}>Gender</label>
                     <select
                       id="userGender"
                       className="form-control"
                       value={userGender}
+                      style={{
+                        boxShadow: "none",
+                        color: "#1d0a15",
+                        borderColor: '#C13F86', // Sets the border color to match the label
+                        borderWidth: '1px', // Specifies the border width
+                        borderStyle: 'solid', // Ensures the border is solid
+                        outline: 'none' // Removes the default focus outline
+                    }}
                       onChange={this.handleUserGender}
                     >
                       <option defaultValue>Male</option>
@@ -460,26 +516,53 @@ export default class Login extends Component {
                     </select>
                   </div>
                   <div className="form-group col-md-2">
-                    <label htmlFor="userAge">Age</label>
+                    <label htmlFor="userAge" style={{ fontWeight: "bold", color: "#C13F86" }}>Age</label>
                     <input
                       type="number"
                       className="form-control"
                       id="userAge"
+                      style={{
+                        boxShadow: "none",
+                        color: "#1d0a15",
+                        borderColor: '#C13F86', // Sets the border color to match the label
+                        borderWidth: '1px', // Specifies the border width
+                        borderStyle: 'solid', // Ensures the border is solid
+                        outline: 'none' // Removes the default focus outline
+                    }}
                       onKeyUp={(e) => this.handleUserAge(e.target.value)}
                     />
                   </div>
                   <div className="form-group col-md-6">
-                    <p className="mb-2">Profile Image</p>
+                    <p className="mb-2" style={{ fontWeight: "bold", color: "#C13F86" }}>Profile Image</p>
                     <div className="custom-file">
                       <input
                         type="file"
                         className="custom-file-input"
                         id="userProfileImage"
                         onChange={this.handleUserProfileImage}
+                        style={{
+                          boxShadow: "none",
+                          color: "#1d0a15",
+                          borderColor: '#C13F86', // Sets the border color to match the label
+                          borderWidth: '1px', // Specifies the border width
+                          borderStyle: 'solid', // Ensures the border is solid
+                          outline: 'none' // Removes the default focus outline
+                      }}
                       />
                       <label
                         className="custom-file-label"
-                        htmlFor="userProfileImage"
+                        htmlFor="userProfileImage" style={{
+                          backgroundColor: 'transparent',
+                          borderColor: '#c13f86',
+                          color: '#1d0a15',
+                          fontSize: '0.875rem',
+                          transition: 'border .3s ease-in-out',
+                          display: 'block',
+                          padding: '0.375rem 0.75rem',
+                          width: '100%',
+                          textAlign: 'left',  // Ensures text alignment is consistent
+                          pointerEvents: 'none',  // Ensures clicks pass through to the input
+                        }}
                       >
                         {userProfileImageLable}
                       </label>
@@ -492,6 +575,14 @@ export default class Login extends Component {
                       type="checkbox"
                       className="custom-control-input"
                       id="userTNC"
+                      style={{
+                        boxShadow: "none",
+                        color: "#1d0a15",
+                        borderColor: '#C13F86', // Sets the border color to match the label
+                        borderWidth: '1px', // Specifies the border width
+                        borderStyle: 'solid', // Ensures the border is solid
+                        outline: 'none' // Removes the default focus outline
+                    }}
                       defaultChecked={userTNC}
                       onChange={this.handleUserTNC}
                     />
@@ -523,8 +614,8 @@ export default class Login extends Component {
               </p>
             </div>
           ) : (
-            <div className="col-lg-4 col-md-6 col-sm-12 mx-auto bg-white shadow p-4">
-              <h2 className="text-center mb-4">Login Your Account</h2>
+            <div className="col-lg-4 col-md-6 col-sm-12 mx-auto" style={{ backgroundColor: "#fbf2f7", boxShadow: "0 4px 8px rgba(0,0,0,0.1)", padding: "1rem" }}>
+              <h2 className="text-center" style={{ marginBottom: "1rem", color: "#C13F86" }}>Login</h2>
               {this.state.loginErrorMessage && (
                 <div className="alert alert-danger" role="alert">
                   {this.state.loginErrorMessage}
@@ -532,24 +623,40 @@ export default class Login extends Component {
               )}
               <form onSubmit={this.handleLoginNowBtn}>
                 <div className="form-group">
-                  <label htmlFor="userLoginEmail">Email</label>
+                  <label htmlFor="userLoginEmail" style={{ fontWeight: "bold", color: "#C13F86" }}>Email</label>
                   <input
                     type="email"
                     className="form-control"
                     id="userLoginEmail"
                     placeholder="Email"
+                    style={{
+                      boxShadow: "none",
+                      color: "#1d0a15",
+                      borderColor: '#C13F86', // Sets the border color to match the label
+                      borderWidth: '1px', // Specifies the border width
+                      borderStyle: 'solid', // Ensures the border is solid
+                      outline: 'none' // Removes the default focus outline
+                  }}
                     onChange={(e) =>
                       this.setState({ userLoginEmail: e.target.value })
                     }
                   />
                 </div>
                 <div className="form-group">
-                  <label htmlFor="userLoginPassword">Password</label>
+                  <label htmlFor="userLoginPassword" style={{ fontWeight: "bold", color: "#C13F86" }}>Password</label>
                   <input
                     type="password"
                     className="form-control"
                     id="userLoginPassword"
                     placeholder="Password"
+                    style={{
+                      boxShadow: "none",
+                      color: "#1d0a15",
+                      borderColor: '#C13F86', // Sets the border color to match the label
+                      borderWidth: '1px', // Specifies the border width
+                      borderStyle: 'solid', // Ensures the border is solid
+                      outline: 'none' // Removes the default focus outline
+                  }}
                     onChange={(e) =>
                       this.setState({ userLoginPassword: e.target.value })
                     }
@@ -563,6 +670,7 @@ export default class Login extends Component {
                 >
                   <b>Login Now</b>
                 </button>
+
               </form>
               <p className="m-0">
                 Don't have an account yet?{" "}
