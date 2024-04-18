@@ -81,7 +81,7 @@ import React, { Component } from 'react';
                   <NavLink to="/order-requests" className="nav-link text-uppercase mr-2" activeClassName="active">Order Requests</NavLink>
               </li>
               <li className="nav-item">
-                  <span className="nav-link active text-uppercase mr-2">{updated_user.userName}</span>
+                  <NavLink to="/edit-profile" className="nav-link active text-uppercase mr-2">{updated_user.userName}</NavLink>
               </li>
               <li className="nav-item">
                   <button type="button" className="btn btn-warning btn-sm text-uppercase mr-2 mr-1 px-3" onClick={() => this.handleLogOutBtn()}>Log Out</button>

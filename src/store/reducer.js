@@ -18,6 +18,9 @@ const reducer = (state = {}, action) => {
         case "MY_FOODS": {
             return { ...state, myFoods: action.myFoods }
         }
+        case "EDIT_PROFILE": {
+            return { ...state, user: { ...state.user, ...action.user }};
+        }
         default: {
             return state;
         }

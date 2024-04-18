@@ -23,6 +23,55 @@ firebase.initializeApp(firebaseConfig);
 
 const db = firebase.firestore();
 
+function updateUserProfile(userDetails) {
+  return new Promise((resolve, reject) => {
+    const {
+      userUid,
+      userName,
+      userEmail,
+      userPassword,
+      userCity,
+      userCountry,
+      userGender,
+      userAge,
+      userProfileImage,  // This should be a File object if updating the image
+      isRestaurant,
+      typeOfFood,
+      restaurantDescription,
+      userFavorites,
+    } = userDetails;
+
+    // Authenticate first to ensure that only the current logged-in user can update their profile
+    const user = firebase.auth().currentUser;
+    if (!user || user.uid !== userUid) {
+      reject("Unauthorized to update profile");
+      return;
+    }
+
+    // Handling image upload if a new image is provided
+    if (userProfileImage && userProfileImage instanceof File) {
+      const storageRef = firebase.storage().ref().child(`userProfileImage/${userUid}/` + userProfileImage.name);
+      storageRef.put(userProfileImage).then((snapshot) => {
+        snapshot.ref.getDownloadURL().then((downloadURL) => {
+          updateUserDetailsInFirestore(userUid, { ...userDetails, userProfileImageUrl: downloadURL })
+            .then(resolve)
+            .catch(reject);
+        }).catch(error => reject("Failed to get download URL: " + error.message));
+      }).catch(error => reject("Image upload failed: " + error.message));
+    } else {
+      // Update details directly if no image upload is needed
+      updateUserDetailsInFirestore(userUid, userDetails)
+        .then(resolve)
+        .catch(reject);
+    }
+  });
+}
+
+function updateUserDetailsInFirestore(userUid, userDetails) {
+  return db.collection("users").doc(userUid).update(userDetails);
+}
+
+
 function signUp(userDetails) {
   return new Promise((resolve, reject) => {
     const {
@@ -267,4 +316,4 @@ function orderNow(cartItemsList, totalPrice, resDetails, userDetails, history) {
 }
 
 export default firebase;
-export { signUp, logIn, addItem, orderNow };
+export { signUp, logIn, addItem, orderNow, updateUserProfile };

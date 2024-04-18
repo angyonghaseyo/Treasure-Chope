@@ -1,6 +1,24 @@
 import firebase from '../config/firebase';
 const db = firebase.firestore();
 
+const editProfile = (uid, profileData) => {
+    return (dispatch) => {
+        db.collection('users').doc(uid).update(profileData)
+            .then(() => {
+                dispatch({
+                    type: 'EDIT_PROFILE',
+                    user: { ...profileData }
+                });
+                alert('Profile updated successfully!');
+            })
+            .catch((error) => {
+                console.error("Error updating profile: ", error);
+                alert('Error updating profile: ' + error.message);
+            });
+    }
+}
+
+
 const update_user = () => {
     return (dispatch) => {
         firebase.auth().onAuthStateChanged((user) => {
@@ -132,4 +150,5 @@ export {
     order_request,
     my_order,
     my_foods,
+    editProfile,
 }
