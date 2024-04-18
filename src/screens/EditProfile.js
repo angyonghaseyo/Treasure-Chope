@@ -157,7 +157,7 @@ class EditProfile extends Component {
               <div className="container">
                 <div className="row">
                   <div className="col-md-12">
-                    <h1 className="text-uppercase text-white mb-4">
+                    <h1 className="text-uppercase text-white mb-4" style={{marginLeft:"130px"}}>
                       <strong>Edit Profile</strong>
                     </h1>
                   </div>
@@ -167,7 +167,7 @@ class EditProfile extends Component {
           </div>
         </div>
 
-        <div className="container py-5" style={{ backgroundColor: "#f8f9fa" }}>
+        <div className="py-5" style={{ backgroundColor: "#f8f9fa" }}>
           <div
             className="col-lg-8 col-md-10 col-sm-12 mx-auto"
             style={{
@@ -313,9 +313,9 @@ class EditProfile extends Component {
                       "userCountry",
                       "restaurantDescription",
                       "userCity",
-                      "userPassword",
-                      "userEmail",
                       "userName",
+                      "userEmail",
+                      "userPassword",
                     ].includes(key)
                   ) {
                     return (
