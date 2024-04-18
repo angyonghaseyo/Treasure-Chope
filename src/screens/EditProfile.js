@@ -119,24 +119,61 @@ class EditProfile extends Component {
 
   handleImageUpload = async () => {
     const { imageFile } = this.state;
-    if (imageFile) {
-      const storageRef = firebase.storage().ref();
-      const fileRef = storageRef.child(`user_profile_images/${imageFile.name}`);
-      try {
+    const { userUid } = this.props.user;  // Assuming userUid is available in props
+
+    if (!imageFile) {
+        alert("No image selected!");
+        return;
+    }
+
+    if (!userUid) {
+        alert("User ID not found!");
+        return;
+    }
+
+    const storageRef = firebase.storage().ref();
+    const userRef = firebase.firestore().collection('users').doc(userUid);
+
+    this.setState({ loading: true });
+
+    try {
+        // First, retrieve the current image name from Firestore
+        const doc = await userRef.get();
+        let imageName = doc.exists && doc.data().imageName;
+        if (!imageName) {
+            // If no image name is stored, generate a new one
+            imageName = `image_${new Date().getTime()}.png`; // This will always generate a new name
+            // Optionally update Firestore with the new image name for consistency
+            await userRef.update({ imageName });
+        }
+
+        const fileRef = storageRef.child(`userProfileImage/${userUid}/${imageName}`);
+
+        // Upload the new image
         await fileRef.put(imageFile);
         const imageUrl = await fileRef.getDownloadURL();
+
+        // Update the Firestore user profile
+        await userRef.update({ userProfileImageUrl: imageUrl });
+
+        // Update local state
         this.setState((prevState) => ({
-          profile: {
-            ...prevState.profile,
-            userProfileImageUrl: imageUrl,
-          },
+            profile: {
+                ...prevState.profile,
+                userProfileImageUrl: imageUrl,
+                imageName,  // Store the image name in state if needed
+            },
+            loading: false,
         }));
-      } catch (error) {
-        console.error("Error uploading image:", error);
-        alert("Failed to upload image.");
-      }
+
+        alert("Image uploaded successfully!");
+    } catch (error) {
+        console.error("Error uploading image or updating profile:", error);
+        this.setState({ loading: false });
+        alert("Failed to upload image or update profile.");
     }
-  };
+};
+
 
   render() {
     const { loading, profile, error, editMode } = this.state;
