@@ -11,6 +11,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import "../App.css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import qrCodeImage from "../assets/images/qrCodeImage.png";
 
 class RestaurantDetails extends Component {
   constructor() {
@@ -236,6 +237,66 @@ class RestaurantDetails extends Component {
     });
   }
 
+  // async handleConfirmOrderBtn() {
+  //   const { cartItemsList, totalPrice, resDetails, userDetails } = this.state;
+  //   console.log(cartItemsList.length);
+  //   if (userDetails) {
+  //     if (!userDetails.isRestaurant) {
+  //       if (cartItemsList.length > 0) {
+  //         try {
+  //           const history = this.props.history;
+  //           const orderNowReturn = await orderNow(
+  //             cartItemsList,
+  //             totalPrice,
+  //             resDetails,
+  //             userDetails,
+  //             history
+  //           );
+  //           console.log(orderNowReturn);
+  //           // console.log("Successfully Ordered")
+  //           Swal.fire({
+  //             title: "Success",
+  //             text: "Successfully Ordered",
+  //             type: "success",
+  //           }).then(() => {
+  //             history.push("/my-orders");
+  //           });
+  //         } catch (error) {
+  //           // console.log(" Error in confirm order => ", error)
+  //           Swal.fire({
+  //             title: "Error",
+  //             text: error,
+  //             type: "error",
+  //           });
+  //         }
+  //       } else {
+  //         console.log("You have to select atleast one item");
+  //         Swal.fire({
+  //           title: "Error",
+  //           text: "You have to select atleast one item",
+  //           type: "error",
+  //         });
+  //       }
+  //     } else {
+  //       // console.log("You are not able to order")
+  //       Swal.fire({
+  //         title: "Error",
+  //         text: "You are not able to order",
+  //         type: "error",
+  //       });
+  //     }
+  //   } else {
+  //     // console.log("You must be Loged In")
+  //     Swal.fire({
+  //       title: "Error",
+  //       text: "You must be Logged In",
+  //       type: "error",
+  //     }).then(() => {
+  //       this.props.history.push("/login");
+  //     });
+  //   }
+  // }
+
   async handleConfirmOrderBtn() {
     const { cartItemsList, totalPrice, resDetails, userDetails } = this.state;
     console.log(cartItemsList.length);
@@ -252,16 +313,58 @@ class RestaurantDetails extends Component {
               history
             );
             console.log(orderNowReturn);
-            // console.log("Successfully Ordered")
+
+            // Swal.fire({
+            //   title:
+            //     '<span style="color: #1d0a15; font-size: 18px;">Scan QR Code to Pay</span>',
+            //   html:
+            //     '<img src="' +
+            //     qrCodeImage +
+            //     '" alt="QR Code" style="width: 150px; height: auto;">' +
+            //     '<p style="color: #1d0a15; font-size: 16px;">Please scan the QR code to proceed with your payment.</p>',
+            //   confirmButtonText: '<span style="color: white;">Proceed</span>',
+            //   confirmButtonColor: "#1d0a15", // Button background color
+            //   focusConfirm: false,
+            //   preConfirm: () => {
+            //     return new Promise((resolve) => {
+            //       Swal.fire({
+            //         title:
+            //           '<span style="color: #1d0a15; font-size: 18px;">Success</span>',
+            //         text: "Successfully Ordered",
+            //         icon: "success",
+            //       }).then(() => {
+            //         history.push("/my-orders");
+            //         resolve();
+            //       });
+            //     });
+            //   },
+            // });
             Swal.fire({
-              title: "Success",
-              text: "Successfully Ordered",
-              type: "success",
-            }).then(() => {
-              history.push("/my-orders");
+              title:
+                '<span style="color: #1d0a15; font-size: 18px;">Scan QR Code to Pay</span>',
+              html:
+                '<img src="' +
+                qrCodeImage +
+                '" alt="QR Code" style="width: 150px; height: auto;">' +
+                '<p style="color: #1d0a15; font-size: 16px;">Please scan the QR code to proceed with your payment.</p>',
+              confirmButtonText: '<span style="color: white;">Proceed</span>',
+              confirmButtonColor: "#1d0a15",
+              focusConfirm: false,
+              preConfirm: () => {
+                return new Promise((resolve) => {
+                  Swal.fire({
+                    title: "Success",
+                    text: "Successfully Ordered",
+                    type: "success",
+                  }).then(() => {
+                    history.push("/my-orders");
+                    resolve();
+                  });
+                });
+              },
             });
           } catch (error) {
-            // console.log(" Error in confirm order => ", error)
+            console.log("Error in confirm order => ", error);
             Swal.fire({
               title: "Error",
               text: error,
@@ -269,15 +372,15 @@ class RestaurantDetails extends Component {
             });
           }
         } else {
-          console.log("You have to select atleast one item");
+          console.log("You have to select at least one item");
           Swal.fire({
             title: "Error",
-            text: "You have to select atleast one item",
+            text: "You have to select at least one item",
             type: "error",
           });
         }
       } else {
-        // console.log("You are not able to order")
+        console.log("You are not able to order");
         Swal.fire({
           title: "Error",
           text: "You are not able to order",
@@ -285,7 +388,7 @@ class RestaurantDetails extends Component {
         });
       }
     } else {
-      // console.log("You must be Loged In")
+      console.log("You must be Logged In");
       Swal.fire({
         title: "Error",
         text: "You must be Logged In",
@@ -302,19 +405,31 @@ class RestaurantDetails extends Component {
       return Object.keys(menuItemsList).map((val) => {
         const item = menuItemsList[val]; // Refactoring for better readability
         return (
-          <div className="container border-bottom pb-2 px-lg-0 px-md-0 mb-4" key={item.id}>
+          <div
+            className="container border-bottom pb-2 px-lg-0 px-md-0 mb-4"
+            key={item.id}
+          >
             <div className="row">
               <div className="col-lg-2 col-md-3 col-8 offset-2 offset-lg-0 offset-md-0 px-0 mb-3 text-center">
-                <img style={{ width: "70px", height: "70px" }} alt="Natural Healthy Food" src={item.itemImageUrl} />
+                <img
+                  style={{ width: "70px", height: "70px" }}
+                  alt="Natural Healthy Food"
+                  src={item.itemImageUrl}
+                />
               </div>
               <div className="col-lg-7 col-md-6 col-sm-12 px-0">
                 <h6>{item.itemTitle}</h6>
-                <p><small>{item.itemIngredients}</small></p>
+                <p>
+                  <small>{item.itemIngredients}</small>
+                </p>
               </div>
               <div className="col-lg-3 col-md-3 col-sm-12 px-0 text-center">
                 <span className="mx-3">${item.itemPrice}</span>
                 {item.availability && (
-                  <span className="menuItemsListAddBtn" onClick={() => this.addToCart(item)}>
+                  <span
+                    className="menuItemsListAddBtn"
+                    onClick={() => this.addToCart(item)}
+                  >
                     <FontAwesomeIcon icon="plus" className="text-warning" />
                   </span>
                 )}
@@ -325,7 +440,6 @@ class RestaurantDetails extends Component {
       });
     }
   }
-  
 
   _renderCartItemsList() {
     const { cartItemsList } = this.state;
