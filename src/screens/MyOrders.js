@@ -283,44 +283,70 @@ class MyOrders extends Component {
                 {Object.keys(order.itemsList).map((itemKey) => {
                   const item = order.itemsList[itemKey];
                   return (
-                    <div key={itemKey} className="order-content">
-                      <div
+                    <div key={itemKey} className="order-content" style={{ display: 'flex', width: '100%' , colour: '#fbf2f7'}}>
+                    {/* Image Container */}
+                    <div style={{
+                      fflex: '1 0 50%', 
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      overflow: "hidden",
+                      height: "200px", 
+                      padding: '10px', 
+                    }}>
+                      <img
                         style={{
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          overflow: "hidden",
-                          width: "100%",
-                          height: "100px",
+                          width: 'auto', 
+                          height: '100%', 
+                          objectFit: 'contain' 
                         }}
-                      >
-                        <img
-                          style={{
-                            maxWidth: "100%",
-                            maxHeight: "100%",
-                            objectFit: "contain",
-                          }}
-                          className="order-image"
-                          alt="Order Item"
-                          src={item.itemImageUrl}
-                        />
-                      </div>
-                      <div className="order-details">
-                        <h5 className="order-title">
-                          {item.itemTitle} ${item.itemPrice} Surprise Box
-                        </h5>
-                        <div className="order-status">
-                          <span
-                            className={`status-indicator ${order.status.toLowerCase()}`}
-                          ></span>
-                          <span>{order.status}</span>
-                        </div>
-                        {order.status === "PENDING" && (
-                         <button onClick={() => this.cancelOrder(order)}>Cancel Order</button>
-
-                        )}
-                      </div>
+                        className="order-image"
+                        alt="Order Item"
+                        src={item.itemImageUrl}
+                      />
                     </div>
+          
+                    {/* Order Details Container */}
+                    <div className="order-details" style={{ flex: '1 0 50%', padding: '0 10px' }}>
+                      <h5 className="order-title" style={{marginTop: '10px'}}>
+                        {item.itemTitle} ${item.itemPrice} Surprise Box
+                      </h5>
+                      <div className="order-status" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+  <span className={`status-indicator ${order.status.toLowerCase()}`} ></span>
+  <span style={{ marginRight: '10px' }}>{order.status}</span>
+  {order.status === "PENDING" && (
+    <button
+    onClick={() => {
+      if (window.confirm('Do you want to confirm cancel order?')) {
+        this.cancelOrder(order);
+      }
+    }}
+      style={{
+        backgroundColor: '#fbf2f7',
+        borderRadius: '10px', // Rounded corners for button
+        height: 'auto', // Height to fit content
+        minWidth: '120px', // Minimum width to contain the button text
+        padding: '10px 20px', // Padding around text inside button
+        boxShadow: '0 2px 4px rgba(0,0,0,0.25)',
+        cursor: 'pointer',
+        border: 'none',
+        display: 'inline-flex', // Use inline-flex to keep it in line with the status text
+        alignItems: 'right',
+        justifyContent: 'right',
+        marginLeft: '-5px', // Space between the status text and button
+        marginTop: '20px'
+        
+      }}
+      className="close-modal-button"
+    >
+      Cancel Order
+    </button>
+  )}
+</div>
+
+                    </div>
+                  </div>
+          
                   );
                 })}
               </div>
@@ -494,15 +520,29 @@ class MyOrders extends Component {
                     </div>
                   </div>
                   {tab1Content && (
-                    <div className="row pending-order-section">
-                      <div className="col-12 bg-white p-4">
+                    <div className="row pending-order-section" style={{
+                      background: "#fbf2f7",
+                      borderRadius: '5px',
+                       
+                      padding: '5px', 
+                      margin: '5px',
+                      overflow: 'hidden' }}
+                      >
+                      <div className="col-30 p-4">
                         {this._renderActiveOrders()}
                       </div>
                     </div>
                   )}
                   {tab2Content && (
-                    <div className="row delivered-order-section">
-                      <div className="col-12 bg-white p-4">
+                    <div className="row delivered-order-section" style={{
+                      background: "#fbf2f7",
+                      borderRadius: '5px',
+                       
+                      padding: '5px', 
+                      margin: '5px',
+                      overflow: 'hidden' }}
+                      >
+                      <div className="col-12 p-4">
                         {this._renderPastOrders()}
                       </div>
                     </div>

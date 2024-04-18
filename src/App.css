@@ -975,3 +975,21 @@ a:hover{
 /* Add this CSS to your stylesheet */
 
 
+
+
+.close-modal-button span {
+  visibility: hidden; 
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #fbf2f7;
+  font-weight: bold;
+
+ 
+}
+
+.close-modal-button:hover span {
+  color: c13f86;
+  visibility: visible;
+}
