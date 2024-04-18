@@ -170,6 +170,7 @@ function addItem(itemDetails) {
               itemPrice: itemPrice,
               itemImageUrl: itemImageUrl,
               chooseItemType: chooseItemType,
+              availability : true,
               // userUid: uid,
             };
             db.collection("users")

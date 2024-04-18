@@ -300,33 +300,24 @@ class RestaurantDetails extends Component {
     const { menuItemsList } = this.state;
     if (menuItemsList) {
       return Object.keys(menuItemsList).map((val) => {
+        const item = menuItemsList[val]; // Refactoring for better readability
         return (
-          <div
-            className="container border-bottom pb-2 px-lg-0 px-md-0 mb-4"
-            key={menuItemsList[val].id}
-          >
+          <div className="container border-bottom pb-2 px-lg-0 px-md-0 mb-4" key={item.id}>
             <div className="row">
               <div className="col-lg-2 col-md-3 col-8 offset-2 offset-lg-0 offset-md-0 px-0 mb-3 text-center">
-                <img
-                  style={{ width: "70px", height: "70px" }}
-                  alt="Natural Healthy Food"
-                  src={menuItemsList[val].itemImageUrl}
-                />
+                <img style={{ width: "70px", height: "70px" }} alt="Natural Healthy Food" src={item.itemImageUrl} />
               </div>
               <div className="col-lg-7 col-md-6 col-sm-12 px-0">
-                <h6 className="">{menuItemsList[val].itemTitle}</h6>
-                <p className="">
-                  <small>{menuItemsList[val].itemIngredients}</small>
-                </p>
+                <h6>{item.itemTitle}</h6>
+                <p><small>{item.itemIngredients}</small></p>
               </div>
               <div className="col-lg-3 col-md-3 col-sm-12 px-0 text-center">
-                <span className="mx-3">${menuItemsList[val].itemPrice}</span>
-                <span
-                  className="menuItemsListAddBtn"
-                  onClick={() => this.addToCart(menuItemsList[val])}
-                >
-                  <FontAwesomeIcon icon="plus" className="text-warning" />
-                </span>
+                <span className="mx-3">${item.itemPrice}</span>
+                {item.availability && (
+                  <span className="menuItemsListAddBtn" onClick={() => this.addToCart(item)}>
+                    <FontAwesomeIcon icon="plus" className="text-warning" />
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -334,6 +325,7 @@ class RestaurantDetails extends Component {
       });
     }
   }
+  
 
   _renderCartItemsList() {
     const { cartItemsList } = this.state;
