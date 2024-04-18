@@ -10,7 +10,7 @@ import firebase from "../config/firebase";
 import 'bootstrap/dist/css/bootstrap.css';
 import '../App.css'
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+//import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 class MyFoods extends Component {
     constructor() {
@@ -18,6 +18,8 @@ class MyFoods extends Component {
         this.state = {
         }
     }
+
+    
 
     async componentDidMount() {
         this.props.my_foods();
@@ -56,6 +58,7 @@ class MyFoods extends Component {
                 console.error("Error toggling item availability:", error)
             );
     }
+    
 
     _renderMyFoodsList() {
         const { myFoods, userDetails } = this.state;
@@ -63,8 +66,6 @@ class MyFoods extends Component {
             console.log(myFoods);
             console.log(userDetails);
             return Object.keys(myFoods).map((val) => {
-                const availabilityText = myFoods[val].availability ? "Mark as Unavailable" : "Mark as Available";
-            const buttonColor = myFoods[val].availability ? 'linear-gradient(to right, #EE6EA7, #ed4264)' : 'linear-gradient(to right, #7ed56f, #28b485)';
                 return (
                     <div className="container pt-4 pb-2 border-bottom" key={val}>
                         <div className="row">
@@ -72,26 +73,23 @@ class MyFoods extends Component {
                                 <img style={{ width: "70px", height: "70px" }} alt="Natural Healthy Food" src={myFoods[val].itemImageUrl} />
                             </div>
                             <div className="col-lg-7 col-md-6 col-sm-12 px-0">
-                                <h6 className="">{myFoods[val].itemTitle}</h6>
-                                <p className="mb-1"><small>{myFoods[val].itemIngredients}</small></p>
+                                <h6 >{myFoods[val].itemTitle}</h6>
+                                <p className="mb-1 "><small>{myFoods[val].itemIngredients}</small></p>
                             </div>
                             <div className="col-lg-3 col-md-3 col-sm-12 px-0 text-right">
-                            <span className="mx-3"><b>${myFoods[val].itemPrice}</b></span>
-                            <button
-                                className="btn btn-danger"
-                                onClick={() => this.handleToggleAvailability(val, userDetails, myFoods)}
-                                style={{ backgroundImage: buttonColor }}
-                            >
-                                {availabilityText}
-                            </button>
-                        </div>
-                            
+                                <span className="mx-3"><b>${myFoods[val].itemPrice}</b></span>
+                                <label className="switch">
+                                    <input type="checkbox" checked={myFoods[val].availability} onChange={() => this.handleToggleAvailability(val, userDetails, myFoods)} />
+                                    <span className="slider round"></span>
+                                </label>
+                            </div>
                         </div>
                     </div>
-                )
-            })
+                );
+            });
         }
     }
+    
 
     render() {
         const { userDetails } = this.state;
