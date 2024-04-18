@@ -222,6 +222,7 @@ class Restaurants extends Component {
       }
       return sortedRestaurantArray.map((restaurant) => {
         const isFavorited = userFavorites.includes(restaurant.id);
+        const totalReviews = restaurant.totalOrdersRated ? restaurant.totalOrdersRated : 0;
         return restaurant.userProfileImageUrl &&
           restaurant.userName &&
           restaurant.typeOfFood ? (
@@ -245,7 +246,7 @@ class Restaurants extends Component {
                     <FontAwesomeIcon icon="star" className="rating mr-1" />
                     <FontAwesomeIcon icon="star" className="rating mr-1" />
                   </small>
-                  <small> Reviews </small>
+                  <small>   ({totalReviews}) {totalReviews ? "Reviews": "Review"}  </small>
                 <h5>{restaurant.userName}</h5>
                 <p>
                   <small>
