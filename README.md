@@ -19,10 +19,6 @@ Our platform not only reduces food waste but also supports restaurants in recupe
 On a more technical aspect, Treasure Chope prides itself on being a user-friendly platform where both users and restaurants can intuitively navigate its features. The interface is designed with simplicity in mind, ensuring that interactions are straightforward and efficient. With clear menus, responsive design, and easy-to-follow steps, users can quickly find and order their desired meals, while restaurants can effortlessly upload and manage their surplus inventory. 
 This seamless interaction enhances the user experience, fostering greater engagement and satisfaction across the platform. It also effectively reduces the churn rate by ensuring that both users and restaurants enjoy a smooth and rewarding experience, encouraging continued use and loyalty.
 
-## Live Demo
-
-Experience Treasure Chope in action: [Live Demo](https://treasure-chope.firebaseapp.com)
-
 ## Features
 
 - **Surprise Boxes**: Get a variety of delicious food at reduced prices.
@@ -77,10 +73,12 @@ yarn start
 
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser. The page will reload when you make changes.
 
+## Live Demo
+
+Experience Treasure Chope in action: [Live Demo](https://treasure-chope.firebaseapp.com)
+
 ## Architecture Diagram
-
-The architecture of Treasure Chope is designed to support a real-time, interactive platform for reducing food waste by connecting restaurants with consumers. Below is a detailed overview of each component in the architecture.
-
+![Treasure Chope Architecture Diagram](https://github.com/angyonghaseyo/Treasure-Chope/blob/main/public/TreasureChope_Architecture.png)
 ### User Interface (React Frontend):
 - This is where the users interact with the application. The React frontend is responsible for rendering the UI components that include pages like Home, RegisterRestaurant, MyFoods, MyOrders, and more.
 - The dynamic nature of React allows for an engaging and responsive user experience.
@@ -99,6 +97,5 @@ The architecture of Treasure Chope is designed to support a real-time, interacti
 - This SDK integrates various Firebase services like authentication and file storage with the application.
 - It provides a set of tools for interacting with Firebase Firestore, handling file uploads to Firebase Storage, and managing user authentication seamlessly.
 
-The entire architecture is designed to be scalable and efficient, ensuring that as the user base grows, Treasure Chope will continue to provide a reliable and consistent service to all its stakeholders.
 
 
