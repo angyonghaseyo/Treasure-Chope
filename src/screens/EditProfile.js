@@ -27,30 +27,14 @@ class EditProfile extends Component {
         userProfileImageUrl: "",
       },
     };
+    this.handleTypeOfFood = this.handleTypeOfFood.bind(this);
   }
 
   toggleEditMode = () => {
-    if (this.state.editMode) {
-        // Exiting edit mode
-        this.setState({
-            editMode: false,
-            profile: {
-                ...this.state.profile,
-                tempProfileImageUrl: null  // Clear the temporary URL to ensure no old preview is shown
-            }
-        }, () => {
-            this.fetchUserProfile(); // Fetch the latest profile to revert unsaved changes
-        });
-    } else {
-        // Entering edit mode
-        this.setState({
-            editMode: true,
-            tempProfile: { ...this.state.profile }  // Optionally backup current state
-        });
-    }
-};
-
-  
+    this.setState((prevState) => ({
+      editMode: !prevState.editMode,
+    }));
+  };
   renderEditableField = (key, value) => {
     const editableFields = [
       "userCountry",
@@ -99,6 +83,17 @@ class EditProfile extends Component {
     }
   };
 
+  handleTypeOfFood = (event, index) => {
+    const newTypeOfFood = [...this.state.profile.typeOfFood];
+    newTypeOfFood[index] = event.target.value;
+    this.setState(prevState => ({
+      profile: {
+        ...prevState.profile,
+        typeOfFood: newTypeOfFood,
+      },
+    }));
+  };
+
   handleChange = (field, value) => {
     this.setState({
       profile: {
@@ -112,90 +107,163 @@ class EditProfile extends Component {
     event.preventDefault();
     const db = firebase.firestore();
     const userRef = db.collection("users").doc(this.props.user.userUid);
-  
+
     this.setState({ loading: true });
     try {
-      // Update the database with the current profile state
       await userRef.update(this.state.profile);
-      // After a successful update, exit edit mode and refresh the profile from the database
-      this.setState({ editMode: false }, () => {
-        this.fetchUserProfile();
-        alert("Profile updated successfully!");
-      });
+      alert("Profile updated successfully!");
+      this.setState({ editMode: false }); 
     } catch (error) {
       console.error("Error updating profile:", error);
-      this.setState({ editMode: true }); // Keep the user in edit mode on error
-      alert("Failed to update profile. Please try again.");
+      alert("Failed to update profile.");
     } finally {
       this.setState({ loading: false });
     }
   };
-  
 
   handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file); // Create a temporary URL for the file
       this.setState({
-          imageFile: file,
-          profile: {
-              ...this.state.profile,
-              tempProfileImageUrl: imageUrl, // Temporarily store the URL for preview purposes
-          },
+        imageFile: file,
       });
-  }
+    }
   };
 
   handleImageUpload = async () => {
     const { imageFile } = this.state;
-    const { userUid } = this.props.user;
+    const { userUid } = this.props.user;  // Assuming userUid is available in props
 
     if (!imageFile) {
-      alert("No image selected!");
-      return;
+        alert("No image selected!");
+        return;
     }
 
     if (!userUid) {
-      alert("User ID not found!");
-      return;
+        alert("User ID not found!");
+        return;
     }
 
     const storageRef = firebase.storage().ref();
-    const userRef = firebase.firestore().collection("users").doc(userUid);
+    const userRef = firebase.firestore().collection('users').doc(userUid);
 
     this.setState({ loading: true });
 
     try {
-      const doc = await userRef.get();
-      let imageName = doc.exists && doc.data().imageName;
-      if (!imageName) {
-        imageName = `image_${new Date().getTime()}.png`;
-        await userRef.update({ imageName });
-      }
+        // First, retrieve the current image name from Firestore
+        const doc = await userRef.get();
+        let imageName = doc.exists && doc.data().imageName;
+        if (!imageName) {
+            // If no image name is stored, generate a new one
+            imageName = `image_${new Date().getTime()}.png`; // This will always generate a new name
+            // Optionally update Firestore with the new image name for consistency
+            await userRef.update({ imageName });
+        }
 
-      const fileRef = storageRef.child(`userProfileImage/${userUid}/${imageName}`);
+        const fileRef = storageRef.child(`userProfileImage/${userUid}/${imageName}`);
 
-      // Upload the new image
-      await fileRef.put(imageFile);
-      const imageUrl = await fileRef.getDownloadURL();
+        // Upload the new image
+        await fileRef.put(imageFile);
+        const imageUrl = await fileRef.getDownloadURL();
 
-      // Immediately update the UI with the new image URL
-      this.setState({
-        profile: { ...this.state.profile, userProfileImageUrl: imageUrl, tempProfileImageUrl: null },
-        loading: false
-      }, () => {
+        // Update the Firestore user profile
+        await userRef.update({ userProfileImageUrl: imageUrl });
+
+        // Update local state
+        this.setState((prevState) => ({
+            profile: {
+                ...prevState.profile,
+                userProfileImageUrl: imageUrl,
+                imageName,  // Store the image name in state if needed
+            },
+            loading: false,
+        }));
+
         alert("Image uploaded successfully!");
-      });
-
-      // Make sure to update Firestore after the state update
-      await userRef.update({ userProfileImageUrl: imageUrl });
-
     } catch (error) {
-      console.error("Error uploading image or updating profile:", error);
-      this.setState({ loading: false });
-      alert("Failed to upload image or update profile.");
+        console.error("Error uploading image or updating profile:", error);
+        this.setState({ loading: false });
+        alert("Failed to upload image or update profile.");
     }
+};
+
+renderProfileView = () => {
+    const { profile } = this.state;
+    let order = [
+      { key: "userName", label: "Username" },
+      { key: "userEmail", label: "Email" },
+      { key: "userPassword", label: "Password", type: "password" },
+      { key: "userCity", label: "City" },
+    ];
+  
+    if (profile.isRestaurant) {
+      order = order.concat([
+        { key: "restaurantDescription", label: "Restaurant Description" },
+        ...profile.typeOfFood.map((_, index) => ({
+          key: `typeOfFood${index}`,
+          label: `Top Dish ${index + 1}`,
+          type: "text",
+          handleTypeOfFood: true // added to signify these inputs should use handleTypeOfFood
+        })),
+      ]);
+    }
+  
+    return order.map(({ key, label, type = "text", handleTypeOfFood }) => {
+      if (handleTypeOfFood) {
+        // Extract the index from the end of the 'key' string
+        const index = parseInt(key.replace('typeOfFood', ''), 10);
+        return (
+          <div key={key} className="mb-3">
+            <label className="form-label" style={{ fontWeight: "bold", color: "#C13F86" }}>
+              {label}:
+            </label>
+            <input
+              type={type}
+              readOnly={!this.state.editMode}
+              className="form-control"
+              value={profile.typeOfFood[index] || ''}
+              onChange={(e) => this.handleTypeOfFood(e, index)}
+              style={{
+                boxShadow: "none",
+                color: "#1d0a15",
+                backgroundColor: "#fbf2f7",
+                borderColor: "#C13F86",
+                borderWidth: "1px",
+                borderStyle: "solid",
+                outline: "none",
+              }}
+            />
+          </div>
+        );
+      } else {
+        // Return a normal input field
+        return (
+          <div key={key} className="mb-3">
+            <label className="form-label" style={{ fontWeight: "bold", color: "#C13F86" }}>
+              {label}:
+            </label>
+            <input
+              type={type}
+              readOnly={!this.state.editMode}
+              className="form-control"
+              value={profile[key]}
+              onChange={(e) => this.handleChange(key, e.target.value)}
+              style={{
+                boxShadow: "none",
+                color: "#1d0a15",
+                backgroundColor: "#fbf2f7",
+                borderColor: "#C13F86",
+                borderWidth: "1px",
+                borderStyle: "solid",
+                outline: "none",
+              }}
+            />
+          </div>
+        );
+      }
+    });
   };
+  
 
 
   render() {
@@ -217,10 +285,7 @@ class EditProfile extends Component {
               <div className="container">
                 <div className="row">
                   <div className="col-md-12">
-                    <h1
-                      className="text-uppercase text-white mb-4"
-                      style={{ marginLeft: "130px" }}
-                    >
+                    <h1 className="text-uppercase text-white mb-4" style={{marginLeft:"130px"}}>
                       <strong>Edit Profile</strong>
                     </h1>
                   </div>
@@ -245,89 +310,10 @@ class EditProfile extends Component {
             >
               My Profile
             </h2>
-
-            {!editMode && (
-              <div>
-                {profile.userProfileImageUrl && (
-                  <div className="text-center mb-4">
-                    <img
-                      src={profile.userProfileImageUrl}
-                      alt="Profile"
-                      className="img-fluid rounded-circle"
-                      style={{
-                        width: "150px",
-                        height: "150px",
-                        border: "3px solid #c13f86",
-                        borderRadius: "50%",
-                        cursor: "pointer",
-                      
-                      }}
-                    />
-                  </div>
-                )}
-
-                {Object.entries(profile).map(([key, value]) => {
-                  if (
-                    Array.isArray(value) ||
-                    key === "userPassword" ||
-                    key === "userProfileImageUrl" ||
-                    !value
-                  ) {
-                    return null;
-                  }
-                  return (
-                    <div key={key} className="mb-3">
-                      <label
-                        className="form-label"
-                        style={{ fontWeight: "bold", color: "#C13F86" }}
-                      >
-                        {key.replace(/([a-z])([A-Z])/g, "$1 $2")}
-                      </label>
-                      <input
-                        type="text"
-                        readOnly
-                        className="form-control"
-                        value={value}
-                        style={{
-                          boxShadow: "none",
-                          color: "#1d0a15",
-                          backgroundColor: "#fbf2f7",
-                          borderColor: "#C13F86",
-                          borderWidth: "1px",
-                          borderStyle: "solid",
-                          outline: "none",
-                        }}
-                      />
-                    </div>
-                  );
-                })}
-                <button
-                  className="btn text-uppercase w-100"
-                  onClick={this.toggleEditMode}
-                  style={{ backgroundColor: "#C13F86", color: "#FFFFFF" }}
-                >
-                  <strong>Edit Profile</strong>
-                </button>
-              </div>
-            )}
-
-            {editMode && (
-              <form onSubmit={this.handleSubmit} className="mb-4">
-                {profile.userProfileImageUrl && (
-                  <div className="text-center mb-4">
-                    <img
-            src={profile.tempProfileImageUrl || profile.userProfileImageUrl}
-            alt="Profile"
-                      className="img-fluid rounded-circle"
-                      style={{
-                        width: "150px",
-                        height: "150px",
-                        border: "3px solid #c13f86",
-                        borderRadius: "50%",
-                        cursor: "pointer",
-                      }}
-                      onClick={() => this.fileInput.click()}
-                    />
+            {profile.userProfileImageUrl && (
+              <div className="text-center mb-4">
+                {editMode === "image" ? (
+                  <div>
                     <input
                       type="file"
                       accept="image/*"
@@ -335,96 +321,105 @@ class EditProfile extends Component {
                       style={{ display: "none" }}
                       ref={(fileInput) => (this.fileInput = fileInput)}
                     />
-                    <div>
-                      <button
-                        type="button"
-                        className="btn"
-                        style={{
-                          backgroundColor: "#C13F86",
-                          color: "#FFFFFF",
-                          margin: "10px",
-                        }}
-                        onClick={() => this.setState({ editMode: false })}
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        type="button"
-                        className="btn"
-                        style={{
-                          backgroundColor: "#C13F86",
-                          color: "#FFFFFF",
-                          margin: "10px",
-                        }}
-                        onClick={this.handleImageUpload}
-                      >
-                        Save Image
-                      </button>
-                    </div>
+                    <img
+                      src={profile.userProfileImageUrl}
+                      alt="Profile"
+                      className="img-fluid rounded-circle"
+                      style={{
+                        maxHeight: "150px",
+                        border: "3px solid #c13f86",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => this.fileInput.click()} // Trigger file input click when image is clicked
+                    />
+                    <button
+                      className="btn"
+                      onClick={() => this.setState({ editMode: false })}
+                      style={{
+                        backgroundColor: "#C13F86",
+                        color: "#FFFFFF",
+                        marginLeft: "10px",
+                        marginTop: "10px",
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      className="btn"
+                      onClick={this.handleImageUpload}
+                      style={{
+                        backgroundColor: "#C13F86",
+                        color: "#FFFFFF",
+                        marginLeft: "10px",
+                        marginTop: "10px",
+                      }}
+                    >
+                      Save Image
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <img
+                      src={profile.userProfileImageUrl}
+                      alt="Profile"
+                      className="img-fluid rounded-circle"
+                      style={{
+                        maxHeight: "150px",
+                        border: "3px solid #c13f86",
+                      }}
+                    />
+                    <button
+                      className="btn"
+                      onClick={() => this.setState({ editMode: "image" })}
+                      style={{
+                        backgroundColor: "#C13F86",
+                        color: "#FFFFFF",
+                        marginLeft: "10px",
+                        marginTop: "10px",
+                      }}
+                    >
+                      Edit Image
+                    </button>
                   </div>
                 )}
-                {/* Only render inputs for editable fields */}
-                {Object.entries(profile).map(([key, value]) => {
-                  if (
-                    [
-                      "userCountry",
-                      "restaurantDescription",
-                      "userCity",
-                      "userName",
-                      "userEmail",
-                      "userPassword",
-                    ].includes(key)
-                  ) {
-                    return (
-                      <div key={key} className="mb-3">
-                        <label
-                          className="form-label"
-                          style={{ fontWeight: "bold", color: "#C13F86" }}
-                        >
-                          {key
-                            .replace(/([a-z])([A-Z])/g, "$1 $2")
-                            .replace(/^./, (str) => str.toUpperCase())}
-                          :
-                        </label>
-                        <input
-                          type={key === "userPassword" ? "password" : "text"}
-                          className="form-control"
-                          value={value}
-                          onChange={(e) =>
-                            this.handleChange(key, e.target.value)
-                          }
-                          style={{
-                            boxShadow: "none",
-                            color: "#1d0a15",
-                            borderColor: "#C13F86",
-                            borderWidth: "1px",
-                            borderStyle: "solid",
-                            outline: "none",
-                            backgroundColor: "#fbf2f7",
-                          }}
-                        />
-                      </div>
-                    );
-                  }
-                  return null;
-                })}
-                <div className="form-group">
-                  <button
-                    type="button"
-                    onClick={this.toggleEditMode}
-                    className="btn btn-secondary w-100 mb-2"
-                  >
-                    Cancel
-                  </button>
-                  <button type="submit" 
-                  className="btn btn-primary w-100">
-                    Save Profile
-                  </button>
-                </div>
-              </form>
+              </div>
             )}
-          </div>
+
+{editMode ? (
+            // Edit mode: form to submit profile updates
+            <form onSubmit={this.handleSubmit} className="mb-4">
+              {this.renderProfileView()}
+              <div className="form-group">
+                <button
+                  type="button"
+                  onClick={this.toggleEditMode}
+                  className="btn btn-secondary w-100 mb-2"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary w-100"
+                >
+                  Save Profile
+                </button>
+              </div>
+            </form>
+          ) : (
+            // View mode: display profile details and Edit Profile button
+            <>
+              {this.renderProfileView()}
+              <button
+                className="btn text-uppercase w-100"
+                onClick={this.toggleEditMode}
+                style={{ backgroundColor: "#C13F86", color: "#FFFFFF" }}
+              >
+                Edit Profile
+              </button>
+            </>
+          )}
         </div>
+      </div>
         <Footer />
       </div>
     );
