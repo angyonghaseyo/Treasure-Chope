@@ -19,7 +19,6 @@ Our platform not only reduces food waste but also supports restaurants in recupe
 On a more technical aspect, Treasure Chope prides itself on being a user-friendly platform where both users and restaurants can intuitively navigate its features. The interface is designed with simplicity in mind, ensuring that interactions are straightforward and efficient. With clear menus, responsive design, and easy-to-follow steps, users can quickly find and order their desired meals, while restaurants can effortlessly upload and manage their surplus inventory. 
 This seamless interaction enhances the user experience, fostering greater engagement and satisfaction across the platform. It also effectively reduces the churn rate by ensuring that both users and restaurants enjoy a smooth and rewarding experience, encouraging continued use and loyalty.
 
-
 ## Live Demo
 
 Experience Treasure Chope in action: [Live Demo](https://treasure-chope.firebaseapp.com)
@@ -30,13 +29,17 @@ Experience Treasure Chope in action: [Live Demo](https://treasure-chope.firebase
 - **Waste Reduction**: Help local businesses cut down on food waste.
 - **Dietary Filters**: Find food that fits your dietary restrictions and preferences.
 
-## Getting Started
+## Technology Stack
 
-Follow these simple steps to get your development environment set up:
+- **Frontend**: React.js, for building a responsive and interactive user interface with dynamic rendering capabilities.
+- **State Management**: Redux, used to maintain a predictable and centralized application state.
+- **Database**: Firebase Firestore, a NoSQL solution for real-time data storage and synchronization.
+- **Authentication**: Firebase SDK, providing secure user authentication and seamless integration with Firestore.
+- **File Storage**: Firebase Storage, handling efficient storage of user-generated content like images and documents.
+- **Real-Time Communication**: Enabled through Firebase SDK & Firestore, ensuring immediate state updates across client devices.
 
 ### Prerequisites
 
-- Node.js
 - npm or Yarn
 
 ### Installation
@@ -74,6 +77,28 @@ yarn start
 
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser. The page will reload when you make changes.
 
+## Architecture Diagram
 
+The architecture of Treasure Chope is designed to support a real-time, interactive platform for reducing food waste by connecting restaurants with consumers. Below is a detailed overview of each component in the architecture.
+
+### User Interface (React Frontend):
+- This is where the users interact with the application. The React frontend is responsible for rendering the UI components that include pages like Home, RegisterRestaurant, MyFoods, MyOrders, and more.
+- The dynamic nature of React allows for an engaging and responsive user experience.
+
+### API Calls:
+- The frontend communicates with Firebase Firestore through API calls made using the Firebase SDK. These calls handle operations like user authentication, data retrieval, and updates.
+
+### Real-time Updates:
+- Firebase Firestore provides real-time database updates to the React frontend. This allows for the immediate reflection of changes in the application state across all clients without the need for manual refresh.
+
+### Firebase Firestore (Database):
+- Firestore acts as the database layer for Treasure Chope. It stores and manages all the data, including user profiles, order details, restaurant information, and more.
+- The NoSQL structure of Firestore allows for flexible data models, which can be easily adapted to the varying needs of the application.
+
+### Firebase SDK:
+- This SDK integrates various Firebase services like authentication and file storage with the application.
+- It provides a set of tools for interacting with Firebase Firestore, handling file uploads to Firebase Storage, and managing user authentication seamlessly.
+
+The entire architecture is designed to be scalable and efficient, ensuring that as the user base grows, Treasure Chope will continue to provide a reliable and consistent service to all its stakeholders.
 
 
