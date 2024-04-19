@@ -1,5 +1,5 @@
 # Treasure Chope
-Treasure Chope leverages a platform to connect restaurants with excess food, packaged as surprise bags, to consumers seeking more diverse and affordable meal options. 
+Treasure Chope is a platform to connect restaurants with excess food, packaged as surprise bags, to consumers seeking more diverse and affordable meal options. 
 
 Our mission is to bridge the gap between local businesses and consumers, promoting a sustainable approach to food consumption. Through Treasure Chope, users can purchase 'surprise bags' of surplus food from local eateries that would have otherwise been thrown away, significantly reducing waste.
 
