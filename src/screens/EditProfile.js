@@ -384,6 +384,7 @@ renderProfileView = () => {
                         border: "3px solid #c13f86",
                       }}
                     />
+                    {editMode ?
                     <button
                       className="btn"
                       onClick={() => this.setState({ editMode: "image" })}
@@ -395,7 +396,8 @@ renderProfileView = () => {
                       }}
                     >
                       Edit Image
-                    </button>
+                    </button>: null
+                }
                   </div>
                 )}
               </div>
