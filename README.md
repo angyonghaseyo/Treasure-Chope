@@ -20,10 +20,12 @@ On a more technical aspect, Treasure Chope prides itself on being a user-friendl
 This seamless interaction enhances the user experience, fostering greater engagement and satisfaction across the platform. It also effectively reduces the churn rate by ensuring that both users and restaurants enjoy a smooth and rewarding experience, encouraging continued use and loyalty.
 
 ## Features
+- **Real-Time Availability Updates**: The platform updates the availability of food items in real-time, ensuring users have access to the latest offerings from restaurants.
+- **Seamless User Experience**: A clean, intuitive interface that makes navigating the platform and placing orders a breeze for all users.
+- **Eco-Friendly 'Surprise Bags'**: Users can purchase discounted surprise bags containing a mix of surplus food items, turning potential waste into culinary adventures.
+- **Accessible Dietary Filtering**: Users can filter options based on dietary restrictions such as vegetarian, vegan, halal and standard.
+- **Food Waste Reduction**: At Treasure Chope, we're dedicated to minimizing food waste through smart redistribution. Connecting surplus food from restaurants to consumers, we're part of a movement for a sustainable future.
 
-- **Surprise Boxes**: Get a variety of delicious food at reduced prices.
-- **Waste Reduction**: Help local businesses cut down on food waste.
-- **Dietary Filters**: Find food that fits your dietary restrictions and preferences.
 
 ## Technology Stack
 
