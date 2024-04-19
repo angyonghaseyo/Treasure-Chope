@@ -660,7 +660,7 @@ class RestaurantDetails extends Component {
                   {tab1Content && (
                     <div className="row menu-section">
                       <div className="col-12 bg-white p-4">
-                        <div className="input-group input-group-sm mb-4 mt-2">
+                        {/* <div className="input-group input-group-sm mb-4 mt-2">
                           <input
                             type="text"
                             className="form-control search-menu-input"
@@ -675,9 +675,9 @@ class RestaurantDetails extends Component {
                               <FontAwesomeIcon icon="search" />
                             </span>
                           </div>
-                        </div>
+                        </div> */}
                         <div>
-                          <h6 className="mb-4 text-warning">
+                          <h6 style={{ fontWeight: "bold", color: "#C13F86" }} >
                             Best food items:
                           </h6>
                           {this._renderMenuItemsList()}
