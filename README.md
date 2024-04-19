@@ -5,17 +5,17 @@ Our mission is to bridge the gap between local businesses and consumers, promoti
 
 Our platform is intuitive and inclusive, accommodating a range of dietary needs and preferences with features such as categories.
 
-##Motivation: Why we started Treasure Chope 
+## Motivation: Why we started Treasure Chope 
 Despite having to import over 90% of food supplies, food waste is one of Singapore’s biggest waste streams — and the amount of food wasted has grown by around 20% in the last decade
 
 Food waste is a significant national issue, with restaurants discarding surplus food daily. Simultaneously, consumers struggle to access affordable, diverse meals. Traditional methods of connecting businesses with consumers often overlook surplus food, contributing to environmental concerns and economic losses for businesses.
 
-##How does Treasure Chope help?
+## How does Treasure Chope help?
 With this gap in the market, we decided to venture into Treasure Chope to bridge the divide between surplus food availability and consumer access. 
 This initiative helps reduce food waste while providing economic benefits to restaurants and enriching the culinary experiences of consumers.
 Our platform not only reduces food waste but also supports restaurants in recuperating potential losses, fostering a more sustainable food ecosystem. This initiative aligns with global efforts to minimise environmental impact while enhancing food security for communities.
 
-##Treasure Chope’s User Experience
+## Treasure Chope’s User Experience
 On a more technical aspect, Treasure Chope prides itself on being a user-friendly platform where both users and restaurants can intuitively navigate its features. The interface is designed with simplicity in mind, ensuring that interactions are straightforward and efficient. With clear menus, responsive design, and easy-to-follow steps, users can quickly find and order their desired meals, while restaurants can effortlessly upload and manage their surplus inventory. 
 This seamless interaction enhances the user experience, fostering greater engagement and satisfaction across the platform. It also effectively reduces the churn rate by ensuring that both users and restaurants enjoy a smooth and rewarding experience, encouraging continued use and loyalty.
 
