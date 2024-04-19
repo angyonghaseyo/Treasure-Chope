@@ -31,10 +31,25 @@ class EditProfile extends Component {
   }
 
   toggleEditMode = () => {
-    this.setState((prevState) => ({
-      editMode: !prevState.editMode,
-    }));
-  };
+    if (this.state.editMode) {
+        // Exiting edit mode
+        this.setState({
+            editMode: false,
+            profile: {
+                ...this.state.profile,
+                tempProfileImageUrl: null  // Clear the temporary URL to ensure no old preview is shown
+            }
+        }, () => {
+            this.fetchUserProfile(); // Fetch the latest profile to revert unsaved changes
+        });
+    } else {
+        // Entering edit mode
+        this.setState({
+            editMode: true,
+            tempProfile: { ...this.state.profile }  // Optionally backup current state
+        });
+    }
+};
   renderEditableField = (key, value) => {
     const editableFields = [
       "userCountry",
@@ -111,8 +126,10 @@ class EditProfile extends Component {
     this.setState({ loading: true });
     try {
       await userRef.update(this.state.profile);
-      alert("Profile updated successfully!");
-      this.setState({ editMode: false }); 
+      this.setState({ editMode: false }, () => {
+        this.fetchUserProfile();
+        alert("Profile updated successfully!");
+      });
     } catch (error) {
       console.error("Error updating profile:", error);
       alert("Failed to update profile.");
@@ -124,9 +141,14 @@ class EditProfile extends Component {
   handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
+      const imageUrl = URL.createObjectURL(file); // Create a temporary URL for the file
       this.setState({
         imageFile: file,
-      });
+           profile: {
+               ...this.state.profile,
+               tempProfileImageUrl: imageUrl, // Temporarily store the URL for preview purposes
+           },
+       });
     }
   };
 
@@ -150,42 +172,36 @@ class EditProfile extends Component {
     this.setState({ loading: true });
 
     try {
-        // First, retrieve the current image name from Firestore
         const doc = await userRef.get();
-        let imageName = doc.exists && doc.data().imageName;
-        if (!imageName) {
-            // If no image name is stored, generate a new one
-            imageName = `image_${new Date().getTime()}.png`; // This will always generate a new name
-            // Optionally update Firestore with the new image name for consistency
-            await userRef.update({ imageName });
-        }
+       let imageName = doc.exists && doc.data().imageName;
+       if (!imageName) {
+         imageName = `image_${new Date().getTime()}.png`;
+         await userRef.update({ imageName });
+       }
 
-        const fileRef = storageRef.child(`userProfileImage/${userUid}/${imageName}`);
+       const fileRef = storageRef.child(`userProfileImage/${userUid}/${imageName}`);
 
-        // Upload the new image
-        await fileRef.put(imageFile);
-        const imageUrl = await fileRef.getDownloadURL();
+       // Upload the new image
+       await fileRef.put(imageFile);
+       const imageUrl = await fileRef.getDownloadURL();
 
-        // Update the Firestore user profile
-        await userRef.update({ userProfileImageUrl: imageUrl });
+       // Immediately update the UI with the new image URL
+       this.setState({
+         profile: { ...this.state.profile, userProfileImageUrl: imageUrl, tempProfileImageUrl: null },
+         loading: false
+       }, () => {
+         alert("Image uploaded successfully!");
+       });
 
-        // Update local state
-        this.setState((prevState) => ({
-            profile: {
-                ...prevState.profile,
-                userProfileImageUrl: imageUrl,
-                imageName,  // Store the image name in state if needed
-            },
-            loading: false,
-        }));
+       // Make sure to update Firestore after the state update
+       await userRef.update({ userProfileImageUrl: imageUrl });
 
-        alert("Image uploaded successfully!");
-    } catch (error) {
-        console.error("Error uploading image or updating profile:", error);
-        this.setState({ loading: false });
-        alert("Failed to upload image or update profile.");
-    }
-};
+     } catch (error) {
+       console.error("Error uploading image or updating profile:", error);
+       this.setState({ loading: false });
+       alert("Failed to upload image or update profile.");
+     }
+   };
 
 renderProfileView = () => {
     const { profile } = this.state;
