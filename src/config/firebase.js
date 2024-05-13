@@ -1,7 +1,5 @@
 import * as firebase from "firebase";
 import "firebase/firestore";
-import dotenv from 'dotenv';
-dotenv.config();
 
 
 var firebaseConfig = {
