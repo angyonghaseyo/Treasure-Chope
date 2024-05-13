@@ -1,8 +1,11 @@
 import * as firebase from "firebase";
 import "firebase/firestore";
+import dotenv from 'dotenv';
+dotenv.config();
+
 
 var firebaseConfig = {
-  apiKey: "AIzaSyC2gO_-OylPvyUHL49vMlFY4JkucMN_LVQ",
+  apiKey: process.env.API_KEY,
   authDomain: "treasure-chope.firebaseapp.com",
   projectId: "treasure-chope",
   storageBucket: "treasure-chope.appspot.com",
