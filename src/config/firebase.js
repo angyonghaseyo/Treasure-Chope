@@ -1,23 +1,6 @@
 import * as firebase from "firebase";
 import "firebase/firestore";
-
-
-var firebaseConfig = {
-  apiKey: process.env.API_KEY,
-  authDomain: "treasure-chope.firebaseapp.com",
-  projectId: "treasure-chope",
-  storageBucket: "treasure-chope.appspot.com",
-  messagingSenderId: "844460342285",
-  appId: "1:844460342285:web:0406fa95d2ec2cdd782944",
-  measurementId: "G-R3F53BJH36",
-  // apiKey: "AIzaSyBnLUHidIafVYqJ4nwPGn_uK5lLriGokwE",
-  // authDomain: "react-quick-food.firebaseapp.com",
-  // databaseURL: "https://react-quick-food.firebaseio.com",
-  // projectId: "react-quick-food",
-  // storageBucket: "react-quick-food.appspot.com",
-  // messagingSenderId: "775496944172",
-  // appId: "1:775496944172:web:c57dc1dbd0aa26dd"
-};
+import firebaseConfig from "./firebaseConfig";
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
